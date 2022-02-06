@@ -8,7 +8,7 @@ private[gameobject] trait StatePropertyHolder {
 
     protected val stateProperty: Option[StateProperty]
 
-    final val stateData = new StateData {
+    final val stateData = new StateAccessor {
         override def state: Option[State] = self.stateProperty.map(_.state)
 
         override def stateTimestamp: Option[Timestamp] = self.stateProperty.map(_.stateTimestamp)

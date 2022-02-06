@@ -1,5 +1,5 @@
 package dod.gameobject.physics
 
-trait PhysicsData {
+trait PhysicsAccessor {
     def physics: Option[Physics]
 }

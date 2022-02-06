@@ -8,7 +8,7 @@ private[gameobject] trait CommonsPropertyHolder {
     
     protected val commonsProperty: CommonsProperty
 
-    final val commonsData = new CommonsData {
+    final val commonsData = new CommonsAccessor {
         override def name: String = self.commonsProperty.name
 
         override def creationTimestamp: Timestamp = self.commonsProperty.creationTimestamp

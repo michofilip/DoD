@@ -2,7 +2,7 @@ package dod.gameobject.position
 
 import dod.temporal.Timestamps.Timestamp
 
-trait PositionData {
+trait PositionAccessor {
     def coordinates: Option[Coordinates]
 
     def direction: Option[Direction]

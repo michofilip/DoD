@@ -8,7 +8,7 @@ private[gameobject] trait PhysicsPropertyHolder {
 
     protected val physicsProperty: Option[PhysicsProperty]
 
-    final val physicsData = new PhysicsData {
+    final val physicsData = new PhysicsAccessor {
         def physics: Option[Physics] = self.physicsProperty.map(_.physics(stateData.state))
     }
 }
