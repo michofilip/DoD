@@ -17,30 +17,30 @@ class GameObjectPhysicsTest extends AnyFunSuite {
     private val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
 
 
-    test("GameObject::physicsData no PhysicsProperty test") {
+    test("GameObject::physicsAccessor no PhysicsProperty test") {
         val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty)
 
-        assertResult(None)(gameObject.physicsData.physics)
+        assertResult(None)(gameObject.physicsAccessor.physics)
     }
 
-    test("GameObject::physicsData test") {
-        assertResult(Some(Physics(solid = false)))(gameObject.physicsData.physics)
+    test("GameObject::physicsAccessor test") {
+        assertResult(Some(Physics(solid = false)))(gameObject.physicsAccessor.physics)
     }
 
-    test("GameObject::physicsData open test") {
+    test("GameObject::physicsAccessor open test") {
         val stateProperty = new StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
-        assertResult(Some(Physics(solid = false)))(gameObject.physicsData.physics)
+        assertResult(Some(Physics(solid = false)))(gameObject.physicsAccessor.physics)
     }
 
-    test("GameObject::physicsData close test") {
+    test("GameObject::physicsAccessor close test") {
         val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
-        assertResult(Some(Physics(solid = true)))(gameObject.physicsData.physics)
+        assertResult(Some(Physics(solid = true)))(gameObject.physicsAccessor.physics)
     }
 
 }

@@ -21,40 +21,40 @@ class GameObjectGraphicsTest extends AnyFunSuite {
     private val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
 
 
-    test("GameObject::graphicsData no GraphicsProperty test") {
+    test("GameObject::graphicsAccessor no GraphicsProperty test") {
         val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty)
 
-        assertResult(None)(gameObject.graphicsData.level)
-        assertResult(None)(gameObject.graphicsData.length)
-        assertResult(None)(gameObject.graphicsData.frame(Timestamp(0)))
+        assertResult(None)(gameObject.graphicsAccessor.level)
+        assertResult(None)(gameObject.graphicsAccessor.length)
+        assertResult(None)(gameObject.graphicsAccessor.frame(Timestamp(0)))
     }
 
-    test("GameObject::graphicsData test") {
-        assertResult(Some(0))(gameObject.graphicsData.level)
-        assertResult(Some(Duration(1000)))(gameObject.graphicsData.length)
-        assertResult(Some(Frame(0, 0, 0)))(gameObject.graphicsData.frame(Timestamp(0)))
+    test("GameObject::graphicsAccessor test") {
+        assertResult(Some(0))(gameObject.graphicsAccessor.level)
+        assertResult(Some(Duration(1000)))(gameObject.graphicsAccessor.length)
+        assertResult(Some(Frame(0, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(0)))
     }
 
-    test("GameObject::graphicsData open test") {
+    test("GameObject::graphicsAccessor open test") {
         val stateProperty = new StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
-        assertResult(Some(0))(gameObject.graphicsData.level)
-        assertResult(Some(Duration(1000)))(gameObject.graphicsData.length)
-        assertResult(Some(Frame(0, 0, 0)))(gameObject.graphicsData.frame(Timestamp(1000)))
-        assertResult(Some(Frame(3, 0, 0)))(gameObject.graphicsData.frame(Timestamp(2000)))
+        assertResult(Some(0))(gameObject.graphicsAccessor.level)
+        assertResult(Some(Duration(1000)))(gameObject.graphicsAccessor.length)
+        assertResult(Some(Frame(0, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(1000)))
+        assertResult(Some(Frame(3, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(2000)))
     }
 
-    test("GameObject::graphicsData close test") {
+    test("GameObject::graphicsAccessor close test") {
         val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
-        assertResult(Some(0))(gameObject.graphicsData.level)
-        assertResult(Some(Duration(1000)))(gameObject.graphicsData.length)
-        assertResult(Some(Frame(4, 0, 0)))(gameObject.graphicsData.frame(Timestamp(1000)))
-        assertResult(Some(Frame(4, 0, 0)))(gameObject.graphicsData.frame(Timestamp(2000)))
+        assertResult(Some(0))(gameObject.graphicsAccessor.level)
+        assertResult(Some(Duration(1000)))(gameObject.graphicsAccessor.length)
+        assertResult(Some(Frame(4, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(1000)))
+        assertResult(Some(Frame(4, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(2000)))
     }
 
 }
