@@ -15,14 +15,14 @@ private[gameobject] trait GraphicsPropertyHolder {
     final val graphicsAccessor = new GraphicsAccessor {
         override def level: Option[Int] = self.graphicsProperty.map(_.level)
 
-        override def length: Option[Duration] = self.graphicsProperty.map(_.animationSelector.selectAnimation(stateAccessor.state, positionAccessor.direction).length)
+        override def length: Option[Duration] = self.graphicsProperty.map(_.animation(stateAccessor.state, positionAccessor.direction).length)
 
         override def frame(timestamp: Timestamp): Option[Frame] =
             self.graphicsProperty.map { graphicsProperty =>
                 val initialTimestamp = stateAccessor.stateTimestamp.getOrElse(commonsAccessor.creationTimestamp)
                 val duration = Duration.between(initialTimestamp, timestamp)
 
-                graphicsProperty.animationSelector.selectAnimation(stateAccessor.state, positionAccessor.direction).frame(duration)
+                graphicsProperty.animation(stateAccessor.state, positionAccessor.direction).frame(duration)
             }
     }
 
