@@ -11,14 +11,14 @@ import java.util.UUID
 
 class GameObjectPhysicsTest extends AnyFunSuite {
 
-    private val commonsProperty = new CommonsProperty(name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val commonsProperty = new CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
     private val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
     private val physicsProperty = new PhysicsProperty(PhysicsSelector(Some(State.Open) -> Physics(false), Some(State.Closed) -> Physics(true)))
-    private val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
+    private val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
 
 
     test("GameObject::physicsAccessor no PhysicsProperty test") {
-        val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty)
+        val gameObject = new GameObject(commonsProperty = commonsProperty)
 
         assertResult(None)(gameObject.physicsAccessor.physics)
     }
@@ -29,7 +29,7 @@ class GameObjectPhysicsTest extends AnyFunSuite {
 
     test("GameObject::physicsAccessor open test") {
         val stateProperty = new StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
-        val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
+        val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
         assertResult(Some(Physics(solid = false)))(gameObject.physicsAccessor.physics)
@@ -37,7 +37,7 @@ class GameObjectPhysicsTest extends AnyFunSuite {
 
     test("GameObject::physicsAccessor close test") {
         val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
-        val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
+        val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
         assertResult(Some(Physics(solid = true)))(gameObject.physicsAccessor.physics)

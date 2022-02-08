@@ -12,17 +12,17 @@ import java.util.UUID
 
 class GameObjectGraphicsTest extends AnyFunSuite {
 
-    private val commonsProperty = new CommonsProperty(name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val commonsProperty = new CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
     private val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
     private val graphicsProperty = new GraphicsProperty(0, AnimationSelector(
         (Some(State.Open), None) -> new Animation(4, false, Vector(Frame(0, 0, 0), Frame(1, 0, 0), Frame(2, 0, 0), Frame(3, 0, 0))),
         (Some(State.Closed), None) -> new Animation(4, true, Vector(Frame(4, 0, 0), Frame(5, 0, 0), Frame(6, 0, 0), Frame(7, 0, 0)))
     ))
-    private val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
+    private val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
 
 
     test("GameObject::graphicsAccessor no GraphicsProperty test") {
-        val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty)
+        val gameObject = new GameObject(commonsProperty = commonsProperty)
 
         assertResult(None)(gameObject.graphicsAccessor.level)
         assertResult(None)(gameObject.graphicsAccessor.length)
@@ -37,7 +37,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
 
     test("GameObject::graphicsAccessor open test") {
         val stateProperty = new StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
-        val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
+        val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
         assertResult(Some(0))(gameObject.graphicsAccessor.level)
@@ -48,7 +48,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
 
     test("GameObject::graphicsAccessor close test") {
         val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
-        val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
+        val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
         assertResult(Some(0))(gameObject.graphicsAccessor.level)

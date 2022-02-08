@@ -9,11 +9,12 @@ import org.scalatest.funsuite.AnyFunSuite
 import java.util.UUID
 
 class GameObjectCommonsTest extends AnyFunSuite {
-
-    private val commonsProperty = new CommonsProperty(name = "TestGameObject", creationTimestamp = Timestamp(0))
-    private val gameObject = new GameObject(id = UUID.randomUUID(), commonsProperty = commonsProperty)
+    private val id = UUID.randomUUID()
+    private val commonsProperty = new CommonsProperty(id = id, name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val gameObject = new GameObject(commonsProperty = commonsProperty)
 
     test("GameObject::commonsAccessor test") {
+        assertResult(id)(gameObject.commonsAccessor.id)
         assertResult("TestGameObject")(gameObject.commonsAccessor.name)
         assertResult(Timestamp(0))(gameObject.commonsAccessor.creationTimestamp)
     }
