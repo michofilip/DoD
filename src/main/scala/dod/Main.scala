@@ -1,8 +1,9 @@
 package dod
 
-import dod.gameobject.GameObject
-import dod.gameobject.commons.{CommonsAccessor, CommonsProperty}
-import dod.temporal.Timestamps.Timestamp
+import dod.game.gameobject.GameObject
+import dod.game.gameobject.commons.{CommonsAccessor, CommonsProperty}
+import dod.game.temporal.Timer
+import dod.game.temporal.Timestamps.Timestamp
 
 import java.util.UUID
 import scala.util.chaining.scalaUtilChainingOps
@@ -15,6 +16,15 @@ object Main {
                 val accessor = gm.commonsAccessor
                 println(accessor.name)
             }
+
+        Timer()
+            .tap(println)
+            .pipe(_.started)
+            .tap(println)
+            .tap(_ => Thread.sleep(1000))
+            .tap(println)
+
+
     }
 
 }
