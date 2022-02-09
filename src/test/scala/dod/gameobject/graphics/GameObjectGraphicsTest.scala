@@ -1,11 +1,12 @@
 package dod.gameobject.graphics
 
-import dod.gameobject.GameObject
-import dod.gameobject.commons.CommonsProperty
-import dod.gameobject.position.{Coordinates, Direction, PositionProperty, PositionTransformer, Shift}
-import dod.gameobject.state.{State, StateProperty, StateTransformer}
-import dod.temporal.Durations.Duration
-import dod.temporal.Timestamps.Timestamp
+import dod.game.gameobject.GameObject
+import dod.game.gameobject.commons.CommonsProperty
+import dod.game.gameobject.graphics.{Animation, AnimationSelector, Frame, GraphicsProperty}
+import dod.game.gameobject.position.{Coordinates, Direction, PositionProperty, PositionTransformer, Shift}
+import dod.game.gameobject.state.{State, StateProperty, StateTransformer}
+import dod.game.temporal.Durations.Duration
+import dod.game.temporal.Timestamps.Timestamp
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID
