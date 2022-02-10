@@ -3,8 +3,8 @@ package dod.game.temporal
 import dod.game.temporal.Durations.Duration
 import dod.game.temporal.Timestamps.Timestamp
 
-class Timer private(private val initialTimestamp: Timestamp,
-                    private val lastStartTimestamp: Option[Timestamp]) {
+class Timer private(initialTimestamp: Timestamp,
+                    lastStartTimestamp: Option[Timestamp]) {
 
     val running: Boolean = lastStartTimestamp.isDefined
 
