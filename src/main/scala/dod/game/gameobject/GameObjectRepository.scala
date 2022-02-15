@@ -4,12 +4,13 @@ import dod.game.gameobject.position.Coordinates
 
 import java.util.UUID
 import scala.annotation.targetName
+import scala.util.chaining.scalaUtilChainingOps
 
-class GameObjects private(gameObjectsById: Map[UUID, GameObject],
-                          gameObjectsByCoordinates: Map[Coordinates, Map[UUID, GameObject]]) {
+class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
+                                   gameObjectsByCoordinates: Map[Coordinates, Map[UUID, GameObject]]) {
 
     @targetName("add")
-    def +(gameObject: GameObject): GameObjects = {
+    def +(gameObject: GameObject): GameObjectRepository = {
         val newGameObjectsByCoordinates = gameObject.positionAccessor.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
             val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) + (gameObject.commonsAccessor.id -> gameObject)
 
@@ -18,15 +19,15 @@ class GameObjects private(gameObjectsById: Map[UUID, GameObject],
 
         val newGameObjectsById = gameObjectsById + (gameObject.commonsAccessor.id -> gameObject)
 
-        new GameObjects(newGameObjectsById, newGameObjectsByCoordinates)
+        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates)
     }
 
     @targetName("addAll")
-    def ++(gameObjects: Seq[GameObject]): GameObjects =
+    def ++(gameObjects: Seq[GameObject]): GameObjectRepository =
         gameObjects.foldLeft(this)(_ + _)
 
     @targetName("remove")
-    def -(gameObject: GameObject): GameObjects = {
+    def -(gameObject: GameObject): GameObjectRepository = {
         val newGameObjectsByCoordinates = gameObject.positionAccessor.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
             val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) - gameObject.commonsAccessor.id
 
@@ -38,11 +39,11 @@ class GameObjects private(gameObjectsById: Map[UUID, GameObject],
 
         val newGameObjectsById = gameObjectsById - gameObject.commonsAccessor.id
 
-        new GameObjects(newGameObjectsById, newGameObjectsByCoordinates)
+        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates)
     }
 
     @targetName("removeAll")
-    def --(gameObjects: Seq[GameObject]): GameObjects =
+    def --(gameObjects: Seq[GameObject]): GameObjectRepository =
         gameObjects.foldLeft(this)(_ - _)
 
     def findAll: Seq[GameObject] =
@@ -68,8 +69,8 @@ class GameObjects private(gameObjectsById: Map[UUID, GameObject],
 
 }
 
-object GameObjects {
-    def apply(): GameObjects = new GameObjects(Map.empty, Map.empty)
-
-    def apply(gameObjects: Seq[GameObject]): GameObjects = GameObjects() ++ gameObjects
+object GameObjectRepository {
+    def apply(gameObjects: Seq[GameObject] = Seq.empty): GameObjectRepository =
+        new GameObjectRepository(Map.empty, Map.empty) ++ gameObjects
+   
 }
