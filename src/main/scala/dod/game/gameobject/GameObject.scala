@@ -20,7 +20,7 @@ final class GameObject(override protected val commonsProperty: CommonsProperty,
 
     inline protected def update(positionProperty: Option[PositionProperty] = positionProperty,
                                 stateProperty: Option[StateProperty] = stateProperty): GameObject =
-        new GameObject(
+        GameObject(
             commonsProperty = commonsProperty,
             positionProperty = positionProperty,
             stateProperty = stateProperty,

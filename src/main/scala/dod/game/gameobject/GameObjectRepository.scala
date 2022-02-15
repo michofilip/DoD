@@ -72,5 +72,4 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 object GameObjectRepository {
     def apply(gameObjects: Seq[GameObject] = Seq.empty): GameObjectRepository =
         new GameObjectRepository(Map.empty, Map.empty) ++ gameObjects
-   
 }

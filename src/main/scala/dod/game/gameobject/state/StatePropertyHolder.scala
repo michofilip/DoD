@@ -16,5 +16,5 @@ private[gameobject] trait StatePropertyHolder {
 
     final def updateState(stateTransformer: StateTransformer, timestamp: Timestamp): GameObject =
         update(stateProperty = self.stateProperty.map(_.updatedState(stateTransformer, timestamp)))
-        
+
 }

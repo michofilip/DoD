@@ -14,14 +14,14 @@ import scala.util.chaining.scalaUtilChainingOps
 object Main {
     def main(args: Array[String]): Unit = {
 
-        val gameObject = new GameObject(
+        val gameObject = GameObject(
             commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0)),
             positionProperty = Some(PositionProperty(coordinates = Coordinates(0, 0), direction = Direction.North, positionTimestamp = Timestamp(0)))
         )
 
         val gameObjectRepository = GameObjectRepository(Seq(gameObject))
 
-        val gameState = new GameState(gameObjectRepository = gameObjectRepository, events = Queue.empty)
+        val gameState = GameState(gameObjectRepository = gameObjectRepository, events = Queue.empty)
 
         println(gameState)
 

@@ -1,4 +1,4 @@
-package dod.gameobject.commons
+package dod.gameobject
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsProperty
@@ -11,7 +11,7 @@ import java.util.UUID
 class GameObjectCommonsTest extends AnyFunSuite {
     private val id = UUID.randomUUID()
     private val commonsProperty = CommonsProperty(id = id, name = "TestGameObject", creationTimestamp = Timestamp(0))
-    private val gameObject = new GameObject(commonsProperty = commonsProperty)
+    private val gameObject = GameObject(commonsProperty = commonsProperty)
 
     test("GameObject::commonsAccessor test") {
         assertResult(id)(gameObject.commonsAccessor.id)

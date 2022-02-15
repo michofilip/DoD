@@ -12,15 +12,10 @@ class EventProcessor {
 
     type EventResponse = (GameObjectRepository, Seq[Event])
 
-    def processEvent(event: Event, gameObjectRepository: GameObjectRepository): EventResponse = event match {
+    def processEvent(event: Event, gameObjectRepository: GameObjectRepository): EventResponse = event match
         case Event.MoveTo(gameObjectId, coordinates) =>
             handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.moveTo(coordinates))
 
-        //        case Event.MoveBy(gameObjectId, shift) => ???
-        //        case Event.StartTimer => ???
-        //        case Event.StopTimer => ???
-        //        case Event.Remove(gameObjectIds) => ???
-    }
 
     inline private def handlePositionChange(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, positionTransformer: PositionTransformer): EventResponse = {
         def canPositionChange(gameObject: GameObject, gameObjectUpdated: GameObject) =
