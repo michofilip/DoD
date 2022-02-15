@@ -17,8 +17,3 @@ final class PositionProperty(private[position] val coordinates: Coordinates,
         }
 
 }
-
-object PositionProperty {
-    def apply(coordinates: Coordinates, direction: Direction, positionTimestamp: Timestamp): PositionProperty =
-        new PositionProperty(coordinates, direction, positionTimestamp)
-}

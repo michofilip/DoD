@@ -11,8 +11,3 @@ final class StateProperty(private[state] val state: State,
             case _ => this
 
 }
-
-object StateProperty {
-    def apply(state: State, stateTimestamp: Timestamp): StateProperty =
-        new StateProperty(state, stateTimestamp)
-}
