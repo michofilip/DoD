@@ -13,9 +13,9 @@ import java.util.UUID
 
 class GameObjectGraphicsTest extends AnyFunSuite {
 
-    private val commonsProperty = new CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
-    private val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
-    private val graphicsProperty = new GraphicsProperty(0, AnimationSelector(
+    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
+    private val graphicsProperty = GraphicsProperty(0, AnimationSelector(
         (Some(State.Open), None) -> new Animation(4, false, Vector(Frame(0, 0, 0), Frame(1, 0, 0), Frame(2, 0, 0), Frame(3, 0, 0))),
         (Some(State.Closed), None) -> new Animation(4, true, Vector(Frame(4, 0, 0), Frame(5, 0, 0), Frame(6, 0, 0), Frame(7, 0, 0)))
     ))
@@ -37,7 +37,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
     }
 
     test("GameObject::graphicsAccessor open test") {
-        val stateProperty = new StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
@@ -48,7 +48,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
     }
 
     test("GameObject::graphicsAccessor close test") {
-        val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 

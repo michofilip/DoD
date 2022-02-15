@@ -12,9 +12,9 @@ import java.util.UUID
 
 class GameObjectPhysicsTest extends AnyFunSuite {
 
-    private val commonsProperty = new CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
-    private val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
-    private val physicsProperty = new PhysicsProperty(PhysicsSelector(Some(State.Open) -> Physics(false), Some(State.Closed) -> Physics(true)))
+    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
+    private val physicsProperty = PhysicsProperty(PhysicsSelector(Some(State.Open) -> Physics(false), Some(State.Closed) -> Physics(true)))
     private val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
 
 
@@ -29,7 +29,7 @@ class GameObjectPhysicsTest extends AnyFunSuite {
     }
 
     test("GameObject::physicsAccessor open test") {
-        val stateProperty = new StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
@@ -37,7 +37,7 @@ class GameObjectPhysicsTest extends AnyFunSuite {
     }
 
     test("GameObject::physicsAccessor close test") {
-        val stateProperty = new StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
         val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 

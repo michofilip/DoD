@@ -8,3 +8,8 @@ class GraphicsProperty(private[graphics] val level: Int,
     def animation(state: Option[State], direction: Option[Direction]): Animation =
         animationSelector.selectAnimation(state, direction)
 }
+
+object GraphicsProperty {
+    def apply(level: Int, animationSelector: AnimationSelector): GraphicsProperty =
+        new GraphicsProperty(level, animationSelector)
+}

@@ -10,8 +10,8 @@ import java.util.UUID
 
 class GameObjectPositionTest extends AnyFunSuite {
 
-    private val commonsProperty = new CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
-    private val positionProperty = new PositionProperty(coordinates = Coordinates(0, 0), direction = Direction.North, positionTimestamp = Timestamp(0))
+    private val commonsProperty =  CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val positionProperty =  PositionProperty(coordinates = Coordinates(0, 0), direction = Direction.North, positionTimestamp = Timestamp(0))
     private val gameObject = new GameObject(commonsProperty = commonsProperty, positionProperty = Some(positionProperty))
 
     test("GameObject::positionAccessor no PositionProperty test") {

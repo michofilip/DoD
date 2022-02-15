@@ -10,7 +10,7 @@ import java.util.UUID
 
 class GameObjectCommonsTest extends AnyFunSuite {
     private val id = UUID.randomUUID()
-    private val commonsProperty = new CommonsProperty(id = id, name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val commonsProperty = CommonsProperty(id = id, name = "TestGameObject", creationTimestamp = Timestamp(0))
     private val gameObject = new GameObject(commonsProperty = commonsProperty)
 
     test("GameObject::commonsAccessor test") {
