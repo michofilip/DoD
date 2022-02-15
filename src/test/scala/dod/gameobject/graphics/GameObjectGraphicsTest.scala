@@ -16,8 +16,8 @@ class GameObjectGraphicsTest extends AnyFunSuite {
     private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
     private val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
     private val graphicsProperty = GraphicsProperty(0, AnimationSelector(
-        (Some(State.Open), None) -> new Animation(4, false, Vector(Frame(0, 0, 0), Frame(1, 0, 0), Frame(2, 0, 0), Frame(3, 0, 0))),
-        (Some(State.Closed), None) -> new Animation(4, true, Vector(Frame(4, 0, 0), Frame(5, 0, 0), Frame(6, 0, 0), Frame(7, 0, 0)))
+        (Some(State.Open), None) -> Animation.SingleRunAnimation(4, Vector(Frame(0, 0, 0), Frame(1, 0, 0), Frame(2, 0, 0), Frame(3, 0, 0))),
+        (Some(State.Closed), None) -> Animation.LoopingAnimation(4, Vector(Frame(4, 0, 0), Frame(5, 0, 0), Frame(6, 0, 0), Frame(7, 0, 0)))
     ))
     private val gameObject = new GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
 
