@@ -10,12 +10,18 @@ import scala.util.chaining.scalaUtilChainingOps
 class GameState(val gameObjectRepository: GameObjectRepository, val events: Queue[Event]) {
     def processEvent(using eventProcessor: EventProcessor): GameState = {
         events match
-            case event +: rest => eventProcessor.processEvent(event, gameObjectRepository).pipe {
+            case event +: rest => eventProcessor.processEvent(gameObjectRepository, event).pipe {
                 case (gameObjects, events) => GameState(gameObjects, rest ++ events)
             }
 
             case _ => this
     }
 
-    override def toString = s"GameState($gameObjectRepository, $events)"
+    def processEvents(using eventProcessor: EventProcessor): GameState = {
+        eventProcessor.processEvents(gameObjectRepository, events).pipe {
+            case (gameObjects, events) => GameState(gameObjects, Queue(events: _*))
+        }
+    }
+
+    override def toString = s"GameState(gameObjects=$gameObjectRepository,events=${events.mkString("[", ",", "]")})"
 }

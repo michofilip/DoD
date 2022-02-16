@@ -1,9 +1,11 @@
 package dod
 
 import dod.game.GameState
-import dod.game.gameobject.{GameObject, GameObjectRepository}
+import dod.game.event.{Event, EventProcessor}
 import dod.game.gameobject.commons.{CommonsAccessor, CommonsProperty}
-import dod.game.gameobject.position.{Coordinates, Direction, PositionProperty}
+import dod.game.gameobject.physics.*
+import dod.game.gameobject.position.*
+import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.temporal.Timer
 import dod.game.temporal.Timestamps.Timestamp
 
@@ -14,18 +16,29 @@ import scala.util.chaining.scalaUtilChainingOps
 object Main {
     def main(args: Array[String]): Unit = {
 
-        val gameObject = GameObject(
-            commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0)),
+        given EventProcessor = new EventProcessor()
+
+        val id = UUID.randomUUID()
+
+        val gameObject1 = GameObject(
+            commonsProperty = CommonsProperty(id = id, name = "TestGameObject1", creationTimestamp = Timestamp(0)),
             positionProperty = Some(PositionProperty(coordinates = Coordinates(0, 0), direction = Direction.North, positionTimestamp = Timestamp(0)))
         )
+        val gameObject2 = GameObject(
+            commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject2", creationTimestamp = Timestamp(0)),
+            positionProperty = Some(PositionProperty(coordinates = Coordinates(1, 0), direction = Direction.North, positionTimestamp = Timestamp(0))),
+            physicsProperty = Some(PhysicsProperty(PhysicsSelector(None -> Physics(solid = true))))
+        )
 
-        val gameObjectRepository = GameObjectRepository(Seq(gameObject))
+        val gameObjectRepository = GameObjectRepository(Seq(gameObject1, gameObject2))
 
-        val gameState = GameState(gameObjectRepository = gameObjectRepository, events = Queue.empty)
-
-        println(gameState)
-
-
+        val gameState = GameState(
+            gameObjectRepository = gameObjectRepository,
+            events = Queue(Event.MoveBy(id, Shift(1, 0)))
+        )
+            .tap(println)
+            .pipe(_.processEvents)
+            .tap(println)
 
 
         //            .tap(_.positionAccessor.coordinates.pipe(println))

@@ -27,4 +27,17 @@ final class GameObject(override protected val commonsProperty: CommonsProperty,
             physicsProperty = physicsProperty,
             graphicsProperty = graphicsProperty
         )
+
+    override def toString: String = {
+        Seq(
+            Option(commonsAccessor.id).map(id => s"id=$id"),
+            Option(commonsAccessor.name).map(name => s"name=$name"),
+            Option(commonsAccessor.creationTimestamp).map(creationTimestamp => s"creationTimestamp=$creationTimestamp"),
+            positionAccessor.coordinates.map(coordinates => s"coordinates=$coordinates"),
+            positionAccessor.direction.map(direction => s"direction=$direction"),
+            positionAccessor.positionTimestamp.map(positionTimestamp => s"positionTimestamp=$positionTimestamp"),
+            stateAccessor.state.map(state => s"state=$state"),
+            stateAccessor.stateTimestamp.map(stateTimestamp => s"stateTimestamp=$stateTimestamp"),
+        ).flatten.mkString("GameObject(", ",", ")")
+    }
 }
