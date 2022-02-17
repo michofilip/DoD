@@ -1,6 +1,8 @@
 package dod
 
-import dod.game.GameState
+import akka.actor.typed.ActorSystem
+import dod.actor.{GameActor, GameStageActor}
+import dod.game.GameStage
 import dod.game.event.{Event, EventProcessor}
 import dod.game.gameobject.commons.{CommonsAccessor, CommonsProperty}
 import dod.game.gameobject.physics.*
@@ -27,32 +29,25 @@ object Main {
         val gameObject2 = GameObject(
             commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject2", creationTimestamp = Timestamp(0)),
             positionProperty = Some(PositionProperty(coordinates = Coordinates(1, 0), direction = Direction.North, positionTimestamp = Timestamp(0))),
-            physicsProperty = Some(PhysicsProperty(PhysicsSelector(None -> Physics(solid = true))))
+            physicsProperty = Some(PhysicsProperty(PhysicsSelector(None -> Physics(solid = false))))
         )
 
         val gameObjectRepository = GameObjectRepository(Seq(gameObject1, gameObject2))
 
-        val gameState = GameState(
+        val gameState = GameStage(
             gameObjectRepository = gameObjectRepository,
             events = Queue(Event.MoveBy(id, Shift(1, 0)))
         )
-            .tap(println)
-            .pipe(_.processEvents)
-            .tap(println)
 
+        val gameActor = ActorSystem(GameActor(new EventProcessor()), "GameActor")
 
-        //            .tap(_.positionAccessor.coordinates.pipe(println))
-        //            .tap { gm =>
-        //                val accessor = gm.commonsAccessor
-        //                println(accessor.name)
-        //            }
-        //
-        //        Timer()
-        //            .tap(println)
-        //            .pipe(_.started)
-        //            .tap(println)
-        //            .tap(_ => Thread.sleep(1000))
-        //            .tap(println)
+        gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameState(Some(gameState)))
+        gameActor ! GameActor.GameStageCommand(GameStageActor.SetDisplaying(true))
+        Thread.sleep(2000)
+        gameActor ! GameActor.GameStageCommand(GameStageActor.SetProcessing(true))
+
+        Thread.sleep(5000)
+        gameActor ! GameActor.Exit
 
 
     }

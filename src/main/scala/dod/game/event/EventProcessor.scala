@@ -24,22 +24,24 @@ class EventProcessor {
         pe(gameObjectRepository, events, Queue.empty)
     }
 
-    def processEvent(gameObjectRepository: GameObjectRepository, event: Event): EventResponse = event match
-        case Event.MoveTo(gameObjectId, coordinates) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.moveTo(coordinates))
-        case Event.MoveBy(gameObjectId, shift) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.moveBy(shift))
-
 
     inline private def handlePositionChange(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, positionTransformer: PositionTransformer): EventResponse = {
-        def canPositionChange(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject) =
-            !gameObjectUpdated.positionAccessor.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
-
         gameObjectRepository.findById(gameObjectId).map { gameObject =>
             (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, Timestamp(0)))
-        }.collect { case (gameObjectRepository, gameObjectUpdated) if canPositionChange(gameObjectRepository, gameObjectUpdated) =>
+        }.collect { case (gameObjectRepository, gameObjectUpdated) if canChangePosition(gameObjectRepository, gameObjectUpdated) =>
             gameObjectRepository + gameObjectUpdated
         }.getOrElse(gameObjectRepository).pipe { gameObjectRepository =>
             (gameObjectRepository, Seq.empty)
         }
     }
+
+
+    inline private def canChangePosition(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
+        !gameObjectUpdated.positionAccessor.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
+
+
+    inline private def processEvent(gameObjectRepository: GameObjectRepository, event: Event): EventResponse = event match
+        case Event.MoveTo(gameObjectId, coordinates) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.moveTo(coordinates))
+        case Event.MoveBy(gameObjectId, shift) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.moveBy(shift))
 
 }
