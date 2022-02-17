@@ -1,4 +1,4 @@
-package dod.gameobject
+package dod.game.gameobject
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsProperty
