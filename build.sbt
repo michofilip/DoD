@@ -14,9 +14,6 @@ lazy val root = (project in file("."))
 
         libraryDependencies += "org.scalatest" %% "scalatest" % scalatestVersion % Test,
         libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion,
-
-        libraryDependencies ++= Seq(
-            "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
-            "com.typesafe.akka" %% "akka-slf4j" % akkaVersion
-        ).map(_.cross(CrossVersion.for3Use2_13)),
+        libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
+        libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
     )
