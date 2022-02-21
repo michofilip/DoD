@@ -60,7 +60,7 @@ object Game extends JFXApp3 {
 
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameState(Some(gameState)))
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetDisplaying(true))
-//        gameActor ! GameActor.GameStageCommand(GameStageActor.SetProcessing(true))
+        gameActor ! GameActor.GameStageCommand(GameStageActor.SetProcessing(true))
     }
 
 }
