@@ -1,15 +1,17 @@
 package dod.actor
 
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
+import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor.GameStageActor.{Command, Setup}
 import dod.game.GameStage
 import dod.game.event.{Event, EventProcessor}
 import dod.game.gameobject.GameObjectRepository
+import dod.ui.Screen
 
 import scala.concurrent.duration.DurationInt
 
 final class GameStageActor private(context: ActorContext[Command],
+                                   timer: TimerScheduler[Command],
                                    eventProcessorActor: ActorRef[EventProcessorActor.Command],
                                    displayActor: ActorRef[DisplayActor.Command]) {
     private def behaviors(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
@@ -24,11 +26,12 @@ final class GameStageActor private(context: ActorContext[Command],
 
         case GameStageActor.ProcessEvents =>
             setup.gameStage match
-                case Some(gameStage) if setup.processing =>
+                case Some(gameStage) if setup.processing && gameStage.events.nonEmpty =>
                     eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage.gameObjectRepository, gameStage.events)
                     behaviors(setup.copy(gameStage = Some(gameStage.clearEvents())))
                 case _ =>
-                    context.self ! GameStageActor.ProcessEvents
+                    timer.startSingleTimer(GameStageActor.ProcessEvents, 33.milliseconds)
+                    //                    context.self ! GameStageActor.ProcessEvents
                     Behaviors.same
 
         case GameStageActor.Display =>
@@ -77,17 +80,17 @@ object GameStageActor {
     private final case class Setup(gameStage: Option[GameStage], processing: Boolean, displaying: Boolean)
 
 
-    def apply(eventProcessor: EventProcessor): Behavior[Command] = Behaviors.setup { context =>
+    def apply(eventProcessor: EventProcessor, screen: Screen): Behavior[Command] = Behaviors.setup { context =>
         Behaviors.withTimers { timer =>
             val setup = Setup(gameStage = None, processing = false, displaying = false)
 
             val eventProcessorActor = context.spawn(EventProcessorActor(eventProcessor, context.self), "EventProcessorActor")
-            val displayActor = context.spawn(DisplayActor(), "DisplayActor")
+            val displayActor: ActorRef[DisplayActor.Command] = context.spawn(DisplayActor(screen, context.self), "DisplayActor")
 
             context.self ! ProcessEvents
-            timer.startTimerAtFixedRate(Display, 1000.milliseconds)
+            timer.startTimerAtFixedRate(Display, 33.milliseconds)
 
-            new GameStageActor(context, eventProcessorActor, displayActor).behaviors(setup)
+            new GameStageActor(context, timer, eventProcessorActor, displayActor).behaviors(setup)
         }
     }
 }

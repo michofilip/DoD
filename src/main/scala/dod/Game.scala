@@ -1,5 +1,6 @@
 package dod
 
+
 import akka.actor.typed.ActorSystem
 import dod.actor.{GameActor, GameStageActor}
 import dod.game.GameStage
@@ -11,15 +12,28 @@ import dod.game.gameobject.position.*
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.temporal.Timer
 import dod.game.temporal.Timestamps.Timestamp
+import dod.ui.{PrimaryGameStage, Screen, SpriteData}
+import scalafx.application.JFXApp3.PrimaryStage
+import scalafx.application.{JFXApp3, Platform}
+import scalafx.scene.Scene
+import scalafx.scene.layout.Pane
+import scalafx.stage.StageStyle
 
 import java.util.UUID
 import scala.collection.immutable.Queue
-import scala.util.chaining.scalaUtilChainingOps
 
-object Main {
-    def main(args: Array[String]): Unit = {
+object Game extends JFXApp3 {
 
-        given EventProcessor = new EventProcessor()
+    private val eventProcessor = EventProcessor()
+    private val spriteData = SpriteData()
+    private val screen = Screen(11, 11, 32, 32, spriteData.sprites)
+    private val gameActor = ActorSystem(GameActor(eventProcessor, screen), "GameActor")
+    private val primaryGameStage = PrimaryGameStage(gameActor, screen)
+
+
+    override def start(): Unit = {
+        stage = primaryGameStage.stage
+
 
         val id = UUID.randomUUID()
 
@@ -36,23 +50,17 @@ object Main {
         )
 
         val gameObjectRepository = GameObjectRepository(Seq(gameObject1, gameObject2))
+        val events = Queue(Event.MoveBy(id, Shift(1, 0)))
 
         val gameState = GameStage(
             gameObjectRepository = gameObjectRepository,
-            events = Queue(Event.MoveBy(id, Shift(1, 0)))
+            events = events
         )
 
-        //        val gameActor = ActorSystem(GameActor(new EventProcessor()), "GameActor")
-        //
-        //        gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameState(Some(gameState)))
-        //        gameActor ! GameActor.GameStageCommand(GameStageActor.SetDisplaying(true))
-        //        Thread.sleep(2000)
-        //        gameActor ! GameActor.GameStageCommand(GameStageActor.SetProcessing(true))
-        //
-        //        Thread.sleep(5000)
-        //        gameActor ! GameActor.Exit
 
-
+        gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameState(Some(gameState)))
+        gameActor ! GameActor.GameStageCommand(GameStageActor.SetDisplaying(true))
+//        gameActor ! GameActor.GameStageCommand(GameStageActor.SetProcessing(true))
     }
 
 }

@@ -14,7 +14,9 @@ final class EventProcessorActor private(eventProcessor: EventProcessor, gameStag
             eventProcessor.processEvents(gameObjectRepository, events) match
                 case (gameObjectRepository, events) =>
                     gameStageActor ! GameStageActor.UpdateGameObjectRepository(gameObjectRepository)
-                    gameStageActor ! GameStageActor.AddEvents(events)
+                    if (events.nonEmpty) {
+                        gameStageActor ! GameStageActor.AddEvents(events)
+                    }
                     gameStageActor ! GameStageActor.ProcessEvents
                     Behaviors.same
     }

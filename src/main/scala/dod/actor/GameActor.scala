@@ -5,6 +5,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor
 import dod.actor.GameActor.Command
 import dod.game.event.EventProcessor
+import dod.ui.Screen
 
 final class GameActor private(gameStageActor: ActorRef[GameStageActor.Command]) {
     private def behaviors(): Behavior[Command] = Behaviors.receiveMessage {
@@ -25,9 +26,9 @@ object GameActor {
 
     final case class GameStageCommand(command: GameStageActor.Command) extends Command
 
-    def apply(eventProcessor: EventProcessor): Behavior[Command] = Behaviors.setup { context =>
+    def apply(eventProcessor: EventProcessor, screen: Screen): Behavior[Command] = Behaviors.setup { context =>
 
-        val gameStageActor = context.spawn(GameStageActor(eventProcessor), "GameStageActor")
+        val gameStageActor = context.spawn(GameStageActor(eventProcessor, screen), "GameStageActor")
 
         new GameActor(gameStageActor).behaviors()
     }

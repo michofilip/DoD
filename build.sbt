@@ -7,6 +7,8 @@ ThisBuild / scalaVersion := "3.1.1"
 lazy val scalatestVersion = "3.2.10"
 lazy val akkaVersion = "2.6.18"
 lazy val logbackVersion = "1.2.10"
+lazy val scalafxVersion = "17.0.1-R26"
+lazy val javafxVersion = "17"
 
 lazy val root = (project in file("."))
     .settings(
@@ -16,4 +18,16 @@ lazy val root = (project in file("."))
         libraryDependencies += "ch.qos.logback" % "logback-classic" % logbackVersion,
         libraryDependencies += "com.typesafe.akka" %% "akka-actor-typed" % akkaVersion,
         libraryDependencies += "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
+        libraryDependencies += "org.scalafx" %% "scalafx" % scalafxVersion,
+        libraryDependencies ++= {
+            // Determine OS version of JavaFX binaries
+            lazy val osName = System.getProperty("os.name") match {
+                case n if n.startsWith("Linux") => "linux"
+                case n if n.startsWith("Mac") => "mac"
+                case n if n.startsWith("Windows") => "win"
+                case _ => throw new Exception("Unknown platform!")
+            }
+            Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
+                .map(m => "org.openjfx" % s"javafx-$m" % javafxVersion classifier osName)
+        }
     )
