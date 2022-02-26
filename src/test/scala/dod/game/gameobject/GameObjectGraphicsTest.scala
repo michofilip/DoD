@@ -15,7 +15,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
 
     private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
     private val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
-    private val graphicsProperty = GraphicsProperty(0, AnimationSelector(
+    private val graphicsProperty = GraphicsProperty(layer = 0, tileWidth = 32, tileHeight = 32, animationSelector = AnimationSelector(
         (Some(State.Open), None) -> Animation.SingleRunAnimation(4, Vector(Frame(0, 0, 0), Frame(1, 0, 0), Frame(2, 0, 0), Frame(3, 0, 0))),
         (Some(State.Closed), None) -> Animation.LoopingAnimation(4, Vector(Frame(4, 0, 0), Frame(5, 0, 0), Frame(6, 0, 0), Frame(7, 0, 0)))
     ))
@@ -25,13 +25,13 @@ class GameObjectGraphicsTest extends AnyFunSuite {
     test("GameObject::graphicsAccessor no GraphicsProperty test") {
         val gameObject = GameObject(commonsProperty = commonsProperty)
 
-        assertResult(None)(gameObject.graphicsAccessor.level)
+        assertResult(None)(gameObject.graphicsAccessor.layer)
         assertResult(None)(gameObject.graphicsAccessor.length)
         assertResult(None)(gameObject.graphicsAccessor.frame(Timestamp(0)))
     }
 
     test("GameObject::graphicsAccessor test") {
-        assertResult(Some(0))(gameObject.graphicsAccessor.level)
+        assertResult(Some(0))(gameObject.graphicsAccessor.layer)
         assertResult(Some(Duration(1000)))(gameObject.graphicsAccessor.length)
         assertResult(Some(Frame(0, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(0)))
     }
@@ -41,7 +41,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
-        assertResult(Some(0))(gameObject.graphicsAccessor.level)
+        assertResult(Some(0))(gameObject.graphicsAccessor.layer)
         assertResult(Some(Duration(1000)))(gameObject.graphicsAccessor.length)
         assertResult(Some(Frame(0, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(1000)))
         assertResult(Some(Frame(3, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(2000)))
@@ -52,7 +52,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), graphicsProperty = Some(graphicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
-        assertResult(Some(0))(gameObject.graphicsAccessor.level)
+        assertResult(Some(0))(gameObject.graphicsAccessor.layer)
         assertResult(Some(Duration(1000)))(gameObject.graphicsAccessor.length)
         assertResult(Some(Frame(4, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(1000)))
         assertResult(Some(Frame(4, 0, 0)))(gameObject.graphicsAccessor.frame(Timestamp(2000)))

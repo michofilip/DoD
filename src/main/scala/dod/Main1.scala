@@ -1,6 +1,6 @@
 package dod
 
-import dod.ui.SpriteData
+import dod.ui.SpriteRepository
 
 import scala.util.Random
 

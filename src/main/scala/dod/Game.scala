@@ -12,7 +12,7 @@ import dod.game.gameobject.position.*
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.temporal.Timer
 import dod.game.temporal.Timestamps.Timestamp
-import dod.ui.{PrimaryGameStage, Screen, SpriteData}
+import dod.ui.{PrimaryGameStage, Screen, SpriteRepository}
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
@@ -25,8 +25,8 @@ import scala.collection.immutable.Queue
 object Game extends JFXApp3 {
 
     private val eventProcessor = EventProcessor()
-    private val spriteData = SpriteData()
-    private val screen = Screen(11, 11, 32, 32, spriteData.sprites)
+    private val spriteData = SpriteRepository()
+    private val screen = Screen(12 * 32, 12 * 32, 32, 32, spriteData)
     private val gameActor = ActorSystem(GameActor(eventProcessor, screen), "GameActor")
     private val primaryGameStage = PrimaryGameStage(gameActor, screen)
 
@@ -40,13 +40,13 @@ object Game extends JFXApp3 {
         val gameObject1 = GameObject(
             commonsProperty = CommonsProperty(id = id, name = "TestGameObject1", creationTimestamp = Timestamp(0)),
             positionProperty = Some(PositionProperty(coordinates = Coordinates(0, 0), direction = Direction.North, positionTimestamp = Timestamp(0))),
-            graphicsProperty = Some(GraphicsProperty(level = 1, animationSelector = AnimationSelector((None, Some(Direction.North)) -> Animation.OneFrameAnimation(Frame(1, 0, 0)))))
+            graphicsProperty = Some(GraphicsProperty(layer = 1, tileWidth = 32, tileHeight = 32, animationSelector = AnimationSelector((None, Some(Direction.North)) -> Animation.OneFrameAnimation(Frame(2, 0, 0)))))
         )
         val gameObject2 = GameObject(
             commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject2", creationTimestamp = Timestamp(0)),
             positionProperty = Some(PositionProperty(coordinates = Coordinates(1, 0), direction = Direction.North, positionTimestamp = Timestamp(0))),
             physicsProperty = Some(PhysicsProperty(PhysicsSelector(None -> Physics(solid = false)))),
-            graphicsProperty = Some(GraphicsProperty(level = 1, animationSelector = AnimationSelector((None, Some(Direction.North)) -> Animation.OneFrameAnimation(Frame(2, 0, 0)))))
+            graphicsProperty = Some(GraphicsProperty(layer = 1, tileWidth = 32, tileHeight = 32, animationSelector = AnimationSelector((None, Some(Direction.North)) -> Animation.OneFrameAnimation(Frame(1, 0, 0)))))
         )
 
         val gameObjectRepository = GameObjectRepository(Seq(gameObject1, gameObject2))

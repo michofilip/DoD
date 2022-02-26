@@ -8,12 +8,8 @@ import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.image.Image
 import scalafx.scene.paint.Color
 
-class Screen(val tilesHorizontal: Int, val tilesVertical: Int, val tileWidth: Double, val tileHeight: Double, images: Map[Int, Image]) {
-    val canvas: Canvas = new Canvas(width = tilesHorizontal * tileWidth, height = tilesVertical * tileHeight)
-
-    def width: Double = canvas.width.toDouble
-
-    def height: Double = canvas.height.toDouble
+class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeight: Double, spriteRepository: SpriteRepository) {
+    val canvas: Canvas = new Canvas(width, height)
 
     private def graphicsContext2D: GraphicsContext = canvas.graphicsContext2D
 
@@ -26,52 +22,60 @@ class Screen(val tilesHorizontal: Int, val tilesVertical: Int, val tileWidth: Do
         graphicsContext2D.stroke = color
         graphicsContext2D.lineWidth = 1
 
-        for (x <- 0 to tilesHorizontal) {
-            graphicsContext2D.strokeLine(x * tileWidth - .5, 0, x * tileWidth - .5, height)
+        val tw = tileWidth / 2
+        val w = width / 2
+        val dw = ((w - tw) / tileWidth).toInt
+
+        val th = tileHeight / 2
+        val h = height / 2
+        val dh = ((h - th) / tileHeight).toInt
+
+        for (x <- 0 to dw) {
+            val x1 = w - tw - x * tileWidth + .5
+            val x2 = w + tw + x * tileWidth - .5
+            graphicsContext2D.strokeLine(x1, 0, x1, height)
+            graphicsContext2D.strokeLine(x2, 0, x2, height)
         }
 
-        for (y <- 0 to tilesVertical) {
-            graphicsContext2D.strokeLine(0, y * tileHeight - .5, width, y * tileHeight - .5)
+        for (y <- 0 to dh) {
+            val y1 = h - th - y * tileHeight + .5
+            val y2 = h + th + y * tileHeight - .5
+            graphicsContext2D.strokeLine(0, y1, width, y1)
+            graphicsContext2D.strokeLine(0, y2, width, y2)
         }
     }
 
 
     def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp): Unit = {
-        case class Sprite(x: Double, y: Double, level: Int, image: Image)
+        case class Sprite(x: Double, y: Double, width: Double, height: Double, layer: Int, image: Image)
 
-        val horizontalOffset = focus.x - tilesHorizontal / 2
-        val verticalOffset = focus.y - tilesVertical / 2
+        val offsetX = focus.x * tileWidth - (width - tileWidth) / 2
+        val offsetY = focus.y * tileHeight - (height - tileHeight) / 2
+
+        def spriteFrom(gameObject: GameObject): Option[Sprite] = for {
+            coordinates <- gameObject.positionAccessor.coordinates
+            frame <- gameObject.graphicsAccessor.frame(timestamp)
+            layer <- gameObject.graphicsAccessor.layer
+            //            image <- spriteRepository.sprites.get(1)
+            image <- spriteRepository.sprites.get(frame.spriteId)
+            frameTileWidth <- gameObject.graphicsAccessor.tileWidth
+            frameTileHeight <- gameObject.graphicsAccessor.tileHeight
+
+            x = (coordinates.x + frame.offsetX) * tileWidth - offsetX
+            y = (coordinates.y + frame.offsetY) * tileHeight - offsetY
+            scaledWidth = image.width.toDouble * (tileWidth / frameTileWidth)
+            scaledHeight = image.height.toDouble * (tileHeight / frameTileHeight)
+
+            if 0 <= x + scaledWidth && x < width && 0 <= y + scaledHeight && y < height
+        } yield Sprite(x, y, scaledWidth, scaledHeight, layer, image)
 
 
-        def isOnScreen(sprite: Sprite): Boolean =
-            0 <= sprite.x + sprite.image.width.toDouble && sprite.x < width && 0 <= sprite.y + sprite.image.height.toDouble && sprite.y < height
+        drawBackground(Color.LightGray)
 
-
-        def spriteFrom(gameObject: GameObject): Option[Sprite] = {
-            val sprite: Option[Sprite] = for {
-                coordinates <- gameObject.positionAccessor.coordinates
-                frame <- gameObject.graphicsAccessor.frame(timestamp)
-                level <- gameObject.graphicsAccessor.level
-                image <- images.get(1)
-                //                image <- image.get(frame.spriteId)
-            } yield {
-                Sprite(
-                    x = (coordinates.x + frame.offsetX - horizontalOffset) * tileWidth,
-                    y = (coordinates.y + frame.offsetY - verticalOffset) * tileHeight,
-                    level = level,
-                    image = image
-                )
-            }
-
-            sprite.filter(isOnScreen)
+        gameObjects.flatMap(spriteFrom).sortBy(_.layer).foreach { sprite =>
+            graphicsContext2D.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height)
         }
 
-
-        drawBackground(Color.White)
-//        drawGrid(Color.Red)
-
-        gameObjects.flatMap(spriteFrom).sortBy(_.level).foreach { sprite =>
-            graphicsContext2D.drawImage(sprite.image, sprite.x, sprite.y, tileWidth, tileHeight)
-        }
+        drawGrid(Color.Red)
     }
 }

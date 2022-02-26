@@ -4,9 +4,13 @@ import dod.game.temporal.Durations.Duration
 import dod.game.temporal.Timestamps.Timestamp
 
 trait GraphicsAccessor {
-    def level: Option[Int]
+    def layer: Option[Int]
 
     def length: Option[Duration]
 
     def frame(timestamp: Timestamp): Option[Frame]
+
+    def tileWidth: Option[Int]
+
+    def tileHeight: Option[Int]
 }
