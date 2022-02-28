@@ -2,7 +2,7 @@ package dod.game.gameobject
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsProperty
-import dod.game.gameobject.position.{Coordinates, Direction, PositionProperty, PositionTransformer, Shift}
+import dod.game.gameobject.position.{Coordinates, Direction, Position, PositionProperty, PositionTransformer, Shift}
 import dod.game.temporal.Timestamps.Timestamp
 import org.scalatest.funsuite.AnyFunSuite
 
@@ -11,7 +11,7 @@ import java.util.UUID
 class GameObjectPositionTest extends AnyFunSuite {
 
     private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
-    private val positionProperty = PositionProperty(coordinates = Coordinates(0, 0), direction = Direction.North, positionTimestamp = Timestamp(0))
+    private val positionProperty = PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.North), positionTimestamp = Timestamp(0))
     private val gameObject = GameObject(commonsProperty = commonsProperty, positionProperty = Some(positionProperty))
 
     test("GameObject::positionAccessor no PositionProperty test") {

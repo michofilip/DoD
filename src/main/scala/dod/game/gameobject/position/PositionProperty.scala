@@ -4,14 +4,13 @@ import dod.game.temporal.Timestamps.Timestamp
 
 import scala.util.chaining.scalaUtilChainingOps
 
-final class PositionProperty(private[position] val coordinates: Coordinates,
-                             private[position] val direction: Direction,
+final class PositionProperty(private[position] val position: Position,
                              private[position] val positionTimestamp: Timestamp) {
 
     def updatePosition(positionTransformer: PositionTransformer, timestamp: Timestamp): PositionProperty =
-        positionTransformer(coordinates, direction) match {
-            case (coordinates, direction) if coordinates != this.coordinates || direction != this.direction =>
-                new PositionProperty(coordinates, direction, timestamp)
+        positionTransformer(position) match {
+            case position if position != this.position =>
+                new PositionProperty(position, timestamp)
 
             case _ => this
         }

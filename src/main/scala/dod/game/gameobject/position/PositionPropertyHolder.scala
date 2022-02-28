@@ -10,9 +10,9 @@ private[gameobject] trait PositionPropertyHolder {
     protected val positionProperty: Option[PositionProperty]
 
     final val positionAccessor = new PositionAccessor {
-        override def coordinates: Option[Coordinates] = self.positionProperty.map(_.coordinates)
+        override def coordinates: Option[Coordinates] = self.positionProperty.map(_.position.coordinates)
 
-        override def direction: Option[Direction] = self.positionProperty.map(_.direction)
+        override def direction: Option[Direction] = self.positionProperty.map(_.position.direction)
 
         override def positionTimestamp: Option[Timestamp] = self.positionProperty.map(_.positionTimestamp)
     }
