@@ -1,5 +1,6 @@
 package dod.ui
 
+import dod.data.SpriteRepository
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.graphics.Frame
 import dod.game.gameobject.position.Coordinates
@@ -56,7 +57,6 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
             coordinates <- gameObject.positionAccessor.coordinates
             frame <- gameObject.graphicsAccessor.frame(timestamp)
             layer <- gameObject.graphicsAccessor.layer
-            //            image <- spriteRepository.sprites.get(1)
             image <- spriteRepository.sprites.get(frame.spriteId)
             frameTileWidth <- gameObject.graphicsAccessor.tileWidth
             frameTileHeight <- gameObject.graphicsAccessor.tileHeight

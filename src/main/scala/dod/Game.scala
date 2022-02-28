@@ -3,6 +3,7 @@ package dod
 
 import akka.actor.typed.ActorSystem
 import dod.actor.{GameActor, GameStageActor}
+import dod.data.SpriteRepository
 import dod.game.GameStage
 import dod.game.event.{Event, EventProcessor}
 import dod.game.gameobject.commons.{CommonsAccessor, CommonsProperty}
@@ -12,7 +13,7 @@ import dod.game.gameobject.position.*
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.temporal.Timer
 import dod.game.temporal.Timestamps.Timestamp
-import dod.ui.{PrimaryGameStage, Screen, SpriteRepository}
+import dod.ui.{PrimaryGameStage, Screen}
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.application.{JFXApp3, Platform}
 import scalafx.scene.Scene
@@ -26,7 +27,7 @@ object Game extends JFXApp3 {
 
     private val eventProcessor = EventProcessor()
     private val spriteData = SpriteRepository()
-    private val screen = Screen(12 * 32, 12 * 32, 32, 32, spriteData)
+    private val screen = Screen(11 * 32, 11 * 32, 32, 32, spriteData)
     private val gameActor = ActorSystem(GameActor(eventProcessor, screen), "GameActor")
     private val primaryGameStage = PrimaryGameStage(gameActor, screen)
 

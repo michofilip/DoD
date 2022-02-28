@@ -1,4 +1,4 @@
-package dod.ui
+package dod.data
 
 import dod.utils.FileUtils
 import scalafx.scene.image.{Image, WritableImage}

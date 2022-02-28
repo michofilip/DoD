@@ -1,7 +1,6 @@
 package dod
 
-import dod.ui.SpriteRepository
-
+import dod.data.SpriteRepository
 import scala.util.Random
 
 object Main1 {
