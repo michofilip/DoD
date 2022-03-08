@@ -53,18 +53,23 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
         val offsetX = focus.x * tileWidth - (width - tileWidth) / 2
         val offsetY = focus.y * tileHeight - (height - tileHeight) / 2
 
+        // TODO move to some settings
+        val frameTileWidth = 32
+        val frameTileHeight = 32
+
+        val scaleX = tileWidth / frameTileWidth
+        val scaleY = tileHeight / frameTileHeight
+
         def spriteFrom(gameObject: GameObject): Option[Sprite] = for {
             coordinates <- gameObject.positionAccessor.coordinates
             frame <- gameObject.graphicsAccessor.frame(timestamp)
             layer <- gameObject.graphicsAccessor.layer
             image <- spriteRepository.sprites.get(frame.spriteId)
-            frameTileWidth <- gameObject.graphicsAccessor.tileWidth
-            frameTileHeight <- gameObject.graphicsAccessor.tileHeight
 
             x = (coordinates.x + frame.offsetX) * tileWidth - offsetX
             y = (coordinates.y + frame.offsetY) * tileHeight - offsetY
-            scaledWidth = image.width.toDouble * (tileWidth / frameTileWidth)
-            scaledHeight = image.height.toDouble * (tileHeight / frameTileHeight)
+            scaledWidth = image.width.toDouble * scaleX
+            scaledHeight = image.height.toDouble * scaleY
 
             if 0 <= x + scaledWidth && x < width && 0 <= y + scaledHeight && y < height
         } yield Sprite(x, y, scaledWidth, scaledHeight, layer, image)

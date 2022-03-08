@@ -3,10 +3,7 @@ package dod.game.gameobject.graphics
 import dod.game.gameobject.position.Direction
 import dod.game.gameobject.state.State
 
-class GraphicsProperty(private[graphics] val layer: Int,
-                       private[graphics] val tileWidth: Int,
-                       private[graphics] val tileHeight: Int,
-                       animationSelector: AnimationSelector) {
+class GraphicsProperty(animationSelector: AnimationSelector) {
     def animation(state: Option[State], direction: Option[Direction]): Animation =
         animationSelector.selectAnimation(state, direction)
 }

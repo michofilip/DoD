@@ -9,8 +9,4 @@ trait GraphicsAccessor {
     def length: Option[Duration]
 
     def frame(timestamp: Timestamp): Option[Frame]
-
-    def tileWidth: Option[Int]
-
-    def tileHeight: Option[Int]
 }

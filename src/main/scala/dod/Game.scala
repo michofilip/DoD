@@ -43,13 +43,13 @@ object Game extends JFXApp3 {
         val gameObject1 = GameObject(
             commonsProperty = CommonsProperty(id = id, name = "TestGameObject1", creationTimestamp = Timestamp(0)),
             positionProperty = Some(PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.East), positionTimestamp = Timestamp(0))),
-            graphicsProperty = Some(GraphicsProperty(layer = 1, tileWidth = 32, tileHeight = 32, animationSelector = AnimationSelector((None, Some(Direction.East)) -> Animation.OneFrameAnimation(Frame(6, 0, 0)))))
+            graphicsProperty = Some(GraphicsProperty(animationSelector = AnimationSelector((None, Some(Direction.East)) -> Animation.OneFrameAnimation(1, Frame(6, 0, 0)))))
         )
         val gameObject2 = GameObject(
             commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject2", creationTimestamp = Timestamp(0)),
             positionProperty = Some(PositionProperty(Position(coordinates = Coordinates(1, 0)), positionTimestamp = Timestamp(0))),
             physicsProperty = Some(PhysicsProperty(PhysicsSelector(None -> Physics(solid = false)))),
-            graphicsProperty = Some(GraphicsProperty(layer = 1, tileWidth = 32, tileHeight = 32, animationSelector = AnimationSelector((None, None) -> Animation.OneFrameAnimation(Frame(9, 0, 0)))))
+            graphicsProperty = Some(GraphicsProperty(animationSelector = AnimationSelector((None, None) -> Animation.OneFrameAnimation(1, Frame(9, 0, 0)))))
         )
 
         val gameObjectRepository = GameObjectRepository(Seq(gameObject1, gameObject2))

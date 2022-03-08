@@ -13,7 +13,7 @@ private[gameobject] trait GraphicsPropertyHolder {
     protected val graphicsProperty: Option[GraphicsProperty]
 
     final val graphicsAccessor = new GraphicsAccessor {
-        override def layer: Option[Int] = self.graphicsProperty.map(_.layer)
+        override def layer: Option[Int] = self.graphicsProperty.map(_.animation(stateAccessor.state, positionAccessor.direction).layer)
 
         override def length: Option[Duration] = self.graphicsProperty.map(_.animation(stateAccessor.state, positionAccessor.direction).length)
 
@@ -24,10 +24,6 @@ private[gameobject] trait GraphicsPropertyHolder {
 
                 graphicsProperty.animation(stateAccessor.state, positionAccessor.direction).frame(duration)
             }
-
-        override def tileWidth: Option[Int] = self.graphicsProperty.map(_.tileWidth)
-
-        override def tileHeight: Option[Int] = self.graphicsProperty.map(_.tileHeight)
     }
 
 }
