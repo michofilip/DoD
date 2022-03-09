@@ -6,6 +6,7 @@ import dod.game.gameobject.commons.*
 import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
 import dod.game.gameobject.position.*
+import dod.game.gameobject.state.StateTransformer
 import dod.game.temporal.Timestamps.Timestamp
 
 import java.util.UUID
@@ -29,5 +30,39 @@ class GameObjectService(positionService: PositionService,
             physicsProperty = physicsProperty,
             graphicsProperty = graphicsProperty
         )
+    }
+
+    def createFloor(id: UUID, timestamp: Timestamp, coordinates: Coordinates): GameObject = {
+        createGameObject(id, "floor", timestamp)
+            .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+    }
+
+    def createWall(id: UUID, timestamp: Timestamp, coordinates: Coordinates): GameObject = {
+        createGameObject(id, "wall", timestamp)
+            .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+    }
+
+    def createPlayer(id: UUID, timestamp: Timestamp, coordinates: Coordinates, direction: Direction): GameObject = {
+        createGameObject(id, "player", timestamp)
+            .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+            .updatePosition(PositionTransformer.turnTo(direction), timestamp)
+    }
+
+    def createOpen(id: UUID, timestamp: Timestamp, coordinates: Coordinates, closed: Boolean): GameObject = {
+        val gameObject = createGameObject(id, "door", timestamp)
+        if (closed) {
+            gameObject.updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+        } else {
+            gameObject
+        }
+    }
+
+    def createSwitch(id: UUID, timestamp: Timestamp, coordinates: Coordinates, on: Boolean): GameObject = {
+        val gameObject = createGameObject(id, "switch", timestamp)
+        if (on) {
+            gameObject.updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+        } else {
+            gameObject
+        }
     }
 }
