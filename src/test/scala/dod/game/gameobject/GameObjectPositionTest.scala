@@ -84,6 +84,14 @@ class GameObjectPositionTest extends AnyFunSuite {
         assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
     }
 
+    test("GameObject::updatePosition step test") {
+        val gameObject = this.gameObject.updatePosition(PositionTransformer.step(Direction.East), Timestamp(1000))
+
+        assertResult(Some(Coordinates(1, 0)))(gameObject.positionAccessor.coordinates)
+        assertResult(Some(Direction.North))(gameObject.positionAccessor.direction)
+        assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
+    }
+
     test("GameObject::updatePosition stepForward test") {
         val gameObject = this.gameObject.updatePosition(PositionTransformer.stepForward, Timestamp(1000))
 
@@ -116,6 +124,14 @@ class GameObjectPositionTest extends AnyFunSuite {
         assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
     }
 
+    test("GameObject::updatePosition stepAndFace test") {
+        val gameObject = this.gameObject.updatePosition(PositionTransformer.stepAndFace(Direction.East), Timestamp(1000))
+
+        assertResult(Some(Coordinates(1, 0)))(gameObject.positionAccessor.coordinates)
+        assertResult(Some(Direction.East))(gameObject.positionAccessor.direction)
+        assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
+    }
+
     test("GameObject::updatePosition stepRightAndFace test") {
         val gameObject = this.gameObject.updatePosition(PositionTransformer.stepRightAndFace, Timestamp(1000))
 
@@ -124,7 +140,7 @@ class GameObjectPositionTest extends AnyFunSuite {
         assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
     }
 
-    test("GameObject::stepLeftAndFace stepLeft test") {
+    test("GameObject::stepLeftAndFace stepLeftAndFace test") {
         val gameObject = this.gameObject.updatePosition(PositionTransformer.stepLeftAndFace, Timestamp(1000))
 
         assertResult(Some(Coordinates(-1, 0)))(gameObject.positionAccessor.coordinates)

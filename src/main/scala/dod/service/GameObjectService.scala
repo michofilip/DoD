@@ -16,7 +16,7 @@ class GameObjectService(positionService: PositionService,
                         physicsService: PhysicsService,
                         graphicsService: GraphicsService) {
 
-    def createGameObject(id: UUID, name: String, timestamp: Timestamp): GameObject = {
+    private def createGameObject(id: UUID, name: String, timestamp: Timestamp): GameObject = {
         val commonsProperty = CommonsProperty(id = id, name = name, creationTimestamp = timestamp)
         val positionProperty = positionService.getPositionProperty(name, timestamp)
         val stateProperty = stateService.getStateProperty(name, timestamp)
@@ -48,10 +48,12 @@ class GameObjectService(positionService: PositionService,
             .updatePosition(PositionTransformer.turnTo(direction), timestamp)
     }
 
-    def createOpen(id: UUID, timestamp: Timestamp, coordinates: Coordinates, closed: Boolean): GameObject = {
+    def createDoor(id: UUID, timestamp: Timestamp, coordinates: Coordinates, closed: Boolean): GameObject = {
         val gameObject = createGameObject(id, "door", timestamp)
+            .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+
         if (closed) {
-            gameObject.updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+            gameObject.updateState(StateTransformer.close, timestamp)
         } else {
             gameObject
         }
@@ -59,8 +61,10 @@ class GameObjectService(positionService: PositionService,
 
     def createSwitch(id: UUID, timestamp: Timestamp, coordinates: Coordinates, on: Boolean): GameObject = {
         val gameObject = createGameObject(id, "switch", timestamp)
+            .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+
         if (on) {
-            gameObject.updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
+            gameObject.updateState(StateTransformer.switchOn, timestamp)
         } else {
             gameObject
         }

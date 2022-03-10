@@ -19,60 +19,43 @@ object PositionTransformer {
     }
 
     def turnClockwise: PositionTransformer = position => position.direction match {
-        case Some(North) => turnTo(East)(position)
-        case Some(East) => turnTo(South)(position)
-        case Some(South) => turnTo(West)(position)
-        case Some(West) => turnTo(North)(position)
+        case Some(direction) => turnTo(direction.nextClockwise)(position)
         case None => position
     }
 
     def turnCounterClockwise: PositionTransformer = position => position.direction match {
-        case Some(North) => turnTo(West)(position)
-        case Some(East) => turnTo(North)(position)
-        case Some(South) => turnTo(East)(position)
-        case Some(West) => turnTo(South)(position)
+        case Some(direction) => turnTo(direction.nextCounterClockwise)(position)
         case None => position
     }
 
     def turnBack: PositionTransformer = position => position.direction match {
-        case Some(North) => turnTo(South)(position)
-        case Some(East) => turnTo(West)(position)
-        case Some(South) => turnTo(North)(position)
-        case Some(West) => turnTo(East)(position)
+        case Some(direction) => turnTo(direction.opposite)(position)
         case None => position
     }
 
+    def step(direction: Direction): PositionTransformer = position => moveBy(direction.shift)(position)
+
     def stepForward: PositionTransformer = position => position.direction match {
-        case Some(North) => moveBy(Shift(0, 1))(position)
-        case Some(East) => moveBy(Shift(1, 0))(position)
-        case Some(South) => moveBy(Shift(0, -1))(position)
-        case Some(West) => moveBy(Shift(-1, 0))(position)
+        case Some(direction) => step(direction)(position)
         case None => position
     }
 
     def stepRight: PositionTransformer = position => position.direction match {
-        case Some(North) => moveBy(Shift(1, 0))(position)
-        case Some(East) => moveBy(Shift(0, -1))(position)
-        case Some(South) => moveBy(Shift(-1, 0))(position)
-        case Some(West) => moveBy(Shift(0, 1))(position)
+        case Some(direction) => step(direction.nextClockwise)(position)
         case None => position
     }
 
     def stepLeft: PositionTransformer = position => position.direction match {
-        case Some(North) => moveBy(Shift(-1, 0))(position)
-        case Some(East) => moveBy(Shift(0, 1))(position)
-        case Some(South) => moveBy(Shift(1, 0))(position)
-        case Some(West) => moveBy(Shift(0, -1))(position)
+        case Some(direction) => step(direction.nextCounterClockwise)(position)
         case None => position
     }
 
     def stepBack: PositionTransformer = position => position.direction match {
-        case Some(North) => moveBy(Shift(0, -1))(position)
-        case Some(East) => moveBy(Shift(-1, 0))(position)
-        case Some(South) => moveBy(Shift(0, 1))(position)
-        case Some(West) => moveBy(Shift(1, 0))(position)
+        case Some(direction) => step(direction.opposite)(position)
         case None => position
     }
+
+    def stepAndFace(direction: Direction): PositionTransformer = position => (turnTo(direction) andThen stepForward) (position)
 
     def stepRightAndFace: PositionTransformer = position => (turnClockwise andThen stepForward) (position)
 

@@ -25,11 +25,9 @@ import scala.collection.immutable.Queue
 
 object Game extends JFXApp3 {
 
+    private val context = new Context
     private val eventProcessor = EventProcessor()
-    private val tileRepository = TileRepository()
-    private val tilesetRepository = TilesetRepository()
-    private val spriteRepository = SpriteRepository(tileRepository, tilesetRepository)
-    private val screen = Screen(11 * 32, 11 * 32, 32, 32, spriteRepository)
+    private val screen = Screen(11 * 32, 11 * 32, 32, 32, context.spriteRepository)
     private val gameActor = ActorSystem(GameActor(eventProcessor, screen), "GameActor")
     private val primaryGameStage = PrimaryGameStage(gameActor, screen)
 
@@ -40,17 +38,8 @@ object Game extends JFXApp3 {
 
         val id = UUID.randomUUID()
 
-        val gameObject1 = GameObject(
-            commonsProperty = CommonsProperty(id = id, name = "TestGameObject1", creationTimestamp = Timestamp(0)),
-            positionProperty = Some(PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.East), positionTimestamp = Timestamp(0))),
-            graphicsProperty = Some(GraphicsProperty(animationSelector = AnimationSelector((None, Some(Direction.East)) -> Animation.OneFrameAnimation(1, Frame(6, 0, 0)))))
-        )
-        val gameObject2 = GameObject(
-            commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject2", creationTimestamp = Timestamp(0)),
-            positionProperty = Some(PositionProperty(Position(coordinates = Coordinates(1, 0)), positionTimestamp = Timestamp(0))),
-            physicsProperty = Some(PhysicsProperty(PhysicsSelector(None -> Physics(solid = false)))),
-            graphicsProperty = Some(GraphicsProperty(animationSelector = AnimationSelector((None, None) -> Animation.OneFrameAnimation(1, Frame(9, 0, 0)))))
-        )
+        val gameObject1 = context.gameObjectService.createPlayer(id, Timestamp.zero, Coordinates(0, 0), Direction.East)
+        val gameObject2 = context.gameObjectService.createDoor(UUID.randomUUID(), Timestamp.zero, Coordinates(1, 0), closed = false)
 
         val gameObjectRepository = GameObjectRepository(Seq(gameObject1, gameObject2))
         val events = Queue(Event.MoveBy(id, Shift(1, 0)))
