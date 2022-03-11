@@ -1,6 +1,6 @@
 package dod.game.event
 
-import dod.game.gameobject.position.{Coordinates, PositionTransformer}
+import dod.game.gameobject.position.{Coordinates, Direction, PositionTransformer}
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.temporal.Timestamps
 import dod.game.temporal.Timestamps.Timestamp
@@ -40,8 +40,22 @@ class EventProcessor {
         !gameObjectUpdated.positionAccessor.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
 
 
-    inline private def processEvent(gameObjectRepository: GameObjectRepository, event: Event): EventResponse = event match
+    inline private def processEvent(gameObjectRepository: GameObjectRepository, event: Event): EventResponse = event match {
         case Event.MoveTo(gameObjectId, coordinates) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.moveTo(coordinates))
         case Event.MoveBy(gameObjectId, shift) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.moveBy(shift))
+        case Event.TurnTo(gameObjectId, direction) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.turnTo(direction))
+        case Event.TurnClockwise(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.turnClockwise)
+        case Event.TurnCounterClockwise(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.turnCounterClockwise)
+        case Event.TurnBack(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.turnBack)
+        case Event.Step(gameObjectId, direction) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.step(direction))
+        case Event.StepForward(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepForward)
+        case Event.StepRight(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepRight)
+        case Event.StepLeft(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepLeft)
+        case Event.StepBack(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepBack)
+        case Event.StepAndFace(gameObjectId, direction) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepAndFace(direction))
+        case Event.StepRightAndFace(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepRightAndFace)
+        case Event.StepLeftAndFace(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepLeftAndFace)
+        case Event.StepBackAndFace(gameObjectId) => handlePositionChange(gameObjectRepository, gameObjectId, PositionTransformer.stepBackAndFace)
+    }
 
 }

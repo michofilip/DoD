@@ -35,20 +35,7 @@ object Game extends JFXApp3 {
     override def start(): Unit = {
         stage = primaryGameStage.stage
 
-
-        val id = UUID.randomUUID()
-
-        val gameObject1 = context.gameObjectService.createPlayer(id, Timestamp.zero, Coordinates(0, 0), Direction.East)
-        val gameObject2 = context.gameObjectService.createDoor(UUID.randomUUID(), Timestamp.zero, Coordinates(1, 0), closed = false)
-
-        val gameObjectRepository = GameObjectRepository(Seq(gameObject1, gameObject2))
-        val events = Queue(Event.MoveBy(id, Shift(1, 0)))
-
-        val gameState = GameStage(
-            gameObjectRepository = gameObjectRepository,
-            events = events
-        )
-
+        val gameState = context.gameStageService.getGameStage(playerId = UUID.randomUUID())
 
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameState(Some(gameState)))
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetDisplaying(true))
