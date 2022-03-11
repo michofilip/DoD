@@ -10,6 +10,7 @@ import dod.game.gameobject.position.Coordinates
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.temporal.Timestamps.Timestamp
 import dod.ui.Screen
+import scalafx.application.Platform
 
 import scala.collection.immutable.Queue
 import scala.concurrent.duration.DurationInt
@@ -17,7 +18,9 @@ import scala.concurrent.duration.DurationInt
 final class DisplayActor private(screen: Screen) {
     private def behaviors(): Behavior[Command] = Behaviors.receiveMessage {
         case DisplayActor.Display(gameObjectRepository) =>
-            screen.drawGameObjects(gameObjectRepository.findAll, Coordinates(0, 0), Timestamp.zero)
+            Platform.runLater {
+                screen.drawGameObjects(gameObjectRepository.findAll, Coordinates(0, 0), Timestamp.zero)
+            }
             Behaviors.same
     }
 }
