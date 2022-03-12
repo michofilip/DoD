@@ -4,9 +4,9 @@ import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor.GameStageActor.{Command, Setup}
 import dod.game.GameStage
-import dod.game.event.{Event, EventProcessor}
+import dod.game.event.Event
 import dod.game.gameobject.GameObjectRepository
-import dod.service.KeyEventService
+import dod.service.{EventService, KeyEventService}
 import dod.ui.Screen
 import scalafx.scene.input.KeyEvent
 
@@ -81,11 +81,11 @@ object GameStageActor {
     private final case class Setup(gameStage: Option[GameStage], processing: Boolean, displaying: Boolean)
 
 
-    def apply(eventProcessor: EventProcessor, screen: Screen, keyEventService: KeyEventService): Behavior[Command] = Behaviors.setup { context =>
+    def apply(eventService: EventService, screen: Screen, keyEventService: KeyEventService): Behavior[Command] = Behaviors.setup { context =>
         Behaviors.withTimers { timer =>
             val setup = Setup(gameStage = None, processing = false, displaying = false)
 
-            val eventProcessorActor = context.spawn(EventProcessorActor(eventProcessor, context.self), "EventProcessorActor")
+            val eventProcessorActor = context.spawn(EventProcessorActor(eventService, context.self), "EventProcessorActor")
             val displayActor = context.spawn(DisplayActor(screen), "DisplayActor")
             val keyEventActor = context.spawn(KeyEventActor(keyEventService, context.self), "KeyEventActor")
 
