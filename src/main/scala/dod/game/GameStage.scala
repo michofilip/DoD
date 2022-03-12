@@ -1,6 +1,6 @@
 package dod.game
 
-import dod.game.event.{Event, EventProcessor}
+import dod.game.event.Event
 import dod.game.gameobject.GameObjectRepository
 import dod.game.temporal.Timer
 
@@ -20,6 +20,4 @@ class GameStage(val gameObjectRepository: GameObjectRepository, val events: Queu
     def clearEvents(): GameStage =
         GameStage(gameObjectRepository = gameObjectRepository, events = Queue.empty)
 
-
-    override def toString = s"GameState(gameObjects=$gameObjectRepository,events=${events.mkString("[", ",", "]")})"
 }

@@ -4,8 +4,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor
 import dod.actor.GameActor.Command
-import dod.game.event.EventProcessor
-import dod.service.KeyEventService
+import dod.service.{EventService, KeyEventService}
 import dod.ui.Screen
 import scalafx.scene.input.{KeyCode, KeyEvent}
 
@@ -28,9 +27,9 @@ object GameActor {
 
     final case class GameStageCommand(command: GameStageActor.Command) extends Command
 
-    def apply(eventProcessor: EventProcessor, screen: Screen, keyEventService: KeyEventService): Behavior[Command] = Behaviors.setup { context =>
+    def apply(eventService: EventService, screen: Screen, keyEventService: KeyEventService): Behavior[Command] = Behaviors.setup { context =>
 
-        val gameStageActor = context.spawn(GameStageActor(eventProcessor, screen, keyEventService), "GameStageActor")
+        val gameStageActor = context.spawn(GameStageActor(eventService, screen, keyEventService), "GameStageActor")
 
         new GameActor(gameStageActor).behaviors()
     }

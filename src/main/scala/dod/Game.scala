@@ -5,7 +5,7 @@ import akka.actor.typed.ActorSystem
 import dod.actor.{GameActor, GameStageActor}
 import dod.data.{SpriteRepository, TileRepository, TilesetRepository}
 import dod.game.GameStage
-import dod.game.event.{Event, EventProcessor}
+import dod.game.event.Event
 import dod.game.gameobject.commons.{CommonsAccessor, CommonsProperty}
 import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
@@ -26,9 +26,8 @@ import scala.collection.immutable.Queue
 object Game extends JFXApp3 {
 
     private val context = new Context
-    private val eventProcessor = EventProcessor()
     private val screen = Screen(11 * 32, 11 * 32, 32, 32, context.spriteRepository)
-    private val gameActor = ActorSystem(GameActor(eventProcessor, screen, context.keyEventService), "GameActor")
+    private val gameActor = ActorSystem(GameActor(context.eventService, screen, context.keyEventService), "GameActor")
     private val primaryGameStage = PrimaryGameStage(gameActor, screen)
 
 
