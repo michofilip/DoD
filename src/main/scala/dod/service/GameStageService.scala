@@ -11,7 +11,7 @@ import scala.collection.immutable.Queue
 
 class GameStageService(gameObjectService: GameObjectService) {
 
-    def getGameStage(playerId: UUID): GameStage = {
+    def getGameStage: GameStage = {
         val floors = for {
             x <- -5 to 5
             y <- -5 to 5
@@ -25,17 +25,14 @@ class GameStageService(gameObjectService: GameObjectService) {
             coordinates = Coordinates(x, y)
         } yield gameObjectService.createWall(UUID.randomUUID(), Timestamp.zero, coordinates)
 
+        val playerId = UUID.randomUUID()
         val player = gameObjectService.createPlayer(playerId, Timestamp.zero, Coordinates(0, 0), Direction.North)
 
         val gameObjects = floors ++ walls ++ Seq(player)
 
         val gameObjectRepository = GameObjectRepository(gameObjects)
-        val events = Queue(
-            Event.StepAndFace(playerId, Direction.East),
-            Event.StepForward(playerId),
-            Event.StepLeft(playerId)
-        )
+            .addByName("player", playerId)
 
-        new GameStage(gameObjectRepository, events)
+        new GameStage(gameObjectRepository, Queue.empty)
     }
 }

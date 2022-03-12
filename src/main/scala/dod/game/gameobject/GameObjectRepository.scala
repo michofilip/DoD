@@ -7,7 +7,8 @@ import scala.annotation.targetName
 import scala.util.chaining.scalaUtilChainingOps
 
 class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
-                                   gameObjectsByCoordinates: Map[Coordinates, Map[UUID, GameObject]]) {
+                                   gameObjectsByCoordinates: Map[Coordinates, Map[UUID, GameObject]],
+                                   gameObjectIdByName: Map[String, UUID]) {
 
     @targetName("add")
     def +(gameObject: GameObject): GameObjectRepository = {
@@ -19,7 +20,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
         val newGameObjectsById = gameObjectsById + (gameObject.commonsAccessor.id -> gameObject)
 
-        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates)
+        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
     }
 
     @targetName("addAll")
@@ -39,18 +40,26 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
         val newGameObjectsById = gameObjectsById - gameObject.commonsAccessor.id
 
-        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates)
+        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
     }
 
     @targetName("removeAll")
     def --(gameObjects: Seq[GameObject]): GameObjectRepository =
         gameObjects.foldLeft(this)(_ - _)
 
+    def addByName(name: String, id: UUID): GameObjectRepository = {
+        new GameObjectRepository(gameObjectsById, gameObjectsByCoordinates, gameObjectIdByName + (name -> id))
+    }
+
     def findAll: Seq[GameObject] =
         gameObjectsById.values.toSeq
 
     def findById(id: UUID): Option[GameObject] =
         gameObjectsById.get(id)
+
+    def findByName(name: String): Option[GameObject] = {
+        gameObjectIdByName.get(name).flatMap(findById)
+    }
 
     def findByCoordinates(coordinates: Coordinates): Map[UUID, GameObject] =
         gameObjectsByCoordinates.getOrElse(coordinates, Map.empty)
@@ -71,5 +80,5 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
 object GameObjectRepository {
     def apply(gameObjects: Seq[GameObject] = Seq.empty): GameObjectRepository =
-        new GameObjectRepository(Map.empty, Map.empty) ++ gameObjects
+        new GameObjectRepository(Map.empty, Map.empty, Map.empty) ++ gameObjects
 }

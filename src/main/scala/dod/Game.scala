@@ -28,14 +28,14 @@ object Game extends JFXApp3 {
     private val context = new Context
     private val eventProcessor = EventProcessor()
     private val screen = Screen(11 * 32, 11 * 32, 32, 32, context.spriteRepository)
-    private val gameActor = ActorSystem(GameActor(eventProcessor, screen), "GameActor")
+    private val gameActor = ActorSystem(GameActor(eventProcessor, screen, context.keyEventService), "GameActor")
     private val primaryGameStage = PrimaryGameStage(gameActor, screen)
 
 
     override def start(): Unit = {
         stage = primaryGameStage.stage
 
-        val gameState = context.gameStageService.getGameStage(playerId = UUID.randomUUID())
+        val gameState = context.gameStageService.getGameStage
 
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameState(Some(gameState)))
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetDisplaying(true))

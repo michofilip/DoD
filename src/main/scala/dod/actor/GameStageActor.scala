@@ -6,12 +6,15 @@ import dod.actor.GameStageActor.{Command, Setup}
 import dod.game.GameStage
 import dod.game.event.{Event, EventProcessor}
 import dod.game.gameobject.GameObjectRepository
+import dod.service.KeyEventService
 import dod.ui.Screen
+import scalafx.scene.input.KeyEvent
 
 import scala.concurrent.duration.DurationInt
 
 final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorActor.Command],
-                                   displayActor: ActorRef[DisplayActor.Command]) {
+                                   displayActor: ActorRef[DisplayActor.Command],
+                                   keyEventActor: ActorRef[KeyEventActor.Command]) {
     private def behaviors(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
         case GameStageActor.SetProcessing(processing) =>
             behaviors(setup.copy(processing = processing))
@@ -43,6 +46,14 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
             setup.gameStage.fold(Behaviors.same) { gameStage =>
                 behaviors(setup.copy(gameStage = Some(gameStage.addEvents(events))))
             }
+
+        case GameStageActor.ProcessKeyEvent(keyEvent) =>
+            setup.gameStage.filter(_ => setup.processing).fold(Behaviors.same) { gameStage =>
+                keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage.gameObjectRepository, keyEvent)
+                Behaviors.same
+            }
+
+
     }
 }
 
@@ -64,21 +75,24 @@ object GameStageActor {
 
     final case class AddEvents(events: Seq[Event]) extends Command
 
+    final case class ProcessKeyEvent(keyEvent: KeyEvent) extends Command
+
 
     private final case class Setup(gameStage: Option[GameStage], processing: Boolean, displaying: Boolean)
 
 
-    def apply(eventProcessor: EventProcessor, screen: Screen): Behavior[Command] = Behaviors.setup { context =>
+    def apply(eventProcessor: EventProcessor, screen: Screen, keyEventService: KeyEventService): Behavior[Command] = Behaviors.setup { context =>
         Behaviors.withTimers { timer =>
             val setup = Setup(gameStage = None, processing = false, displaying = false)
 
             val eventProcessorActor = context.spawn(EventProcessorActor(eventProcessor, context.self), "EventProcessorActor")
             val displayActor = context.spawn(DisplayActor(screen), "DisplayActor")
+            val keyEventActor = context.spawn(KeyEventActor(keyEventService, context.self), "KeyEventActor")
 
             timer.startTimerAtFixedRate(ProcessEvents, 2000.milliseconds, 33.milliseconds)
             timer.startTimerAtFixedRate(Display, 1000.milliseconds, 33.milliseconds)
 
-            new GameStageActor(eventProcessorActor, displayActor).behaviors(setup)
+            new GameStageActor(eventProcessorActor, displayActor, keyEventActor).behaviors(setup)
         }
     }
 }

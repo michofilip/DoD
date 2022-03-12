@@ -1,7 +1,8 @@
 package dod.ui
 
 import akka.actor.typed.ActorRef
-import dod.actor.GameActor
+import dod.actor.{GameActor, GameStageActor}
+import scalafx.Includes.*
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.application.Platform
 import scalafx.scene.Scene
@@ -15,7 +16,7 @@ class PrimaryGameStage(gameActor: ActorRef[GameActor.Command], screen: Screen) {
         resizable = false
         scene = new Scene {
             onKeyPressed = { keyEvent =>
-                //                    gameActor ! GameActor.ProcessKeyEvent(keyEvent)
+                gameActor ! GameActor.GameStageCommand(GameStageActor.ProcessKeyEvent(keyEvent))
             }
 
             root = new Pane {
