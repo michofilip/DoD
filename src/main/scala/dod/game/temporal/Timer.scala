@@ -24,8 +24,7 @@ class Timer private(initialTimestamp: Timestamp,
     def duration: Duration = durationSince(Timestamp.zero)
 
     def durationSince(timestamp: Timestamp): Duration = Duration.between(timestamp, this.timestamp)
-
-    override def toString: String = s"Timer(timestamp=$timestamp, running=$running)"
+    
 }
 
 object Timer {
