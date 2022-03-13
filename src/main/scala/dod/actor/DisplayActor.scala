@@ -24,8 +24,13 @@ final class DisplayActor private(screen: Screen) {
                 .flatMap(_.positionAccessor.coordinates)
                 .getOrElse(Coordinates(0, 0))
 
+            // TODO fix duplicate
+            val timestamp = gameObjectRepository.findByName("global_timers")
+                .flatMap(_.timersAccessor.timestamp("global_timer_1"))
+                .getOrElse(Timestamp.zero)
+
             Platform.runLater {
-                screen.drawGameObjects(gameObjectRepository.findAll, focus, Timestamp.zero)
+                screen.drawGameObjects(gameObjectRepository.findAll, focus, timestamp)
             }
 
             Behaviors.same
