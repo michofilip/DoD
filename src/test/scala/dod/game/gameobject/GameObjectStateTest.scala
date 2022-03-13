@@ -11,7 +11,7 @@ import java.util.UUID
 
 class GameObjectStateTest extends AnyFunSuite {
 
-    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
+    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::stateAccessor no StateProperty test") {
         val gameObject = GameObject(commonsProperty = commonsProperty)
@@ -21,24 +21,24 @@ class GameObjectStateTest extends AnyFunSuite {
     }
 
     test("GameObject::stateAccessor test") {
-        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
 
         assertResult(Some(State.Off))(gameObject.stateAccessor.state)
-        assertResult(Some(Timestamp(0)))(gameObject.stateAccessor.stateTimestamp)
+        assertResult(Some(Timestamp.zero))(gameObject.stateAccessor.stateTimestamp)
     }
 
     test("GameObject::updateState switchOff if off test") {
-        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.switchOff, Timestamp(1000))
 
         assertResult(Some(State.Off))(gameObject.stateAccessor.state)
-        assertResult(Some(Timestamp(0)))(gameObject.stateAccessor.stateTimestamp)
+        assertResult(Some(Timestamp.zero))(gameObject.stateAccessor.stateTimestamp)
     }
 
     test("GameObject::updateState switchOff if on test") {
-        val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.switchOff, Timestamp(1000))
 
@@ -47,7 +47,7 @@ class GameObjectStateTest extends AnyFunSuite {
     }
 
     test("GameObject::updateState switchOn if off test") {
-        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.switchOn, Timestamp(1000))
 
@@ -56,16 +56,16 @@ class GameObjectStateTest extends AnyFunSuite {
     }
 
     test("GameObject::updateState switchOn if on test") {
-        val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.switchOn, Timestamp(1000))
 
         assertResult(Some(State.On))(gameObject.stateAccessor.state)
-        assertResult(Some(Timestamp(0)))(gameObject.stateAccessor.stateTimestamp)
+        assertResult(Some(Timestamp.zero))(gameObject.stateAccessor.stateTimestamp)
     }
 
     test("GameObject::updateState switch if off test") {
-        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.switch, Timestamp(1000))
 
@@ -74,7 +74,7 @@ class GameObjectStateTest extends AnyFunSuite {
     }
 
     test("GameObject::updateState switch if on test") {
-        val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.switch, Timestamp(1000))
 
@@ -83,16 +83,16 @@ class GameObjectStateTest extends AnyFunSuite {
     }
 
     test("GameObject::updateState open if open test") {
-        val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
         assertResult(Some(State.Open))(gameObject.stateAccessor.state)
-        assertResult(Some(Timestamp(0)))(gameObject.stateAccessor.stateTimestamp)
+        assertResult(Some(Timestamp.zero))(gameObject.stateAccessor.stateTimestamp)
     }
 
     test("GameObject::updateState open if closed test") {
-        val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
@@ -101,7 +101,7 @@ class GameObjectStateTest extends AnyFunSuite {
     }
 
     test("GameObject::updateState close if open test") {
-        val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
@@ -110,11 +110,11 @@ class GameObjectStateTest extends AnyFunSuite {
     }
 
     test("GameObject::updateState close if closed test") {
-        val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp(0))
+        val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp.zero)
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
         assertResult(Some(State.Closed))(gameObject.stateAccessor.state)
-        assertResult(Some(Timestamp(0)))(gameObject.stateAccessor.stateTimestamp)
+        assertResult(Some(Timestamp.zero))(gameObject.stateAccessor.stateTimestamp)
     }
 }

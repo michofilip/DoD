@@ -37,5 +37,13 @@ object Durations {
 
         @targetName("subtract")
         def -(that: Duration): Duration = duration - that
+
+        def >(that: Duration): Boolean = value > that.value
+
+        def >=(that: Duration): Boolean = value >= that.value
+
+        def <(that: Duration): Boolean = value < that.value
+
+        def <=(that: Duration): Boolean = value <= that.value
     }
 }
