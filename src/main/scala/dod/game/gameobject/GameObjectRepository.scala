@@ -1,6 +1,7 @@
 package dod.game.gameobject
 
 import dod.game.gameobject.position.Coordinates
+import dod.game.temporal.Timestamps.Timestamp
 
 import java.util.UUID
 import scala.annotation.targetName
@@ -74,7 +75,9 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         gameObject.physicsAccessor.physics.fold(false)(_.solid)
     }
 
-    override def toString: String = findAll.mkString("[", ", ", "]")
+    def globalTimestamp: Timestamp = findByName("global_timers")
+        .flatMap(_.timersAccessor.timestamp("global_timer_1"))
+        .getOrElse(Timestamp.zero)
 
 }
 

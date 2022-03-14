@@ -60,23 +60,17 @@ private[service] final class PositionEventService {
 
 
     private def handlePositionChange(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, positionTransformer: PositionTransformer): EventResponse = {
-
-        // TODO fix duplicate
-        val timestamp = gameObjectRepository.findByName("global_timers")
-            .flatMap(_.timersAccessor.timestamp("global_timer_1"))
-            .getOrElse(Timestamp.zero)
-
         gameObjectRepository.findById(gameObjectId).map { gameObject =>
-            (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, timestamp))
-        }.collect { case (gameObjectRepository, gameObjectUpdated) if canChangePosition(gameObjectRepository, gameObjectUpdated) =>
-            gameObjectRepository + gameObjectUpdated
-        }.getOrElse(gameObjectRepository).pipe { gameObjectRepository =>
+            (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, gameObjectRepository.globalTimestamp))
+        }.collect { case (gameObjectRepository, gameObject) if canUpdatePosition(gameObjectRepository, gameObject) =>
+            (gameObjectRepository + gameObject, Seq.empty)
+        }.getOrElse {
             (gameObjectRepository, Seq.empty)
         }
     }
 
 
-    inline private def canChangePosition(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
+    inline private def canUpdatePosition(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
         !gameObjectUpdated.positionAccessor.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
 
 }
