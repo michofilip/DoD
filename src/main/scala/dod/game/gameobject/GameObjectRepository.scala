@@ -58,9 +58,8 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
     def findById(id: UUID): Option[GameObject] =
         gameObjectsById.get(id)
 
-    def findByName(name: String): Option[GameObject] = {
+    def findByName(name: String): Option[GameObject] = 
         gameObjectIdByName.get(name).flatMap(findById)
-    }
 
     def findByCoordinates(coordinates: Coordinates): Map[UUID, GameObject] =
         gameObjectsByCoordinates.getOrElse(coordinates, Map.empty)

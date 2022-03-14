@@ -1,6 +1,6 @@
 package dod.service
 
-import dod.game.event.{Event, PositionEvent}
+import dod.game.event.{Event, PositionEvent, StateEvent}
 import dod.game.gameobject.GameObjectRepository
 import dod.service.EventService.EventResponse
 
@@ -10,6 +10,7 @@ import scala.collection.immutable.Queue
 class EventService {
 
     private val positionEventService = new PositionEventService
+    private val stateEventService = new StateEventService
 
     def processEvents(gameObjectRepository: GameObjectRepository, events: Queue[Event]): EventResponse = {
         @tailrec
@@ -26,6 +27,7 @@ class EventService {
 
     inline private def processEvent(gameObjectRepository: GameObjectRepository, event: Event): EventResponse = event match {
         case positionEvent: PositionEvent => positionEventService.processPositionEvent(gameObjectRepository, positionEvent)
+        case stateEvent: StateEvent => stateEventService.processStateEvent(gameObjectRepository, stateEvent)
         case _ => (gameObjectRepository, Seq.empty)
     }
 }
