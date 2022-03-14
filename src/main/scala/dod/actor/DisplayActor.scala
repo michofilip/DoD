@@ -19,18 +19,17 @@ final class DisplayActor private(screen: Screen) {
     private def behaviors(): Behavior[Command] = Behaviors.receiveMessage {
         case DisplayActor.Display(gameObjectRepository) =>
 
+            val gameObjects = gameObjectRepository.findAll
+
             val focus = gameObjectRepository
                 .findByName("player")
                 .flatMap(_.positionAccessor.coordinates)
                 .getOrElse(Coordinates(0, 0))
 
-            // TODO fix duplicate
-            val timestamp = gameObjectRepository.findByName("global_timers")
-                .flatMap(_.timersAccessor.timestamp("global_timer_1"))
-                .getOrElse(Timestamp.zero)
+            val timestamp = gameObjectRepository.globalTimestamp
 
             Platform.runLater {
-                screen.drawGameObjects(gameObjectRepository.findAll, focus, timestamp)
+                screen.drawGameObjects(gameObjects, focus, timestamp)
             }
 
             Behaviors.same
@@ -44,7 +43,5 @@ object DisplayActor {
     private[actor] final case class Display(gameObjectRepository: GameObjectRepository) extends Command
 
 
-    def apply(screen: Screen): Behavior[Command] = Behaviors.setup { context =>
-        new DisplayActor(screen).behaviors()
-    }
+    def apply(screen: Screen): Behavior[Command] = new DisplayActor(screen).behaviors()
 }

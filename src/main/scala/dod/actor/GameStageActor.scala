@@ -15,20 +15,20 @@ import scala.concurrent.duration.DurationInt
 final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorActor.Command],
                                    displayActor: ActorRef[DisplayActor.Command],
                                    keyEventActor: ActorRef[KeyEventActor.Command]) {
-    private def behaviors(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
+    private def behavior(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
         case GameStageActor.SetProcessing(processing) =>
-            behaviors(setup.copy(processing = processing))
+            behavior(setup.copy(processing = processing))
 
         case GameStageActor.SetDisplaying(displaying) =>
-            behaviors(setup.copy(displaying = displaying))
+            behavior(setup.copy(displaying = displaying))
 
         case GameStageActor.SetGameState(gameStage) =>
-            behaviors(setup.copy(gameStage = gameStage))
+            behavior(setup.copy(gameStage = gameStage))
 
         case GameStageActor.ProcessEvents =>
             setup.gameStage.filter(_ => setup.processing).filter(_.events.nonEmpty).fold(Behaviors.same) { gameStage =>
                 eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage.gameObjectRepository, gameStage.events)
-                behaviors(setup.copy(gameStage = Some(gameStage.clearEvents())))
+                behavior(setup.copy(gameStage = Some(gameStage.clearEvents())))
             }
 
         case GameStageActor.Display =>
@@ -39,12 +39,12 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
 
         case GameStageActor.UpdateGameObjectRepository(gameObjectRepository) =>
             setup.gameStage.fold(Behaviors.same) { gameStage =>
-                behaviors(setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository))))
+                behavior(setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository))))
             }
 
         case GameStageActor.AddEvents(events) =>
             setup.gameStage.fold(Behaviors.same) { gameStage =>
-                behaviors(setup.copy(gameStage = Some(gameStage.addEvents(events))))
+                behavior(setup.copy(gameStage = Some(gameStage.addEvents(events))))
             }
 
         case GameStageActor.ProcessKeyEvent(keyEvent) =>
@@ -92,7 +92,7 @@ object GameStageActor {
             timer.startTimerAtFixedRate(ProcessEvents, 2000.milliseconds, 33.milliseconds)
             timer.startTimerAtFixedRate(Display, 1000.milliseconds, 33.milliseconds)
 
-            new GameStageActor(eventProcessorActor, displayActor, keyEventActor).behaviors(setup)
+            new GameStageActor(eventProcessorActor, displayActor, keyEventActor).behavior(setup)
         }
     }
 }

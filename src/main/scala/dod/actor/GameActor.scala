@@ -9,7 +9,7 @@ import dod.ui.Screen
 import scalafx.scene.input.{KeyCode, KeyEvent}
 
 final class GameActor private(gameStageActor: ActorRef[GameStageActor.Command]) {
-    private def behaviors(): Behavior[Command] = Behaviors.receiveMessage {
+    private def behavior(): Behavior[Command] = Behaviors.receiveMessage {
         case GameActor.Exit =>
             Behaviors.stopped
 
@@ -31,6 +31,6 @@ object GameActor {
 
         val gameStageActor = context.spawn(GameStageActor(eventService, screen, keyEventService), "GameStageActor")
 
-        new GameActor(gameStageActor).behaviors()
+        new GameActor(gameStageActor).behavior()
     }
 }

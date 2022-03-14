@@ -2,13 +2,16 @@ package dod.actor
 
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
+import akka.util.Collections
 import dod.actor.KeyEventActor.Command
 import dod.game.gameobject.GameObjectRepository
 import dod.service.KeyEventService
 import scalafx.scene.input.KeyEvent
 
+import scala.collection.immutable.{AbstractSeq, LinearSeq}
+
 final class KeyEventActor private(keyEventService: KeyEventService, gameStageActor: ActorRef[GameStageActor.Command]) {
-    private def behaviors(): Behavior[Command] = Behaviors.receiveMessage {
+    private def behavior(): Behavior[Command] = Behaviors.receiveMessage {
         case KeyEventActor.ProcessKeyEvent(gameObjectRepository, keyEvent) =>
             val events = keyEventService.processKeyEvent(gameObjectRepository, keyEvent)
             if (events.nonEmpty) {
@@ -24,7 +27,6 @@ object KeyEventActor {
 
     private[actor] final case class ProcessKeyEvent(gameObjectRepository: GameObjectRepository, keyEvent: KeyEvent) extends Command
 
-    def apply(keyEventService: KeyEventService, gameStageActor: ActorRef[GameStageActor.Command]): Behavior[Command] = Behaviors.setup { context =>
-        new KeyEventActor(keyEventService, gameStageActor).behaviors()
-    }
+    def apply(keyEventService: KeyEventService, gameStageActor: ActorRef[GameStageActor.Command]): Behavior[Command] =
+        new KeyEventActor(keyEventService, gameStageActor).behavior()
 }
