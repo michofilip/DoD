@@ -4,36 +4,20 @@ import dod.game.gameobject.position.{Coordinates, Direction, Shift}
 
 import java.util.UUID
 
-sealed trait PositionEvent extends Event
-
-object PositionEvent {
-    final case class MoveTo(gameObjectId: UUID, coordinates: Coordinates) extends PositionEvent
-
-    final case class MoveBy(gameObjectId: UUID, shift: Shift) extends PositionEvent
-
-    final case class TurnTo(gameObjectId: UUID, direction: Direction) extends PositionEvent
-
-    final case class TurnClockwise(gameObjectId: UUID) extends PositionEvent
-
-    final case class TurnCounterClockwise(gameObjectId: UUID) extends PositionEvent
-
-    final case class TurnBack(gameObjectId: UUID) extends PositionEvent
-
-    final case class Step(gameObjectId: UUID, direction: Direction) extends PositionEvent
-
-    final case class StepForward(gameObjectId: UUID) extends PositionEvent
-
-    final case class StepRight(gameObjectId: UUID) extends PositionEvent
-
-    final case class StepLeft(gameObjectId: UUID) extends PositionEvent
-
-    final case class StepBack(gameObjectId: UUID) extends PositionEvent
-
-    final case class StepAndFace(gameObjectId: UUID, direction: Direction) extends PositionEvent
-
-    final case class StepRightAndFace(gameObjectId: UUID) extends PositionEvent
-
-    final case class StepLeftAndFace(gameObjectId: UUID) extends PositionEvent
-
-    final case class StepBackAndFace(gameObjectId: UUID) extends PositionEvent
+enum PositionEvent extends Event {
+    case MoveTo(gameObjectId: UUID, coordinates: Coordinates)
+    case MoveBy(gameObjectId: UUID, shift: Shift)
+    case TurnTo(gameObjectId: UUID, direction: Direction)
+    case TurnClockwise(gameObjectId: UUID)
+    case TurnCounterClockwise(gameObjectId: UUID)
+    case TurnBack(gameObjectId: UUID)
+    case Step(gameObjectId: UUID, direction: Direction)
+    case StepForward(gameObjectId: UUID)
+    case StepRight(gameObjectId: UUID)
+    case StepLeft(gameObjectId: UUID)
+    case StepBack(gameObjectId: UUID)
+    case StepAndFace(gameObjectId: UUID, direction: Direction)
+    case StepRightAndFace(gameObjectId: UUID)
+    case StepLeftAndFace(gameObjectId: UUID)
+    case StepBackAndFace(gameObjectId: UUID)
 }
