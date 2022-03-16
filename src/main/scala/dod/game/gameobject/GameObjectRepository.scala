@@ -1,6 +1,7 @@
 package dod.game.gameobject
 
 import dod.game.gameobject.position.Coordinates
+import dod.game.temporal.Timestamps.Timestamp
 
 import java.util.UUID
 import scala.annotation.targetName
@@ -57,9 +58,8 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
     def findById(id: UUID): Option[GameObject] =
         gameObjectsById.get(id)
 
-    def findByName(name: String): Option[GameObject] = {
+    def findByName(name: String): Option[GameObject] = 
         gameObjectIdByName.get(name).flatMap(findById)
-    }
 
     def findByCoordinates(coordinates: Coordinates): Map[UUID, GameObject] =
         gameObjectsByCoordinates.getOrElse(coordinates, Map.empty)
@@ -74,7 +74,9 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         gameObject.physicsAccessor.physics.fold(false)(_.solid)
     }
 
-    override def toString: String = findAll.mkString("[", ", ", "]")
+    def globalTimestamp: Timestamp = findByName("global_timers")
+        .flatMap(_.timersAccessor.timestamp("global_timer_1"))
+        .getOrElse(Timestamp.zero)
 
 }
 

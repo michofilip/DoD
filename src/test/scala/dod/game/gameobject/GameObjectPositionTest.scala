@@ -10,8 +10,8 @@ import java.util.UUID
 
 class GameObjectPositionTest extends AnyFunSuite {
 
-    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp(0))
-    private val positionProperty = PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.North), positionTimestamp = Timestamp(0))
+    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val positionProperty = PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.North), positionTimestamp = Timestamp.zero)
     private val gameObject = GameObject(commonsProperty = commonsProperty, positionProperty = Some(positionProperty))
 
     test("GameObject::positionAccessor no PositionProperty test") {
@@ -25,7 +25,7 @@ class GameObjectPositionTest extends AnyFunSuite {
     test("GameObject::positionAccessor test") {
         assertResult(Some(Coordinates(0, 0)))(gameObject.positionAccessor.coordinates)
         assertResult(Some(Direction.North))(gameObject.positionAccessor.direction)
-        assertResult(Some(Timestamp(0)))(gameObject.positionAccessor.positionTimestamp)
+        assertResult(Some(Timestamp.zero))(gameObject.positionAccessor.positionTimestamp)
     }
 
     test("GameObject::updatePosition moveTo test") {
@@ -41,7 +41,7 @@ class GameObjectPositionTest extends AnyFunSuite {
 
         assertResult(Some(Coordinates(0, 0)))(gameObject.positionAccessor.coordinates)
         assertResult(Some(Direction.North))(gameObject.positionAccessor.direction)
-        assertResult(Some(Timestamp(0)))(gameObject.positionAccessor.positionTimestamp)
+        assertResult(Some(Timestamp.zero))(gameObject.positionAccessor.positionTimestamp)
     }
 
     test("GameObject::updatePosition moveBy test") {

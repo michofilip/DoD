@@ -11,7 +11,7 @@ import scala.collection.immutable.Queue
 import scala.concurrent.duration.DurationInt
 
 final class EventProcessorActor private(eventService: EventService, gameStageActor: ActorRef[GameStageActor.Command]) {
-    private def behaviors(): Behavior[Command] = Behaviors.receiveMessage {
+    private def behavior(): Behavior[Command] = Behaviors.receiveMessage {
         case EventProcessorActor.ProcessEvents(gameObjectRepository, events) =>
             eventService.processEvents(gameObjectRepository, events) match
                 case (gameObjectRepository, events) =>
@@ -30,7 +30,6 @@ object EventProcessorActor {
     private[actor] final case class ProcessEvents(gameObjectRepository: GameObjectRepository, events: Queue[Event]) extends Command
 
 
-    def apply(eventService: EventService, gameStageActor: ActorRef[GameStageActor.Command]): Behavior[Command] = Behaviors.setup { context =>
-        new EventProcessorActor(eventService, gameStageActor).behaviors()
-    }
+    def apply(eventService: EventService, gameStageActor: ActorRef[GameStageActor.Command]): Behavior[Command] =
+        new EventProcessorActor(eventService, gameStageActor).behavior()
 }

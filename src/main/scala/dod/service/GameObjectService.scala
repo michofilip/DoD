@@ -7,6 +7,7 @@ import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
 import dod.game.gameobject.position.*
 import dod.game.gameobject.state.StateTransformer
+import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
 import dod.game.temporal.Timestamps.Timestamp
 
 import java.util.UUID
@@ -22,13 +23,15 @@ class GameObjectService(positionService: PositionService,
         val stateProperty = stateService.getStateProperty(name, timestamp)
         val physicsProperty = physicsService.getPhysicsProperty(name)
         val graphicsProperty = graphicsService.getGraphicsProperty(name)
+        val timersProperty = Some(TimersProperty())
 
         GameObject(
             commonsProperty = commonsProperty,
             positionProperty = positionProperty,
             stateProperty = stateProperty,
             physicsProperty = physicsProperty,
-            graphicsProperty = graphicsProperty
+            graphicsProperty = graphicsProperty,
+            timersProperty = timersProperty
         )
     }
 
@@ -68,5 +71,10 @@ class GameObjectService(positionService: PositionService,
         } else {
             gameObject
         }
+    }
+
+    def crateGlobalTimer(id: UUID, timestamp: Timestamp): GameObject = {
+        createGameObject(id, "global_timer", timestamp)
+            .updateTimers(TimersTransformer.addTimerAndStart("global_timer_1", Timestamp.zero))
     }
 }

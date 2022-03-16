@@ -59,18 +59,18 @@ private[service] final class PositionEventService {
     }
 
 
-    inline private def handlePositionChange(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, positionTransformer: PositionTransformer): EventResponse = {
+    private def handlePositionChange(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, positionTransformer: PositionTransformer): EventResponse = {
         gameObjectRepository.findById(gameObjectId).map { gameObject =>
-            (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, Timestamp(0)))
-        }.collect { case (gameObjectRepository, gameObjectUpdated) if canChangePosition(gameObjectRepository, gameObjectUpdated) =>
-            gameObjectRepository + gameObjectUpdated
-        }.getOrElse(gameObjectRepository).pipe { gameObjectRepository =>
+            (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, gameObjectRepository.globalTimestamp))
+        }.collect { case (gameObjectRepository, gameObject) if canUpdatePosition(gameObjectRepository, gameObject) =>
+            (gameObjectRepository + gameObject, Seq.empty)
+        }.getOrElse {
             (gameObjectRepository, Seq.empty)
         }
     }
 
 
-    inline private def canChangePosition(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
+    inline private def canUpdatePosition(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
         !gameObjectUpdated.positionAccessor.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
 
 }

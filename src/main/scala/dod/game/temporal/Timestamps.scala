@@ -24,6 +24,14 @@ object Timestamps {
 
         @targetName("subtract")
         def -(duration: Duration): Timestamp = timestamp - duration.value
+
+        def >(that: Timestamp): Boolean = value > that.value
+        
+        def >=(that: Timestamp): Boolean = value >= that.value
+        
+        def <(that: Timestamp): Boolean = value < that.value
+        
+        def <=(that: Timestamp): Boolean = value <= that.value
     }
 
 }
