@@ -25,13 +25,14 @@ class GameStageService(gameObjectService: GameObjectService) {
             coordinates = Coordinates(x, y)
         } yield gameObjectService.createWall(UUID.randomUUID(), Timestamp.zero, coordinates)
 
-        val playerId = UUID.randomUUID()
-        val player = gameObjectService.createPlayer(playerId, Timestamp.zero, Coordinates(0, 0), Direction.North)
+        val player = gameObjectService.createPlayer(UUID.randomUUID(), Timestamp.zero, Coordinates(0, 0), Direction.North)
+        val globalTimer = gameObjectService.crateGlobalTimer(UUID.randomUUID(), Timestamp.zero)
 
-        val gameObjects = floors ++ walls ++ Seq(player)
+        val gameObjects = floors ++ walls ++ Seq(player) ++ Seq(globalTimer)
 
         val gameObjectRepository = GameObjectRepository(gameObjects)
-            .addByName("player", playerId)
+            .addByName("player", player.commonsAccessor.id)
+            .addByName("global_timer", globalTimer.commonsAccessor.id)
 
         new GameStage(gameObjectRepository, Queue.empty)
     }
