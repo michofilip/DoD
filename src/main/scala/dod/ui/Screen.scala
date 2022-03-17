@@ -50,6 +50,10 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
     def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp): Unit = {
         case class Sprite(x: Double, y: Double, width: Double, height: Double, layer: Int, image: Image)
 
+        given Ordering[Sprite] = Ordering.by { sprite =>
+            (-sprite.y, sprite.layer)
+        }
+
         val offsetX = focus.x * tileWidth - (width - tileWidth) / 2
         val offsetY = -focus.y * tileHeight - (height - tileHeight) / 2
 
@@ -77,7 +81,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
 
         drawBackground(Color.LightGray)
 
-        gameObjects.flatMap(spriteFrom).sortBy(_.layer).foreach { sprite =>
+        gameObjects.flatMap(spriteFrom).sorted.foreach { sprite =>
             graphicsContext2D.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height)
         }
 
