@@ -12,21 +12,21 @@ import scala.io.{BufferedSource, Source}
 
 class GameStageService(gameObjectService: GameObjectService) {
 
-    def getGameStage: GameStage = {
+    def getGameStageTest: GameStage = {
         val floors = for {
-            x <- -5 to 5
-            y <- -5 to 5
+            x <- 0 to 11
+            y <- 0 to 11
             coordinates = Coordinates(x, y)
         } yield gameObjectService.createFloor(UUID.randomUUID(), Timestamp.zero, coordinates)
 
         val walls = for {
-            x <- -5 to 5
-            y <- -5 to 5
-            if x == -5 || x == 5 || y == -5 || y == 5
+            x <- 0 to 11
+            y <- 0 to 11
+            if x == 0 || x == 11 || y == 0 || y == 11
             coordinates = Coordinates(x, y)
         } yield gameObjectService.createWall(UUID.randomUUID(), Timestamp.zero, coordinates)
 
-        val player = gameObjectService.createPlayer(UUID.randomUUID(), Timestamp.zero, Coordinates(0, 0), Direction.North)
+        val player = gameObjectService.createPlayer(UUID.randomUUID(), Timestamp.zero, Coordinates(1, 1), Direction.North)
         val globalTimer = gameObjectService.crateGlobalTimer(UUID.randomUUID(), Timestamp.zero)
 
         val gameObjects = floors ++ walls ++ Seq(player) ++ Seq(globalTimer)
