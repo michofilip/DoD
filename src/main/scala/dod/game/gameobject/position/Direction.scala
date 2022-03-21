@@ -28,9 +28,9 @@ enum Direction {
     }
 
     def shift: Shift = this match {
-        case North => Shift(0, 1)
+        case North => Shift(0, -1)
         case East => Shift(1, 0)
-        case South => Shift(0, -1)
+        case South => Shift(0, 1)
         case West => Shift(-1, 0)
     }
 

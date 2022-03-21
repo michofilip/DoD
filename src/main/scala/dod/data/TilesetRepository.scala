@@ -7,7 +7,7 @@ import java.io.FileInputStream
 
 class TilesetRepository {
     val tilesetByName: Map[String, Image] = {
-        FileUtils.filesInDir("assets", Seq("png")).map { tileSet =>
+        FileUtils.filesInDir("assets/tilesets", Seq("png")).map { tileSet =>
             FileUtils.fileName(tileSet) -> new Image(new FileInputStream(tileSet))
         }.toMap
     }
