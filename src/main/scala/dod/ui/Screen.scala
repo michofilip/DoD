@@ -55,7 +55,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
         }
 
         val offsetX = focus.x * tileWidth - (width - tileWidth) / 2
-        val offsetY = -focus.y * tileHeight - (height - tileHeight) / 2
+        val offsetY = focus.y * tileHeight - (height - tileHeight) / 2
 
         // TODO move to some settings
         val frameTileWidth = 32
@@ -71,7 +71,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
             image <- spriteRepository.sprites.get(frame.spriteId)
 
             x = (coordinates.x + frame.offsetX) * tileWidth - offsetX
-            y = -(coordinates.y + frame.offsetY) * tileHeight - offsetY
+            y = (coordinates.y + frame.offsetY) * tileHeight - offsetY
             scaledWidth = image.width.toDouble * scaleX
             scaledHeight = image.height.toDouble * scaleY
 
@@ -85,6 +85,6 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
             graphicsContext2D.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height)
         }
 
-        drawGrid(Color.Red)
+//        drawGrid(Color.Red)
     }
 }

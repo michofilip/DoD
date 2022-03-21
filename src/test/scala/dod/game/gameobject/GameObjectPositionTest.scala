@@ -95,7 +95,7 @@ class GameObjectPositionTest extends AnyFunSuite {
     test("GameObject::updatePosition stepForward test") {
         val gameObject = this.gameObject.updatePosition(PositionTransformer.stepForward, Timestamp(1000))
 
-        assertResult(Some(Coordinates(0, 1)))(gameObject.positionAccessor.coordinates)
+        assertResult(Some(Coordinates(0, -1)))(gameObject.positionAccessor.coordinates)
         assertResult(Some(Direction.North))(gameObject.positionAccessor.direction)
         assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
     }
@@ -119,7 +119,7 @@ class GameObjectPositionTest extends AnyFunSuite {
     test("GameObject::updatePosition stepBack test") {
         val gameObject = this.gameObject.updatePosition(PositionTransformer.stepBack, Timestamp(1000))
 
-        assertResult(Some(Coordinates(0, -1)))(gameObject.positionAccessor.coordinates)
+        assertResult(Some(Coordinates(0, 1)))(gameObject.positionAccessor.coordinates)
         assertResult(Some(Direction.North))(gameObject.positionAccessor.direction)
         assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
     }
@@ -151,7 +151,7 @@ class GameObjectPositionTest extends AnyFunSuite {
     test("GameObject::updatePosition stepBackAndFace test") {
         val gameObject = this.gameObject.updatePosition(PositionTransformer.stepBackAndFace, Timestamp(1000))
 
-        assertResult(Some(Coordinates(0, -1)))(gameObject.positionAccessor.coordinates)
+        assertResult(Some(Coordinates(0, 1)))(gameObject.positionAccessor.coordinates)
         assertResult(Some(Direction.South))(gameObject.positionAccessor.direction)
         assertResult(Some(Timestamp(1000)))(gameObject.positionAccessor.positionTimestamp)
     }
