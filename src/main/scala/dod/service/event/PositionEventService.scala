@@ -1,15 +1,15 @@
-package dod.service
+package dod.service.event
 
 import dod.game.event.{Event, PositionEvent}
 import dod.game.gameobject.position.PositionTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.temporal.Timestamps.Timestamp
-import dod.service.EventService.EventResponse
+import dod.service.event.EventService.EventResponse
 
 import java.util.UUID
 import scala.util.chaining.scalaUtilChainingOps
 
-private[service] final class PositionEventService {
+private[event] final class PositionEventService {
 
     def processPositionEvent(gameObjectRepository: GameObjectRepository, positionEvent: PositionEvent): EventResponse = positionEvent match {
         case PositionEvent.MoveTo(gameObjectId, coordinates) =>
