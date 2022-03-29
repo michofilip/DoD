@@ -17,7 +17,7 @@ private[event] final class SchedulerService {
                 gameObject <- gameObjectRepository.findById(gameObjectId)
                 scheduler <- gameObject.schedulerAccessor.scheduler(schedulerKey)
             } yield {
-                if (scheduler.check) {
+                if (scheduler.durationLeft <= Duration.zero) {
                     if (scheduler.repeating) {
                         val schedulerTransformer = SchedulerTransformer.scheduleAtFixedDelay(schedulerKey, scheduler.delay, scheduler.events)
                         val responseEvents = SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey) +: scheduler.events

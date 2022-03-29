@@ -9,5 +9,5 @@ import java.util.UUID
 
 
 case class Scheduler(timer: Timer, delay: Duration, repeating: Boolean, events: Seq[Event]) {
-    def check: Boolean = timer.duration >= delay
+    def durationLeft: Duration = delay - timer.duration
 }
