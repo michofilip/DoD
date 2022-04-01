@@ -2,7 +2,7 @@ package dod.service.event
 
 import dod.game.event.{Event, SchedulerEvent}
 import dod.game.gameobject.GameObjectRepository
-import dod.game.gameobject.scheduler.SchedulerTransformer
+import dod.game.gameobject.scheduler.{Scheduler, SchedulerTransformer}
 import dod.game.temporal.Durations.Duration
 import dod.game.temporal.Timer
 import dod.service.event.EventService.EventResponse
@@ -14,12 +14,13 @@ private[event] final class SchedulerService {
     def processSchedulerEvent(gameObjectRepository: GameObjectRepository, schedulerEvent: SchedulerEvent): EventResponse = schedulerEvent match {
         case SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey) => {
             for {
-                gameObject <- gameObjectRepository.findById(gameObjectId)
-                scheduler <- gameObject.schedulerAccessor.scheduler(schedulerKey)
+                scheduler <- gameObjectRepository.finsScheduler(gameObjectId, schedulerKey)
+                timestamp <- gameObjectRepository.getTimestamp(scheduler.timerId, scheduler.timerKey)
             } yield {
-                if (scheduler.durationLeft <= Duration.zero) {
+                val duration = Duration.between(scheduler.initialTimeStamp, timestamp)
+                if (duration >= scheduler.delay) {
                     if (scheduler.repeating) {
-                        val schedulerTransformer = SchedulerTransformer.scheduleAtFixedDelay(schedulerKey, scheduler.delay, scheduler.events)
+                        val schedulerTransformer = SchedulerTransformer.delayBy(schedulerKey, scheduler.delay)
                         val responseEvents = SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey) +: scheduler.events
 
                         handleSchedulerChange(gameObjectRepository, gameObjectId, schedulerTransformer, responseEvents)
@@ -35,17 +36,30 @@ private[event] final class SchedulerService {
             }
         }.getOrElse((gameObjectRepository, Seq.empty))
 
-        case SchedulerEvent.ScheduleOnce(gameObjectId, schedulerKey, delay, events) =>
-            val schedulerTransformer = SchedulerTransformer.scheduleOnce(schedulerKey, delay, events)
-            val responseEvents = Seq(SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey))
 
-            handleSchedulerChange(gameObjectRepository, gameObjectId, schedulerTransformer, responseEvents)
+        case SchedulerEvent.ScheduleOnce(gameObjectId, schedulerKey, timerId, timerKey, delay, events) => {
+            for {
+                timestamp <- gameObjectRepository.getTimestamp(timerId, timerKey)
+            } yield {
+                val schedulerTransformer = SchedulerTransformer.scheduleOnce(schedulerKey, timerId, timerKey, timestamp, delay, events)
+                val responseEvents = Seq(SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey))
 
-        case SchedulerEvent.ScheduleAtFixedDelay(gameObjectId, schedulerKey, delay, events) =>
-            val schedulerTransformer = SchedulerTransformer.scheduleAtFixedDelay(schedulerKey, delay, events)
-            val responseEvents = Seq(SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey))
+                handleSchedulerChange(gameObjectRepository, gameObjectId, schedulerTransformer, responseEvents)
+            }
+        }.getOrElse((gameObjectRepository, Seq.empty))
 
-            handleSchedulerChange(gameObjectRepository, gameObjectId, schedulerTransformer, responseEvents)
+
+        case SchedulerEvent.ScheduleAtFixedRate(gameObjectId, schedulerKey, timerId, timerKey, delay, events) => {
+            for {
+                timestamp <- gameObjectRepository.getTimestamp(timerId, timerKey)
+            } yield {
+                val schedulerTransformer = SchedulerTransformer.scheduleAtFixedRate(schedulerKey, timerId, timerKey, timestamp, delay, events)
+                val responseEvents = Seq(SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey))
+
+                handleSchedulerChange(gameObjectRepository, gameObjectId, schedulerTransformer, responseEvents)
+            }
+        }.getOrElse((gameObjectRepository, Seq.empty))
+
 
         case SchedulerEvent.RemoveScheduler(gameObjectId, schedulerKey) =>
             handleSchedulerChange(gameObjectRepository, gameObjectId, SchedulerTransformer.removeScheduler(schedulerKey))

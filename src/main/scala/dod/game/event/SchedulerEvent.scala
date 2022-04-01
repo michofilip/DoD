@@ -7,7 +7,7 @@ import java.util.UUID
 
 enum SchedulerEvent extends Event {
     case CheckScheduler(gameObjectId: UUID, schedulerKey: String)
-    case ScheduleOnce(gameObjectId: UUID, schedulerKey: String, delay: Duration, events: Seq[Event])
-    case ScheduleAtFixedDelay(gameObjectId: UUID, schedulerKey: String, delay: Duration, events: Seq[Event])
+    case ScheduleOnce(gameObjectId: UUID, schedulerKey: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event])
+    case ScheduleAtFixedRate(gameObjectId: UUID, schedulerKey: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event])
     case RemoveScheduler(gameObjectId: UUID, schedulerKey: String)
 }

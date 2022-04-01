@@ -12,28 +12,20 @@ trait SchedulerTransformer extends (Map[String, Scheduler] => Map[String, Schedu
 
 object SchedulerTransformer {
 
-    def scheduleOnce(key: String, delay: Duration, events: Seq[Event]): SchedulerTransformer =
-        schedulers => schedulers + (key -> Scheduler(Timer(running = true), delay, repeating = false, events))
+    def scheduleOnce(schedulerKey: String, timerId: UUID, timerKey: String, initialTimeStamp: Timestamp, delay: Duration, events: Seq[Event]): SchedulerTransformer =
+        schedulers => schedulers + (schedulerKey -> Scheduler(timerId, timerKey, initialTimeStamp, delay, repeating = false, events))
 
-    def scheduleAtFixedDelay(key: String, delay: Duration, events: Seq[Event]): SchedulerTransformer =
-        schedulers => schedulers + (key -> Scheduler(Timer(running = true), delay, repeating = true, events))
+    def scheduleAtFixedRate(schedulerKey: String, timerId: UUID, timerKey: String, initialTimeStamp: Timestamp, delay: Duration, events: Seq[Event]): SchedulerTransformer =
+        schedulers => schedulers + (schedulerKey -> Scheduler(timerId, timerKey, initialTimeStamp, delay, repeating = true, events))
 
-    def removeScheduler(key: String): SchedulerTransformer = schedulers => schedulers - key
+    def removeScheduler(schedulerKey: String): SchedulerTransformer = schedulers => schedulers - schedulerKey
 
-    //    def addDelay(key: String, delay: Duration): SchedulerTransformer =
-    //        schedulers => schedulers.get(key) match {
-    //            case Some(scheduler) =>
-    //                scheduler.timer.pipe { timer =>
-    //                    Timer(initialTimestamp = timer.timestamp + delay, running = timer.running)
-    //                }.pipe { timer =>
-    //                    scheduler.copy(timer = timer)
-    //                }.pipe { scheduler =>
-    //                    schedulers + (key -> scheduler)
-    //                }
-    //
-    //            case None => schedulers
-    //        }
-    //
-    //    def subtractDelay(key: String, delay: Duration): SchedulerTransformer = schedulers => addDelay(key, -delay)(schedulers)
+    def delayBy(schedulerKey: String, delay: Duration): SchedulerTransformer =
+        schedulers => schedulers.get(schedulerKey) match {
+            case Some(scheduler) => schedulers + (schedulerKey -> scheduler.delayBy(delay))
+            case None => schedulers
+        }
+
+    def subtractDelay(schedulerKey: String, delay: Duration): SchedulerTransformer = schedulers => delayBy(schedulerKey, -delay)(schedulers)
 
 }

@@ -5,5 +5,5 @@ final class SchedulerProperty(private[scheduler] val schedulers: Map[String, Sch
     def updateSchedulers(schedulerTransformer: SchedulerTransformer): SchedulerProperty = {
         new SchedulerProperty(schedulerTransformer(schedulers))
     }
-    
+
 }

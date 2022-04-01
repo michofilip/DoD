@@ -6,7 +6,7 @@ import dod.game.gameobject.commons.*
 import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
 import dod.game.gameobject.position.*
-import dod.game.gameobject.scheduler.{Scheduler, SchedulerProperty}
+import dod.game.gameobject.scheduler.SchedulerProperty
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
 import dod.game.temporal.Timestamps.Timestamp

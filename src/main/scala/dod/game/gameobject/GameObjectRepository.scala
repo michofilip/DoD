@@ -1,6 +1,7 @@
 package dod.game.gameobject
 
 import dod.game.gameobject.position.Coordinates
+import dod.game.gameobject.scheduler.Scheduler
 import dod.game.temporal.Timestamps.Timestamp
 
 import java.util.UUID
@@ -58,7 +59,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
     def findById(id: UUID): Option[GameObject] =
         gameObjectsById.get(id)
 
-    def findByName(name: String): Option[GameObject] = 
+    def findByName(name: String): Option[GameObject] =
         gameObjectIdByName.get(name).flatMap(findById)
 
     def findByCoordinates(coordinates: Coordinates): Map[UUID, GameObject] =
@@ -74,10 +75,20 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         gameObject.physicsAccessor.physics.fold(false)(_.solid)
     }
 
+    @Deprecated
     def globalTimestamp: Timestamp = findByName("global_timers")
         .flatMap(_.timersAccessor.timestamp("global_timer_1"))
         .getOrElse(Timestamp.zero)
 
+
+    // TODO change to timer
+    def getTimestamp(id: UUID, key: String): Option[Timestamp] =
+        findById(id).flatMap(_.timersAccessor.timestamp(key))
+
+    //    def findTimer
+
+    def finsScheduler(id: UUID, key: String): Option[Scheduler] =
+        findById(id).flatMap(_.schedulerAccessor.scheduler(key))
 }
 
 object GameObjectRepository {
