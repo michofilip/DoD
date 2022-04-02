@@ -16,33 +16,30 @@ class GameObjectTimersTest extends AnyFunSuite {
 
     private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
-    test("GameObject::timersAccessor no TimersProperty test") {
+    test("GameObject::timers no TimersProperty test") {
         val key = "timer_1"
         val gameObject = GameObject(commonsProperty = commonsProperty)
 
-        val timer = gameObject.timer(key)
-        assertResult(false)(timer.isDefined)
+        assertResult(false)(gameObject.timer(key).isDefined)
     }
 
-    test("GameObject::timersAccessor no timer test") {
+    test("GameObject::timers no timer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
 
-        val timer = gameObject.timer(key)
-        assertResult(false)(timer.isDefined)
+        assertResult(false)(gameObject.timer(key).isDefined)
     }
 
-    test("GameObject::timersAccessor test") {
+    test("GameObject::timers test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
 
-        val timer = gameObject.timer(key)
-        assertResult(true)(timer.isDefined)
+        assertResult(true)(gameObject.timer(key).isDefined)
 
         for {
-            timer <- timer
+            timer <- gameObject.timer(key)
         } yield {
             assertResult(false)(timer.running)
             assertResult(Timestamp.zero)(timer.timestamp)
@@ -51,17 +48,16 @@ class GameObjectTimersTest extends AnyFunSuite {
         }
     }
 
-    test("GameObject::updateTimers addTimer test") {
+    test("GameObject::timers addTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.addTimer(key, Timestamp(1000)))
 
-        val timer = gameObject.timer(key)
-        assertResult(true)(timer.isDefined)
+        assertResult(true)(gameObject.timer(key).isDefined)
 
         for {
-            timer <- timer
+            timer <- gameObject.timer(key)
         } yield {
             assertResult(false)(timer.running)
             assertResult(Timestamp(1000))(timer.timestamp)
@@ -70,17 +66,16 @@ class GameObjectTimersTest extends AnyFunSuite {
         }
     }
 
-    test("GameObject::updateTimers addTimerAndStart test") {
+    test("GameObject::timers addTimerAndStart test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.addTimerAndStart(key, Timestamp.zero))
 
-        val timer = gameObject.timer(key)
-        assertResult(true)(timer.isDefined)
+        assertResult(true)(gameObject.timer(key).isDefined)
 
         for {
-            timer <- timer
+            timer <- gameObject.timer(key)
         } yield {
             assertResult(true)(timer.running)
             Thread.sleep(10)
@@ -91,41 +86,36 @@ class GameObjectTimersTest extends AnyFunSuite {
         }
     }
 
-    test("GameObject::timersAccessor removeTimer test") {
+    test("GameObject::timers removeTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.removeTimer(key))
 
-        val timer = gameObject.timer(key)
-        assertResult(false)(timer.isDefined)
+        assertResult(false)(gameObject.timer(key).isDefined)
     }
 
-    test("GameObject::timersAccessor removeAllTimers test") {
+    test("GameObject::timers removeAllTimers test") {
         val key1 = "timer_1"
         val key2 = "timer_2"
         val timersProperty = TimersProperty(Map(key1 -> Timer(), key2 -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.removeAllTimers)
 
-        val timer1 = gameObject.timer(key1)
-        assertResult(false)(timer1.isDefined)
-
-        val timer2 = gameObject.timer(key2)
-        assertResult(false)(timer2.isDefined)
+        assertResult(false)(gameObject.timer(key1).isDefined)
+        assertResult(false)(gameObject.timer(key2).isDefined)
     }
 
-    test("GameObject::timersAccessor startTimer test") {
+    test("GameObject::timers startTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.startTimer(key))
 
-        val timer = gameObject.timer(key)
-        assertResult(true)(timer.isDefined)
+        assertResult(true)(gameObject.timer(key).isDefined)
 
         for {
-            timer <- timer
+            timer <- gameObject.timer(key)
         } yield {
             assertResult(true)(timer.running)
             Thread.sleep(10)
@@ -136,18 +126,17 @@ class GameObjectTimersTest extends AnyFunSuite {
         }
     }
 
-    test("GameObject::timersAccessor stopTimer test") {
+    test("GameObject::timers stopTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer(running = true)))
         Thread.sleep(10)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.stopTimer(key))
 
-        val timer = gameObject.timer(key)
-        assertResult(true)(timer.isDefined)
+        assertResult(true)(gameObject.timer(key).isDefined)
 
         for {
-            timer <- timer
+            timer <- gameObject.timer(key)
         } yield {
             assertResult(false)(timer.running)
             assert(timer.timestamp > Timestamp.zero)
@@ -156,21 +145,19 @@ class GameObjectTimersTest extends AnyFunSuite {
         }
     }
 
-    test("GameObject::timersAccessor startAllTimers test") {
+    test("GameObject::timers startAllTimers test") {
         val key1 = "timer_1"
         val key2 = "timer_2"
         val timersProperty = TimersProperty(Map(key1 -> Timer(), key2 -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.startAllTimers)
 
-        val timer1 = gameObject.timer(key1)
-        assertResult(true)(timer1.isDefined)
-        val timer2 = gameObject.timer(key2)
-        assertResult(true)(timer2.isDefined)
+        assertResult(true)(gameObject.timer(key1).isDefined)
+        assertResult(true)(gameObject.timer(key2).isDefined)
 
         for {
-            timer1 <- timer1
-            timer2 <- timer2
+            timer1 <- gameObject.timer(key1)
+            timer2 <- gameObject.timer(key2)
         } yield {
             assertResult(true)(timer1.running)
             assertResult(true)(timer2.running)
@@ -186,7 +173,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         }
     }
 
-    test("GameObject::timersAccessor stopAllTimers test") {
+    test("GameObject::timers stopAllTimers test") {
         val key1 = "timer_1"
         val key2 = "timer_2"
         val timersProperty = TimersProperty(Map(key1 -> Timer(running = true), key2 -> Timer(running = true)))
@@ -194,14 +181,12 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.stopAllTimers)
 
-        val timer1 = gameObject.timer(key1)
-        assertResult(true)(timer1.isDefined)
-        val timer2 = gameObject.timer(key2)
-        assertResult(true)(timer2.isDefined)
+        assertResult(true)(gameObject.timer(key1).isDefined)
+        assertResult(true)(gameObject.timer(key2).isDefined)
 
         for {
-            timer1 <- timer1
-            timer2 <- timer2
+            timer1 <- gameObject.timer(key1)
+            timer2 <- gameObject.timer(key2)
         } yield {
             assertResult(false)(timer1.running)
             assertResult(false)(timer2.running)

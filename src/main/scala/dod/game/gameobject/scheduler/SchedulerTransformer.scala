@@ -18,9 +18,9 @@ object SchedulerTransformer {
     def scheduleAtFixedRate(schedulerKey: String, timerId: UUID, timerKey: String, initialTimeStamp: Timestamp, delay: Duration, events: Seq[Event]): SchedulerTransformer =
         schedulers => schedulers + (schedulerKey -> Scheduler(timerId, timerKey, initialTimeStamp, delay, repeating = true, events))
 
-    def remove(schedulerKey: String): SchedulerTransformer = schedulers => schedulers - schedulerKey
+    def removeScheduler(schedulerKey: String): SchedulerTransformer = schedulers => schedulers - schedulerKey
 
-    def delayBy(schedulerKey: String, duration: Duration): SchedulerTransformer =
+    def delaySchedulerBy(schedulerKey: String, duration: Duration): SchedulerTransformer =
         schedulers => schedulers.get(schedulerKey) match {
             case Some(scheduler) => schedulers + (schedulerKey -> scheduler.delayBy(duration))
             case None => schedulers

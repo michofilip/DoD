@@ -22,10 +22,10 @@ private[event] final class SchedulerService {
             handleScheduleAtFixedRate(gameObjectRepository, gameObjectId, schedulerKey, timerId, timerKey, delay, events)
 
         case SchedulerEvent.RemoveScheduler(gameObjectId, schedulerKey) =>
-            handleSchedulerChange(gameObjectRepository, gameObjectId, SchedulerTransformer.remove(schedulerKey))
+            handleSchedulerChange(gameObjectRepository, gameObjectId, SchedulerTransformer.removeScheduler(schedulerKey))
 
         case SchedulerEvent.DelayScheduler(gameObjectId, schedulerKey, duration) =>
-            handleSchedulerChange(gameObjectRepository, gameObjectId, SchedulerTransformer.delayBy(schedulerKey, duration))
+            handleSchedulerChange(gameObjectRepository, gameObjectId, SchedulerTransformer.delaySchedulerBy(schedulerKey, duration))
     }
 
     private inline def handleCheckScheduler(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerKey: String) = {
