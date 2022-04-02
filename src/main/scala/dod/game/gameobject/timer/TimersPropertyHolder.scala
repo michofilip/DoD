@@ -11,6 +11,8 @@ trait TimersPropertyHolder {
     protected val timersProperty: Option[TimersProperty]
 
     final val timersAccessor = new TimersAccessor {
+        override def timer(key: String): Option[Timer] = self.timersProperty.flatMap(_.timers.get(key))
+
         override def running(key: String): Option[Boolean] = self.timersProperty.flatMap(_.timers.get(key)).map(_.running)
 
         override def timestamp(key: String): Option[Timestamp] = self.timersProperty.flatMap(_.timers.get(key)).map(_.timestamp)
