@@ -86,7 +86,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         findById(id).flatMap(_.timer(key))
 
     def finsScheduler(id: UUID, key: String): Option[Scheduler] =
-        findById(id).flatMap(_.schedulerAccessor.scheduler(key))
+        findById(id).flatMap(_.scheduler(key))
 }
 
 object GameObjectRepository {

@@ -11,9 +11,7 @@ trait SchedulerPropertyHolder {
 
     protected val schedulerProperty: Option[SchedulerProperty]
 
-    final val schedulerAccessor = new SchedulerAccessor {
-        override def scheduler(key: String): Option[Scheduler] = self.schedulerProperty.flatMap(_.schedulers.get(key))
-    }
+    final def scheduler(key: String): Option[Scheduler] = self.schedulerProperty.flatMap(_.schedulers.get(key))
 
     final def updateSchedulers(schedulerTransformer: SchedulerTransformer): GameObject =
         update(schedulerProperty = self.schedulerProperty.map(_.updateSchedulers(schedulerTransformer)))
