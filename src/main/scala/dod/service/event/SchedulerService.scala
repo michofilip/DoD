@@ -15,10 +15,10 @@ private[event] final class SchedulerService {
         case SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey) => {
             for {
                 scheduler <- gameObjectRepository.finsScheduler(gameObjectId, schedulerKey)
-                timestamp <- gameObjectRepository.getTimestamp(scheduler.timerId, scheduler.timerKey)
+                timer <- gameObjectRepository.findTimer(scheduler.timerId, scheduler.timerKey)
             } yield {
-                val duration = Duration.between(scheduler.initialTimeStamp, timestamp)
-                if (duration >= scheduler.delay) {
+                val ready = timer.durationSince(scheduler.initialTimeStamp) >= scheduler.delay
+                if (ready) {
                     if (scheduler.repeating) {
                         val schedulerTransformer = SchedulerTransformer.delayBy(schedulerKey, scheduler.delay)
                         val responseEvents = SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey) +: scheduler.events
@@ -39,9 +39,9 @@ private[event] final class SchedulerService {
 
         case SchedulerEvent.ScheduleOnce(gameObjectId, schedulerKey, timerId, timerKey, delay, events) => {
             for {
-                timestamp <- gameObjectRepository.getTimestamp(timerId, timerKey)
+                timer <- gameObjectRepository.findTimer(timerId, timerKey)
             } yield {
-                val schedulerTransformer = SchedulerTransformer.scheduleOnce(schedulerKey, timerId, timerKey, timestamp, delay, events)
+                val schedulerTransformer = SchedulerTransformer.scheduleOnce(schedulerKey, timerId, timerKey, timer.timestamp, delay, events)
                 val responseEvents = Seq(SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey))
 
                 handleSchedulerChange(gameObjectRepository, gameObjectId, schedulerTransformer, responseEvents)
@@ -51,9 +51,9 @@ private[event] final class SchedulerService {
 
         case SchedulerEvent.ScheduleAtFixedRate(gameObjectId, schedulerKey, timerId, timerKey, delay, events) => {
             for {
-                timestamp <- gameObjectRepository.getTimestamp(timerId, timerKey)
+                timer <- gameObjectRepository.findTimer(timerId, timerKey)
             } yield {
-                val schedulerTransformer = SchedulerTransformer.scheduleAtFixedRate(schedulerKey, timerId, timerKey, timestamp, delay, events)
+                val schedulerTransformer = SchedulerTransformer.scheduleAtFixedRate(schedulerKey, timerId, timerKey, timer.timestamp, delay, events)
                 val responseEvents = Seq(SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey))
 
                 handleSchedulerChange(gameObjectRepository, gameObjectId, schedulerTransformer, responseEvents)
