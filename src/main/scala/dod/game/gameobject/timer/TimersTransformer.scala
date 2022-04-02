@@ -29,4 +29,7 @@ object TimersTransformer {
 
     def stopAllTimers: TimersTransformer = timers => timers.transform { case (_, timer) => timer.stopped }
 
+    // TODO 
+    // add to timer
+    // subtract from timer
 }

@@ -16,142 +16,164 @@ class GameObjectTimersTest extends AnyFunSuite {
 
     private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
-    test("GameObject::timersAccessor no TimersProperty test") {
+    test("GameObject::timers no TimersProperty test") {
         val key = "timer_1"
         val gameObject = GameObject(commonsProperty = commonsProperty)
 
-        assertResult(None)(gameObject.timersAccessor.running(key))
-        assertResult(None)(gameObject.timersAccessor.timestamp(key))
-        assertResult(None)(gameObject.timersAccessor.duration(key))
-        assertResult(None)(gameObject.timersAccessor.durationSince(key, Timestamp.zero))
+        assertResult(false)(gameObject.timer(key).isDefined)
     }
 
-    test("GameObject::timersAccessor no timer test") {
+    test("GameObject::timers no timer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
 
-        assertResult(None)(gameObject.timersAccessor.running(key))
-        assertResult(None)(gameObject.timersAccessor.timestamp(key))
-        assertResult(None)(gameObject.timersAccessor.duration(key))
-        assertResult(None)(gameObject.timersAccessor.durationSince(key, Timestamp.zero))
+        assertResult(false)(gameObject.timer(key).isDefined)
     }
 
-    test("GameObject::timersAccessor test") {
+    test("GameObject::timers test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
 
-        assertResult(Some(false))(gameObject.timersAccessor.running(key))
-        assertResult(Some(Timestamp.zero))(gameObject.timersAccessor.timestamp(key))
-        assertResult(Some(Duration.zero))(gameObject.timersAccessor.duration(key))
-        assertResult(Some(Duration.zero))(gameObject.timersAccessor.durationSince(key, Timestamp.zero))
+        assertResult(true)(gameObject.timer(key).isDefined)
+
+        for {
+            timer <- gameObject.timer(key)
+        } yield {
+            assertResult(false)(timer.running)
+            assertResult(Timestamp.zero)(timer.timestamp)
+            assertResult(Duration.zero)(timer.duration)
+            assertResult(Duration.zero)(timer.durationSince(Timestamp.zero))
+        }
     }
 
-    test("GameObject::updateTimers addTimer test") {
+    test("GameObject::timers addTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.addTimer(key, Timestamp(1000)))
 
-        assertResult(Some(false))(gameObject.timersAccessor.running(key))
-        assertResult(Some(Timestamp(1000)))(gameObject.timersAccessor.timestamp(key))
-        assertResult(Some(Duration(1000)))(gameObject.timersAccessor.duration(key))
-        assertResult(Some(Duration(1000)))(gameObject.timersAccessor.durationSince(key, Timestamp.zero))
+        assertResult(true)(gameObject.timer(key).isDefined)
+
+        for {
+            timer <- gameObject.timer(key)
+        } yield {
+            assertResult(false)(timer.running)
+            assertResult(Timestamp(1000))(timer.timestamp)
+            assertResult(Duration(1000))(timer.duration)
+            assertResult(Duration(1000))(timer.durationSince(Timestamp.zero))
+        }
     }
 
-    test("GameObject::updateTimers addTimerAndStart test") {
+    test("GameObject::timers addTimerAndStart test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.addTimerAndStart(key, Timestamp.zero))
 
-        assertResult(Some(true))(gameObject.timersAccessor.running(key))
-        Thread.sleep(10)
+        assertResult(true)(gameObject.timer(key).isDefined)
 
-        assert(gameObject.timersAccessor.timestamp(key).exists(_ > Timestamp.zero))
-        assert(gameObject.timersAccessor.duration(key).exists(_ > Duration.zero))
-        assert(gameObject.timersAccessor.durationSince(key, Timestamp.zero).exists(_ > Duration.zero))
+        for {
+            timer <- gameObject.timer(key)
+        } yield {
+            assertResult(true)(timer.running)
+            Thread.sleep(10)
+
+            assert(timer.timestamp > Timestamp.zero)
+            assert(timer.duration > Duration.zero)
+            assert(timer.durationSince(Timestamp.zero) > Duration.zero)
+        }
     }
 
-    test("GameObject::timersAccessor removeTimer test") {
+    test("GameObject::timers removeTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.removeTimer(key))
 
-        assertResult(None)(gameObject.timersAccessor.running(key))
-        assertResult(None)(gameObject.timersAccessor.timestamp(key))
-        assertResult(None)(gameObject.timersAccessor.duration(key))
-        assertResult(None)(gameObject.timersAccessor.durationSince(key, Timestamp.zero))
+        assertResult(false)(gameObject.timer(key).isDefined)
     }
 
-    test("GameObject::timersAccessor removeAllTimers test") {
+    test("GameObject::timers removeAllTimers test") {
         val key1 = "timer_1"
         val key2 = "timer_2"
         val timersProperty = TimersProperty(Map(key1 -> Timer(), key2 -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.removeAllTimers)
 
-        assertResult(None)(gameObject.timersAccessor.running(key1))
-        assertResult(None)(gameObject.timersAccessor.timestamp(key1))
-        assertResult(None)(gameObject.timersAccessor.duration(key1))
-        assertResult(None)(gameObject.timersAccessor.durationSince(key1, Timestamp.zero))
-
-        assertResult(None)(gameObject.timersAccessor.running(key2))
-        assertResult(None)(gameObject.timersAccessor.timestamp(key2))
-        assertResult(None)(gameObject.timersAccessor.duration(key2))
-        assertResult(None)(gameObject.timersAccessor.durationSince(key2, Timestamp.zero))
+        assertResult(false)(gameObject.timer(key1).isDefined)
+        assertResult(false)(gameObject.timer(key2).isDefined)
     }
 
-    test("GameObject::timersAccessor startTimer test") {
+    test("GameObject::timers startTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.startTimer(key))
 
-        assertResult(Some(true))(gameObject.timersAccessor.running(key))
-        Thread.sleep(10)
+        assertResult(true)(gameObject.timer(key).isDefined)
 
-        assert(gameObject.timersAccessor.timestamp(key).exists(_ > Timestamp.zero))
-        assert(gameObject.timersAccessor.duration(key).exists(_ > Duration.zero))
-        assert(gameObject.timersAccessor.durationSince(key, Timestamp.zero).exists(_ > Duration.zero))
+        for {
+            timer <- gameObject.timer(key)
+        } yield {
+            assertResult(true)(timer.running)
+            Thread.sleep(10)
+
+            assert(timer.timestamp > Timestamp.zero)
+            assert(timer.duration > Duration.zero)
+            assert(timer.durationSince(Timestamp.zero) > Duration.zero)
+        }
     }
 
-    test("GameObject::timersAccessor stopTimer test") {
+    test("GameObject::timers stopTimer test") {
         val key = "timer_1"
         val timersProperty = TimersProperty(Map(key -> Timer(running = true)))
         Thread.sleep(10)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.stopTimer(key))
 
-        assertResult(Some(false))(gameObject.timersAccessor.running(key))
-        assert(gameObject.timersAccessor.timestamp(key).exists(_ > Timestamp.zero))
-        assert(gameObject.timersAccessor.duration(key).exists(_ > Duration.zero))
-        assert(gameObject.timersAccessor.durationSince(key, Timestamp.zero).exists(_ > Duration.zero))
+        assertResult(true)(gameObject.timer(key).isDefined)
+
+        for {
+            timer <- gameObject.timer(key)
+        } yield {
+            assertResult(false)(timer.running)
+            assert(timer.timestamp > Timestamp.zero)
+            assert(timer.duration > Duration.zero)
+            assert(timer.durationSince(Timestamp.zero) > Duration.zero)
+        }
     }
 
-    test("GameObject::timersAccessor startAllTimers test") {
+    test("GameObject::timers startAllTimers test") {
         val key1 = "timer_1"
         val key2 = "timer_2"
         val timersProperty = TimersProperty(Map(key1 -> Timer(), key2 -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.startAllTimers)
 
-        assertResult(Some(true))(gameObject.timersAccessor.running(key1))
-        assertResult(Some(true))(gameObject.timersAccessor.running(key2))
-        Thread.sleep(10)
+        assertResult(true)(gameObject.timer(key1).isDefined)
+        assertResult(true)(gameObject.timer(key2).isDefined)
 
-        assert(gameObject.timersAccessor.timestamp(key1).exists(_ > Timestamp.zero))
-        assert(gameObject.timersAccessor.duration(key1).exists(_ > Duration.zero))
-        assert(gameObject.timersAccessor.durationSince(key1, Timestamp.zero).exists(_ > Duration.zero))
+        for {
+            timer1 <- gameObject.timer(key1)
+            timer2 <- gameObject.timer(key2)
+        } yield {
+            assertResult(true)(timer1.running)
+            assertResult(true)(timer2.running)
+            Thread.sleep(10)
 
-        assert(gameObject.timersAccessor.timestamp(key2).exists(_ > Timestamp.zero))
-        assert(gameObject.timersAccessor.duration(key2).exists(_ > Duration.zero))
-        assert(gameObject.timersAccessor.durationSince(key2, Timestamp.zero).exists(_ > Duration.zero))
+            assert(timer1.timestamp > Timestamp.zero)
+            assert(timer1.duration > Duration.zero)
+            assert(timer1.durationSince(Timestamp.zero) > Duration.zero)
+
+            assert(timer2.timestamp > Timestamp.zero)
+            assert(timer2.duration > Duration.zero)
+            assert(timer2.durationSince(Timestamp.zero) > Duration.zero)
+        }
     }
 
-    test("GameObject::timersAccessor stopAllTimers test") {
+    test("GameObject::timers stopAllTimers test") {
         val key1 = "timer_1"
         val key2 = "timer_2"
         val timersProperty = TimersProperty(Map(key1 -> Timer(running = true), key2 -> Timer(running = true)))
@@ -159,16 +181,24 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.stopAllTimers)
 
-        assertResult(Some(false))(gameObject.timersAccessor.running(key1))
-        assertResult(Some(false))(gameObject.timersAccessor.running(key2))
+        assertResult(true)(gameObject.timer(key1).isDefined)
+        assertResult(true)(gameObject.timer(key2).isDefined)
 
-        assert(gameObject.timersAccessor.timestamp(key1).exists(_ > Timestamp.zero))
-        assert(gameObject.timersAccessor.duration(key1).exists(_ > Duration.zero))
-        assert(gameObject.timersAccessor.durationSince(key1, Timestamp.zero).exists(_ > Duration.zero))
+        for {
+            timer1 <- gameObject.timer(key1)
+            timer2 <- gameObject.timer(key2)
+        } yield {
+            assertResult(false)(timer1.running)
+            assertResult(false)(timer2.running)
 
-        assert(gameObject.timersAccessor.timestamp(key2).exists(_ > Timestamp.zero))
-        assert(gameObject.timersAccessor.duration(key2).exists(_ > Duration.zero))
-        assert(gameObject.timersAccessor.durationSince(key2, Timestamp.zero).exists(_ > Duration.zero))
+            assert(timer1.timestamp > Timestamp.zero)
+            assert(timer1.duration > Duration.zero)
+            assert(timer1.durationSince(Timestamp.zero) > Duration.zero)
+
+            assert(timer2.timestamp > Timestamp.zero)
+            assert(timer2.duration > Duration.zero)
+            assert(timer2.durationSince(Timestamp.zero) > Duration.zero)
+        }
     }
 
 }

@@ -5,7 +5,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor.EventProcessorActor.Command
 import dod.game.event.Event
 import dod.game.gameobject.GameObjectRepository
-import dod.service.EventService
+import dod.service.event.EventService
 
 import scala.collection.immutable.Queue
 import scala.concurrent.duration.DurationInt

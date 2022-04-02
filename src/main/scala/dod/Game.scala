@@ -6,7 +6,7 @@ import dod.actor.{GameActor, GameStageActor}
 import dod.data.{SpriteRepository, TileRepository, TilesetRepository}
 import dod.game.GameStage
 import dod.game.event.Event
-import dod.game.gameobject.commons.{CommonsAccessor, CommonsProperty}
+import dod.game.gameobject.commons.CommonsProperty
 import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
 import dod.game.gameobject.position.*
@@ -35,7 +35,7 @@ object Game extends JFXApp3 {
         stage = primaryGameStage.stage
 
         val gameState = context.gameStageService.getGameStageTest
-//        val gameState = context.gameStageService.getGameStageFomMap("map1")
+        //        val gameState = context.gameStageService.getGameStageFomMap("map1")
 
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameState(Some(gameState)))
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetDisplaying(true))

@@ -6,7 +6,8 @@ import dod.actor.GameStageActor.{Command, Setup}
 import dod.game.GameStage
 import dod.game.event.Event
 import dod.game.gameobject.GameObjectRepository
-import dod.service.{EventService, KeyEventService}
+import dod.service.KeyEventService
+import dod.service.event.EventService
 import dod.ui.Screen
 import scalafx.scene.input.KeyEvent
 

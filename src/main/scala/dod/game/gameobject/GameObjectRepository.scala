@@ -1,6 +1,8 @@
 package dod.game.gameobject
 
 import dod.game.gameobject.position.Coordinates
+import dod.game.gameobject.scheduler.Scheduler
+import dod.game.temporal.Timer
 import dod.game.temporal.Timestamps.Timestamp
 
 import java.util.UUID
@@ -13,13 +15,13 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     @targetName("add")
     def +(gameObject: GameObject): GameObjectRepository = {
-        val newGameObjectsByCoordinates = gameObject.positionAccessor.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
-            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) + (gameObject.commonsAccessor.id -> gameObject)
+        val newGameObjectsByCoordinates = gameObject.position.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
+            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) + (gameObject.id -> gameObject)
 
             gameObjectsByCoordinates + (coordinates -> newGameObjectsAtCoordinates)
         }
 
-        val newGameObjectsById = gameObjectsById + (gameObject.commonsAccessor.id -> gameObject)
+        val newGameObjectsById = gameObjectsById + (gameObject.id -> gameObject)
 
         new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
     }
@@ -30,8 +32,8 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     @targetName("remove")
     def -(gameObject: GameObject): GameObjectRepository = {
-        val newGameObjectsByCoordinates = gameObject.positionAccessor.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
-            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) - gameObject.commonsAccessor.id
+        val newGameObjectsByCoordinates = gameObject.position.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
+            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) - gameObject.id
 
             if (newGameObjectsAtCoordinates.isEmpty)
                 gameObjectsByCoordinates - coordinates
@@ -39,7 +41,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
                 gameObjectsByCoordinates + (coordinates -> newGameObjectsAtCoordinates)
         }
 
-        val newGameObjectsById = gameObjectsById - gameObject.commonsAccessor.id
+        val newGameObjectsById = gameObjectsById - gameObject.id
 
         new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
     }
@@ -58,7 +60,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
     def findById(id: UUID): Option[GameObject] =
         gameObjectsById.get(id)
 
-    def findByName(name: String): Option[GameObject] = 
+    def findByName(name: String): Option[GameObject] =
         gameObjectIdByName.get(name).flatMap(findById)
 
     def findByCoordinates(coordinates: Coordinates): Map[UUID, GameObject] =
@@ -71,13 +73,20 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         findByCoordinates(coordinates).values.forall(predicate)
 
     def existSolidAtCoordinates(coordinates: Coordinates): Boolean = existAtCoordinates(coordinates) { gameObject =>
-        gameObject.physicsAccessor.physics.fold(false)(_.solid)
+        gameObject.physics.fold(false)(_.solid)
     }
 
+    @Deprecated
     def globalTimestamp: Timestamp = findByName("global_timers")
-        .flatMap(_.timersAccessor.timestamp("global_timer_1"))
+        .flatMap(_.timer("global_timer_1"))
+        .map(_.timestamp)
         .getOrElse(Timestamp.zero)
 
+    def findTimer(id: UUID, key: String): Option[Timer] =
+        findById(id).flatMap(_.timer(key))
+
+    def finsScheduler(id: UUID, key: String): Option[Scheduler] =
+        findById(id).flatMap(_.scheduler(key))
 }
 
 object GameObjectRepository {

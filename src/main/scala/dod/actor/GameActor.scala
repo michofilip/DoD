@@ -4,7 +4,8 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor
 import dod.actor.GameActor.Command
-import dod.service.{EventService, KeyEventService}
+import dod.service.KeyEventService
+import dod.service.event.EventService
 import dod.ui.Screen
 import scalafx.scene.input.{KeyCode, KeyEvent}
 

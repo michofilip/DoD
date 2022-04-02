@@ -1,7 +1,8 @@
 package dod
 
 import dod.data.{AnimationRepository, AnimationSelectorRepository, FrameRepository, PhysicsRepository, PhysicsSelectorRepository, PositionRepository, SpriteRepository, StateRepository, TileRepository, TilesetRepository}
-import dod.service.{EventService, GameObjectService, GameStageService, GraphicsService, KeyEventService, PhysicsService, PositionService, StateService}
+import dod.service.event.EventService
+import dod.service.{GameObjectService, GameStageService, GraphicsService, KeyEventService, PhysicsService, PositionService, StateService}
 
 class Context {
 
