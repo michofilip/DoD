@@ -1,6 +1,7 @@
 package dod.game.gameobject.position
 
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Position
+import dod.game.model.Timestamps.Timestamp
 
 import scala.util.chaining.scalaUtilChainingOps
 

@@ -1,8 +1,8 @@
-package dod.game.gameobject.scheduler
+package dod.game.model
 
 import dod.game.event.Event
-import dod.game.temporal.Durations.Duration
-import dod.game.temporal.Timestamps.Timestamp
+import Durations.Duration
+import Timestamps.Timestamp
 
 import java.util.UUID
 

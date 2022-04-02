@@ -1,9 +1,7 @@
 package dod.game.gameobject
 
-import dod.game.gameobject.position.Coordinates
-import dod.game.gameobject.scheduler.Scheduler
-import dod.game.temporal.Timer
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Scheduler, Timer}
+import dod.game.model.Timestamps.Timestamp
 
 import java.util.UUID
 import scala.annotation.targetName

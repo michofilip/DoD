@@ -1,9 +1,9 @@
 package dod.game.gameobject.timer
 
 import dod.game.gameobject.GameObject
-import dod.game.temporal.Durations.Duration
-import dod.game.temporal.Timer
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Durations.Duration
+import dod.game.model.Timer
+import dod.game.model.Timestamps.Timestamp
 
 trait TimersPropertyHolder {
     self: GameObject =>

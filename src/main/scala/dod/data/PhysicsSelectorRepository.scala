@@ -1,7 +1,6 @@
 package dod.data
 
-import dod.game.gameobject.physics.{Physics, PhysicsSelector}
-import dod.game.gameobject.state.State
+import dod.game.model.{PhysicsSelector, State}
 
 class PhysicsSelectorRepository(physicsRepository: PhysicsRepository) {
     case class PhysicsSelectorVariant(name: String, state: Option[State], physicsId: Int)

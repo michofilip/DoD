@@ -6,9 +6,9 @@ import dod.actor.DisplayActor.Command
 import dod.actor.GameStageActor.Display
 import dod.game.GameStage
 import dod.game.event.Event
-import dod.game.gameobject.position.Coordinates
 import dod.game.gameobject.{GameObject, GameObjectRepository}
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Coordinates
+import dod.game.model.Timestamps.Timestamp
 import dod.ui.Screen
 import scalafx.application.Platform
 

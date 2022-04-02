@@ -1,6 +1,7 @@
 package dod.game.gameobject.state
 
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.State
+import dod.game.model.Timestamps.Timestamp
 
 final class StateProperty(private[state] val state: State,
                           private[state] val stateTimestamp: Timestamp) {

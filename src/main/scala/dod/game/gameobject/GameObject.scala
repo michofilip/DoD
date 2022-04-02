@@ -7,7 +7,7 @@ import dod.game.gameobject.position.{PositionProperty, PositionPropertyHolder, P
 import dod.game.gameobject.scheduler.{SchedulerProperty, SchedulerPropertyHolder}
 import dod.game.gameobject.state.{StateProperty, StatePropertyHolder, StateTransformer}
 import dod.game.gameobject.timer.{TimersProperty, TimersPropertyHolder}
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Timestamps.Timestamp
 
 final class GameObject(override protected val commonsProperty: CommonsProperty,
                        override protected val positionProperty: Option[PositionProperty] = None,

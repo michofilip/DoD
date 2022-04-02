@@ -1,7 +1,6 @@
 package dod.data
 
-import dod.game.gameobject.graphics.Frame
-import dod.game.gameobject.physics.Physics
+import dod.game.model.{Frame, Physics}
 
 class PhysicsRepository {
     case class PhysicsData(id: Int, solid: Boolean)

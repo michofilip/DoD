@@ -1,7 +1,6 @@
 package dod.data
 
-import dod.game.gameobject.graphics.Frame
-import dod.game.gameobject.position.{Coordinates, Direction, Position}
+import dod.game.model.{Coordinates, Direction, Frame, Position}
 
 class PositionRepository {
     enum PositionType {

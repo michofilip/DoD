@@ -2,9 +2,9 @@ package dod.service.event
 
 import dod.game.event.{Event, SchedulerEvent}
 import dod.game.gameobject.GameObjectRepository
-import dod.game.gameobject.scheduler.{Scheduler, SchedulerTransformer}
-import dod.game.temporal.Durations.Duration
-import dod.game.temporal.Timer
+import dod.game.gameobject.scheduler.SchedulerTransformer
+import dod.game.model.Durations.Duration
+import dod.game.model.Timer
 import dod.service.event.EventService.EventResponse
 
 import java.util.UUID

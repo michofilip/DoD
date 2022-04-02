@@ -2,7 +2,7 @@ package dod.service
 
 import dod.game.event.{Event, PositionEvent}
 import dod.game.gameobject.GameObjectRepository
-import dod.game.gameobject.position.Direction
+import dod.game.model.Direction
 import scalafx.scene.input.{KeyCode, KeyEvent}
 
 class KeyEventService {

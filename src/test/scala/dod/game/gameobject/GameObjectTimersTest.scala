@@ -2,12 +2,12 @@ package dod.game.gameobject
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsProperty
-import dod.game.gameobject.position.{Coordinates, Direction, PositionProperty, PositionTransformer, Shift}
-import dod.game.gameobject.state.{State, StateProperty, StateTransformer}
+import dod.game.gameobject.position.{PositionProperty, PositionTransformer}
+import dod.game.gameobject.state.{StateProperty, StateTransformer}
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
-import dod.game.temporal.Durations.Duration
-import dod.game.temporal.Timer
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Durations.Duration
+import dod.game.model.Timer
+import dod.game.model.Timestamps.Timestamp
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID

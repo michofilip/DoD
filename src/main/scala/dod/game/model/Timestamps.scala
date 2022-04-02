@@ -1,6 +1,6 @@
-package dod.game.temporal
+package dod.game.model
 
-import dod.game.temporal.Durations.Duration
+import dod.game.model.Durations.Duration
 
 import scala.annotation.targetName
 
@@ -17,7 +17,7 @@ object Timestamps {
     }
 
     extension (timestamp: Timestamp) {
-        private[temporal] def value: Long = timestamp
+        private[model] def value: Long = timestamp
 
         @targetName("add")
         def +(duration: Duration): Timestamp = timestamp + duration.value
@@ -26,11 +26,11 @@ object Timestamps {
         def -(duration: Duration): Timestamp = timestamp - duration.value
 
         def >(that: Timestamp): Boolean = value > that.value
-        
+
         def >=(that: Timestamp): Boolean = value >= that.value
-        
+
         def <(that: Timestamp): Boolean = value < that.value
-        
+
         def <=(that: Timestamp): Boolean = value <= that.value
     }
 

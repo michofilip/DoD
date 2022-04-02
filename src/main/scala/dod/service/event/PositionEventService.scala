@@ -3,7 +3,7 @@ package dod.service.event
 import dod.game.event.{Event, PositionEvent}
 import dod.game.gameobject.position.PositionTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Timestamps.Timestamp
 import dod.service.event.EventService.EventResponse
 
 import java.util.UUID
