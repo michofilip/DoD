@@ -20,7 +20,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val key = "timer_1"
         val gameObject = GameObject(commonsProperty = commonsProperty)
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(false)(timer.isDefined)
     }
 
@@ -29,7 +29,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val timersProperty = TimersProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(false)(timer.isDefined)
     }
 
@@ -38,7 +38,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val timersProperty = TimersProperty(Map(key -> Timer()))
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(true)(timer.isDefined)
 
         for {
@@ -57,7 +57,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.addTimer(key, Timestamp(1000)))
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(true)(timer.isDefined)
 
         for {
@@ -76,7 +76,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.addTimerAndStart(key, Timestamp.zero))
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(true)(timer.isDefined)
 
         for {
@@ -97,7 +97,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.removeTimer(key))
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(false)(timer.isDefined)
     }
 
@@ -108,10 +108,10 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.removeAllTimers)
 
-        val timer1 = gameObject.timersAccessor.timer(key1)
+        val timer1 = gameObject.timer(key1)
         assertResult(false)(timer1.isDefined)
 
-        val timer2 = gameObject.timersAccessor.timer(key2)
+        val timer2 = gameObject.timer(key2)
         assertResult(false)(timer2.isDefined)
     }
 
@@ -121,7 +121,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.startTimer(key))
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(true)(timer.isDefined)
 
         for {
@@ -143,7 +143,7 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.stopTimer(key))
 
-        val timer = gameObject.timersAccessor.timer(key)
+        val timer = gameObject.timer(key)
         assertResult(true)(timer.isDefined)
 
         for {
@@ -163,9 +163,9 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.startAllTimers)
 
-        val timer1 = gameObject.timersAccessor.timer(key1)
+        val timer1 = gameObject.timer(key1)
         assertResult(true)(timer1.isDefined)
-        val timer2 = gameObject.timersAccessor.timer(key2)
+        val timer2 = gameObject.timer(key2)
         assertResult(true)(timer2.isDefined)
 
         for {
@@ -194,9 +194,9 @@ class GameObjectTimersTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, timersProperty = Some(timersProperty))
             .updateTimers(TimersTransformer.stopAllTimers)
 
-        val timer1 = gameObject.timersAccessor.timer(key1)
+        val timer1 = gameObject.timer(key1)
         assertResult(true)(timer1.isDefined)
-        val timer2 = gameObject.timersAccessor.timer(key2)
+        val timer2 = gameObject.timer(key2)
         assertResult(true)(timer2.isDefined)
 
         for {

@@ -78,12 +78,12 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     @Deprecated
     def globalTimestamp: Timestamp = findByName("global_timers")
-        .flatMap(_.timersAccessor.timer("global_timer_1"))
+        .flatMap(_.timer("global_timer_1"))
         .map(_.timestamp)
         .getOrElse(Timestamp.zero)
 
     def findTimer(id: UUID, key: String): Option[Timer] =
-        findById(id).flatMap(_.timersAccessor.timer(key))
+        findById(id).flatMap(_.timer(key))
 
     def finsScheduler(id: UUID, key: String): Option[Scheduler] =
         findById(id).flatMap(_.schedulerAccessor.scheduler(key))

@@ -10,9 +10,7 @@ trait TimersPropertyHolder {
 
     protected val timersProperty: Option[TimersProperty]
 
-    final val timersAccessor = new TimersAccessor {
-        override def timer(key: String): Option[Timer] = self.timersProperty.flatMap(_.timers.get(key))
-    }
+    final def timer(key: String): Option[Timer] = self.timersProperty.flatMap(_.timers.get(key))
 
     final def updateTimers(timersTransformer: TimersTransformer): GameObject =
         update(timersProperty = self.timersProperty.map(_.updateTimers(timersTransformer)))
