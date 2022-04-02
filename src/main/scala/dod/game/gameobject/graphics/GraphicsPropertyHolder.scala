@@ -12,17 +12,17 @@ private[gameobject] trait GraphicsPropertyHolder {
 
     protected val graphicsProperty: Option[GraphicsProperty]
 
-    final val graphicsAccessor = new GraphicsAccessor {
-        override def layer: Option[Int] = self.graphicsProperty.map(_.animation(stateAccessor.state, positionAccessor.direction).layer)
+    final val graphics = new GraphicsAccessor {
+        override def layer: Option[Int] = self.graphicsProperty.map(_.animation(states.state, position.direction).layer)
 
-        override def length: Option[Duration] = self.graphicsProperty.map(_.animation(stateAccessor.state, positionAccessor.direction).length)
+        override def length: Option[Duration] = self.graphicsProperty.map(_.animation(states.state, position.direction).length)
 
         override def frame(timestamp: Timestamp): Option[Frame] =
             self.graphicsProperty.map { graphicsProperty =>
-                val initialTimestamp = stateAccessor.stateTimestamp.getOrElse(commonsAccessor.creationTimestamp)
+                val initialTimestamp = states.stateTimestamp.getOrElse(self.creationTimestamp)
                 val duration = Duration.between(initialTimestamp, timestamp)
 
-                graphicsProperty.animation(stateAccessor.state, positionAccessor.direction).frame(duration)
+                graphicsProperty.animation(states.state, position.direction).frame(duration)
             }
     }
 

@@ -14,8 +14,8 @@ class GameObjectCommonsTest extends AnyFunSuite {
     private val gameObject = GameObject(commonsProperty = commonsProperty)
 
     test("GameObject::commonsAccessor test") {
-        assertResult(id)(gameObject.commonsAccessor.id)
-        assertResult("TestGameObject")(gameObject.commonsAccessor.name)
-        assertResult(Timestamp.zero)(gameObject.commonsAccessor.creationTimestamp)
+        assertResult(id)(gameObject.id)
+        assertResult("TestGameObject")(gameObject.name)
+        assertResult(Timestamp.zero)(gameObject.creationTimestamp)
     }
 }

@@ -23,7 +23,7 @@ final class DisplayActor private(screen: Screen) {
 
             val focus = gameObjectRepository
                 .findByName("player")
-                .flatMap(_.positionAccessor.coordinates)
+                .flatMap(_.position.coordinates)
                 .getOrElse(Coordinates(0, 0))
 
             val timestamp = gameObjectRepository.globalTimestamp

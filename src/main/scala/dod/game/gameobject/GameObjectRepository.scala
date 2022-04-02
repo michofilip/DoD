@@ -15,13 +15,13 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     @targetName("add")
     def +(gameObject: GameObject): GameObjectRepository = {
-        val newGameObjectsByCoordinates = gameObject.positionAccessor.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
-            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) + (gameObject.commonsAccessor.id -> gameObject)
+        val newGameObjectsByCoordinates = gameObject.position.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
+            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) + (gameObject.id -> gameObject)
 
             gameObjectsByCoordinates + (coordinates -> newGameObjectsAtCoordinates)
         }
 
-        val newGameObjectsById = gameObjectsById + (gameObject.commonsAccessor.id -> gameObject)
+        val newGameObjectsById = gameObjectsById + (gameObject.id -> gameObject)
 
         new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
     }
@@ -32,8 +32,8 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     @targetName("remove")
     def -(gameObject: GameObject): GameObjectRepository = {
-        val newGameObjectsByCoordinates = gameObject.positionAccessor.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
-            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) - gameObject.commonsAccessor.id
+        val newGameObjectsByCoordinates = gameObject.position.coordinates.fold(gameObjectsByCoordinates) { coordinates =>
+            val newGameObjectsAtCoordinates = gameObjectsByCoordinates.getOrElse(coordinates, Map.empty) - gameObject.id
 
             if (newGameObjectsAtCoordinates.isEmpty)
                 gameObjectsByCoordinates - coordinates
@@ -41,7 +41,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
                 gameObjectsByCoordinates + (coordinates -> newGameObjectsAtCoordinates)
         }
 
-        val newGameObjectsById = gameObjectsById - gameObject.commonsAccessor.id
+        val newGameObjectsById = gameObjectsById - gameObject.id
 
         new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
     }
@@ -73,7 +73,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         findByCoordinates(coordinates).values.forall(predicate)
 
     def existSolidAtCoordinates(coordinates: Coordinates): Boolean = existAtCoordinates(coordinates) { gameObject =>
-        gameObject.physicsAccessor.physics.fold(false)(_.solid)
+        gameObject.physics.fold(false)(_.solid)
     }
 
     @Deprecated

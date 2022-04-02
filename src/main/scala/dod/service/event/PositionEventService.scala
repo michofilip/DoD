@@ -71,6 +71,6 @@ private[event] final class PositionEventService {
 
 
     inline private def canUpdatePosition(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
-        !gameObjectUpdated.positionAccessor.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
+        !gameObjectUpdated.position.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
 
 }

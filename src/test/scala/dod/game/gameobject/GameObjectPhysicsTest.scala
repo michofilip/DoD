@@ -21,11 +21,11 @@ class GameObjectPhysicsTest extends AnyFunSuite {
     test("GameObject::physicsAccessor no PhysicsProperty test") {
         val gameObject = GameObject(commonsProperty = commonsProperty)
 
-        assertResult(None)(gameObject.physicsAccessor.physics)
+        assertResult(None)(gameObject.physics)
     }
 
     test("GameObject::physicsAccessor test") {
-        assertResult(Some(Physics(solid = false)))(gameObject.physicsAccessor.physics)
+        assertResult(Some(Physics(solid = false)))(gameObject.physics)
     }
 
     test("GameObject::physicsAccessor open test") {
@@ -33,7 +33,7 @@ class GameObjectPhysicsTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.open, Timestamp(1000))
 
-        assertResult(Some(Physics(solid = false)))(gameObject.physicsAccessor.physics)
+        assertResult(Some(Physics(solid = false)))(gameObject.physics)
     }
 
     test("GameObject::physicsAccessor close test") {
@@ -41,7 +41,7 @@ class GameObjectPhysicsTest extends AnyFunSuite {
         val gameObject = GameObject(commonsProperty = commonsProperty, stateProperty = Some(stateProperty), physicsProperty = Some(physicsProperty))
             .updateState(StateTransformer.close, Timestamp(1000))
 
-        assertResult(Some(Physics(solid = true)))(gameObject.physicsAccessor.physics)
+        assertResult(Some(Physics(solid = true)))(gameObject.physics)
     }
 
 }
