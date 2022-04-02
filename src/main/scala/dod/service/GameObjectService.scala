@@ -6,6 +6,7 @@ import dod.game.gameobject.commons.*
 import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
 import dod.game.gameobject.position.*
+import dod.game.gameobject.scheduler.SchedulerProperty
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
 import dod.game.temporal.Timestamps.Timestamp
@@ -24,6 +25,7 @@ class GameObjectService(positionService: PositionService,
         val physicsProperty = physicsService.getPhysicsProperty(name)
         val graphicsProperty = graphicsService.getGraphicsProperty(name)
         val timersProperty = Some(TimersProperty())
+        val schedulerProperty = Some(SchedulerProperty())
 
         GameObject(
             commonsProperty = commonsProperty,
@@ -31,7 +33,8 @@ class GameObjectService(positionService: PositionService,
             stateProperty = stateProperty,
             physicsProperty = physicsProperty,
             graphicsProperty = graphicsProperty,
-            timersProperty = timersProperty
+            timersProperty = timersProperty,
+            schedulerProperty = schedulerProperty
         )
     }
 

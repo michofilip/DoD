@@ -1,13 +1,13 @@
-package dod.service
+package dod.service.event
 
 import dod.game.event.StateEvent
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
-import dod.service.EventService.EventResponse
+import dod.service.event.EventService.EventResponse
 
 import java.util.UUID
 
-private[service] final class StateEventService {
+private[event] final class StateEventService {
 
     def processStateEvent(gameObjectRepository: GameObjectRepository, stateEvent: StateEvent): EventResponse = stateEvent match {
         case StateEvent.SwitchOff(gameObjectId) =>
