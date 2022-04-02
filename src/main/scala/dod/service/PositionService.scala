@@ -3,7 +3,7 @@ package dod.service
 import dod.data.PositionRepository
 import dod.game.gameobject.physics.PhysicsProperty
 import dod.game.gameobject.position.PositionProperty
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Timestamps.Timestamp
 
 class PositionService(positionRepository: PositionRepository) {
     def getPositionProperty(name: String, timestamp: Timestamp): Option[PositionProperty] = {

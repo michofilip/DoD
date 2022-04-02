@@ -1,6 +1,7 @@
 package dod.game.gameobject.position
 
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Direction}
+import dod.game.model.Timestamps.Timestamp
 
 trait PositionAccessor {
     def coordinates: Option[Coordinates]

@@ -1,6 +1,6 @@
 package dod.data
 
-import dod.game.gameobject.graphics.Frame
+import dod.game.model.Frame
 
 class FrameRepository {
     case class FrameData(id: Int, spriteId: Int, offsetX: Double, offsetY: Double)

@@ -1,7 +1,7 @@
 package dod.game.gameobject.timer
 
-import dod.game.temporal.Timer
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Timer
+import dod.game.model.Timestamps.Timestamp
 
 trait TimersTransformer extends (Map[String, Timer] => Map[String, Timer])
 

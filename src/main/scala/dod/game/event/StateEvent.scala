@@ -1,6 +1,6 @@
 package dod.game.event
 
-import dod.game.gameobject.state.{State, StateTransformer}
+import dod.game.gameobject.state.StateTransformer
 
 import java.util.UUID
 

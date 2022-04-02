@@ -2,8 +2,8 @@ package dod.game.gameobject
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsProperty
-import dod.game.gameobject.position.{Coordinates, Direction, PositionProperty, PositionTransformer, Shift}
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.gameobject.position.{PositionProperty, PositionTransformer}
+import dod.game.model.Timestamps.Timestamp
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID

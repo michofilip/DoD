@@ -2,9 +2,8 @@ package dod.ui
 
 import dod.data.SpriteRepository
 import dod.game.gameobject.GameObject
-import dod.game.gameobject.graphics.Frame
-import dod.game.gameobject.position.Coordinates
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Frame}
+import dod.game.model.Timestamps.Timestamp
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.image.Image
 import scalafx.scene.paint.Color

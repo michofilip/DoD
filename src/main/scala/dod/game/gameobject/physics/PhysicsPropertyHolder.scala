@@ -2,6 +2,7 @@ package dod.game.gameobject.physics
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.state.StatePropertyHolder
+import dod.game.model.Physics
 
 private[gameobject] trait PhysicsPropertyHolder {
     self: GameObject with StatePropertyHolder =>

@@ -1,7 +1,8 @@
 package dod.game.gameobject.state
 
 import dod.game.gameobject.GameObject
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.State
+import dod.game.model.Timestamps.Timestamp
 
 private[gameobject] trait StatePropertyHolder {
     self: GameObject =>

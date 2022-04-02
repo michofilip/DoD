@@ -1,7 +1,7 @@
 package dod.game.event
 
-import dod.game.gameobject.state.{State, StateTransformer}
-import dod.game.temporal.Durations.Duration
+import dod.game.gameobject.state.StateTransformer
+import dod.game.model.Durations.Duration
 
 import java.util.UUID
 

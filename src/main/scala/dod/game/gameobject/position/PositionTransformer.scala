@@ -1,6 +1,7 @@
 package dod.game.gameobject.position
 
-import dod.game.gameobject.position.Direction.{East, North, South, West}
+import dod.game.model.{Coordinates, Direction, Position, Shift}
+import dod.game.model.Direction.{East, North, South, West}
 
 import scala.annotation.showAsInfix
 import scala.util.chaining.scalaUtilChainingOps

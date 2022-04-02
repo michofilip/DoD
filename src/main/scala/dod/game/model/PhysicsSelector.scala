@@ -1,12 +1,12 @@
-package dod.game.gameobject.physics
+package dod.game.model
 
-import dod.game.gameobject.state.State
+import dod.game.model.PhysicsSelector
+import dod.game.model.{Physics, State}
 
 final class PhysicsSelector(variants: Map[Option[State], Physics]) {
     inline def selectPhysics(state: Option[State]): Physics = variants(state)
 }
 
-// TODO not needed anymore
 object PhysicsSelector {
     def apply(variants: (Option[State], Physics)*): PhysicsSelector =
         new PhysicsSelector(variants.toMap)

@@ -1,6 +1,6 @@
 package dod.game.gameobject.timer
 
-import dod.game.temporal.Timer
+import dod.game.model.Timer
 
 final class TimersProperty(private[timer] val timers: Map[String, Timer] = Map.empty) {
 

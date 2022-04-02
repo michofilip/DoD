@@ -1,6 +1,6 @@
 package dod.game.event
 
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Timestamps.Timestamp
 
 import java.util.UUID
 

@@ -1,7 +1,4 @@
-package dod.game.gameobject.graphics
-
-import dod.game.gameobject.position.Direction
-import dod.game.gameobject.state.State
+package dod.game.model
 
 final class AnimationSelector(variants: Map[(Option[State], Option[Direction]), Animation]) {
     inline def selectAnimation(state: Option[State], direction: Option[Direction]): Animation = variants((state, direction))
