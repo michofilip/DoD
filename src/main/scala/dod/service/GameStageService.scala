@@ -32,8 +32,8 @@ class GameStageService(gameObjectService: GameObjectService) {
         val gameObjects = floors ++ walls ++ Seq(player) ++ Seq(globalTimer)
 
         val gameObjectRepository = GameObjectRepository(gameObjects)
-            .addByName("player", player.commonsAccessor.id)
-            .addByName("global_timer", globalTimer.commonsAccessor.id)
+            .addByName("player", player.id)
+            .addByName("global_timer", globalTimer.id)
 
         new GameStage(gameObjectRepository, Queue.empty)
     }
@@ -89,7 +89,7 @@ class GameStageService(gameObjectService: GameObjectService) {
             case '@' =>
                 val floor = gameObjectService.createFloor(UUID.randomUUID(), timestamp, coordinates)
                 val player = gameObjectService.createPlayer(UUID.randomUUID(), timestamp, coordinates, Direction.East)
-                ((gameObjectRepository + floor + player).addByName("player", player.commonsAccessor.id), Queue.empty)
+                ((gameObjectRepository + floor + player).addByName("player", player.id), Queue.empty)
 
             case _ =>
                 (gameObjectRepository, Queue.empty)

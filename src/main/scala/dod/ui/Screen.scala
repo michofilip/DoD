@@ -65,9 +65,9 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
         val scaleY = tileHeight / frameTileHeight
 
         def spriteFrom(gameObject: GameObject): Option[Sprite] = for {
-            coordinates <- gameObject.positionAccessor.coordinates
-            frame <- gameObject.graphicsAccessor.frame(timestamp)
-            layer <- gameObject.graphicsAccessor.layer
+            coordinates <- gameObject.position.coordinates
+            frame <- gameObject.graphics.frame(timestamp)
+            layer <- gameObject.graphics.layer
             image <- spriteRepository.sprites.get(frame.spriteId)
 
             x = (coordinates.x + frame.offsetX) * tileWidth - offsetX
