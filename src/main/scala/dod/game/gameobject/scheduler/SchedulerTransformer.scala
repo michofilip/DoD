@@ -20,12 +20,10 @@ object SchedulerTransformer {
 
     def removeScheduler(schedulerKey: String): SchedulerTransformer = schedulers => schedulers - schedulerKey
 
-    def delayBy(schedulerKey: String, delay: Duration): SchedulerTransformer =
+    def delaySchedulerBy(schedulerKey: String, duration: Duration): SchedulerTransformer =
         schedulers => schedulers.get(schedulerKey) match {
-            case Some(scheduler) => schedulers + (schedulerKey -> scheduler.delayBy(delay))
+            case Some(scheduler) => schedulers + (schedulerKey -> scheduler.delayBy(duration))
             case None => schedulers
         }
-
-    def subtractDelay(schedulerKey: String, delay: Duration): SchedulerTransformer = schedulers => delayBy(schedulerKey, -delay)(schedulers)
 
 }
