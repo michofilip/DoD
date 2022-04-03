@@ -1,7 +1,7 @@
 package dod.game.gameobject
 
-import dod.game.model.{Coordinates, Scheduler, Timer}
 import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Behavior, Coordinates, Scheduler, Timer}
 
 import java.util.UUID
 import scala.annotation.targetName
@@ -85,6 +85,9 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     def finsScheduler(id: UUID, key: String): Option[Scheduler] =
         findById(id).flatMap(_.scheduler(key))
+
+    def finsBehavior(id: UUID, key: String): Option[Behavior] =
+        findById(id).flatMap(_.behavior(key))
 }
 
 object GameObjectRepository {
