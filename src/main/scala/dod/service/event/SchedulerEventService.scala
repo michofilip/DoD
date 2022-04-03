@@ -9,7 +9,7 @@ import dod.service.event.EventService.EventResponse
 
 import java.util.UUID
 
-private[event] final class SchedulerService {
+private[event] final class SchedulerEventService {
 
     private[event] def processSchedulerEvent(gameObjectRepository: GameObjectRepository, schedulerEvent: SchedulerEvent): EventResponse = schedulerEvent match {
         case SchedulerEvent.CheckScheduler(gameObjectId, schedulerKey) =>
@@ -28,11 +28,11 @@ private[event] final class SchedulerService {
             handleSchedulerUpdate(gameObjectRepository, gameObjectId, SchedulerTransformer.delaySchedulerBy(schedulerKey, duration))
     }
 
-    private inline def handleCheckScheduler(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerKey: String) = {
+    private inline def handleCheckScheduler(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerKey: String): EventResponse = {
         import SchedulerEvent.*
 
         for
-            scheduler <- gameObjectRepository.finsScheduler(gameObjectId, schedulerKey)
+            scheduler <- gameObjectRepository.findScheduler(gameObjectId, schedulerKey)
             timer <- gameObjectRepository.findTimer(scheduler.timerId, scheduler.timerKey)
             ready = timer.durationSince(scheduler.initialTimeStamp) >= scheduler.delay
         yield
@@ -50,7 +50,7 @@ private[event] final class SchedulerService {
         (gameObjectRepository, Seq.empty)
     }
 
-    private inline def handleScheduleOnce(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerKey: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event]) = {
+    private inline def handleScheduleOnce(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerKey: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event]): EventResponse = {
         import SchedulerEvent.*
 
         for
@@ -65,7 +65,7 @@ private[event] final class SchedulerService {
         (gameObjectRepository, Seq.empty)
     }
 
-    private inline def handleScheduleAtFixedRate(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerKey: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event]) = {
+    private inline def handleScheduleAtFixedRate(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerKey: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event]): EventResponse = {
         import SchedulerEvent.*
 
         for

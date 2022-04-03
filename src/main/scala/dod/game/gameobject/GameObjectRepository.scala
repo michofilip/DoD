@@ -83,10 +83,10 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
     def findTimer(id: UUID, key: String): Option[Timer] =
         findById(id).flatMap(_.timer(key))
 
-    def finsScheduler(id: UUID, key: String): Option[Scheduler] =
+    def findScheduler(id: UUID, key: String): Option[Scheduler] =
         findById(id).flatMap(_.scheduler(key))
 
-    def finsBehavior(id: UUID, key: String): Option[Behavior] =
+    def findBehavior(id: UUID, key: String): Option[Behavior] =
         findById(id).flatMap(_.behavior(key))
 }
 

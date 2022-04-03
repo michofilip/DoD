@@ -1,3 +1,5 @@
 package dod.game.model
 
-final case class Behavior()
+import dod.game.event.Event
+
+final case class Behavior(events: Seq[Event])
