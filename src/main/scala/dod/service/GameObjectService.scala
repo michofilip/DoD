@@ -2,6 +2,7 @@ package dod.service
 
 import dod.data.PhysicsSelectorRepository
 import dod.game.gameobject.*
+import dod.game.gameobject.behavior.BehaviorProperty
 import dod.game.gameobject.commons.*
 import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
@@ -9,8 +10,8 @@ import dod.game.gameobject.position.*
 import dod.game.gameobject.scheduler.SchedulerProperty
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
-import dod.game.model.{Coordinates, Direction}
 import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Direction}
 
 import java.util.UUID
 
@@ -20,22 +21,15 @@ class GameObjectService(positionService: PositionService,
                         graphicsService: GraphicsService) {
 
     private def createGameObject(id: UUID, name: String, timestamp: Timestamp): GameObject = {
-        val commonsProperty = CommonsProperty(id = id, name = name, creationTimestamp = timestamp)
-        val positionProperty = positionService.getPositionProperty(name, timestamp)
-        val stateProperty = stateService.getStateProperty(name, timestamp)
-        val physicsProperty = physicsService.getPhysicsProperty(name)
-        val graphicsProperty = graphicsService.getGraphicsProperty(name)
-        val timersProperty = Some(TimersProperty())
-        val schedulerProperty = Some(SchedulerProperty())
-
         GameObject(
-            commonsProperty = commonsProperty,
-            positionProperty = positionProperty,
-            stateProperty = stateProperty,
-            physicsProperty = physicsProperty,
-            graphicsProperty = graphicsProperty,
-            timersProperty = timersProperty,
-            schedulerProperty = schedulerProperty
+            commonsProperty = CommonsProperty(id = id, name = name, creationTimestamp = timestamp),
+            positionProperty = positionService.getPositionProperty(name, timestamp),
+            stateProperty = stateService.getStateProperty(name, timestamp),
+            physicsProperty = physicsService.getPhysicsProperty(name),
+            graphicsProperty = graphicsService.getGraphicsProperty(name),
+            timersProperty = Some(TimersProperty()),
+            schedulerProperty = Some(SchedulerProperty()),
+            behaviorProperty = Some(BehaviorProperty())
         )
     }
 

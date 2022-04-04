@@ -13,13 +13,13 @@ class PhysicsSelectorRepository(physicsRepository: PhysicsRepository) {
         PhysicsSelectorVariant(name = "door", state = Some(State.Closed), physicsId = 2),
         PhysicsSelectorVariant(name = "switch", state = Some(State.Off), physicsId = 2),
         PhysicsSelectorVariant(name = "switch", state = Some(State.On), physicsId = 2)
-    ).groupBy(_.name).view.mapValues { variants =>
+    ).groupBy(_.name).transform { case (_, variants) =>
         val variantMapped = variants.map { variant =>
             variant.state -> physicsRepository.findById(variant.physicsId)
         }.toMap
 
         new PhysicsSelector(variantMapped)
-    }.toMap
+    }
 
     def findByName(name: String): Option[PhysicsSelector] = physicsSelectorByName.get(name)
 }

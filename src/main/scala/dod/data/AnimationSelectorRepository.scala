@@ -16,13 +16,13 @@ class AnimationSelectorRepository(animationRepository: AnimationRepository) {
         AnimationSelectorVariant(name = "door", state = Some(State.Closed), direction = None, animationId = 8),
         AnimationSelectorVariant(name = "switch", state = Some(State.Off), direction = None, animationId = 9),
         AnimationSelectorVariant(name = "switch", state = Some(State.On), direction = None, animationId = 10)
-    ).groupBy(_.name).view.mapValues { variants =>
+    ).groupBy(_.name).transform { case (_, variants) =>
         val variantMapped = variants.map { variant =>
             (variant.state, variant.direction) -> animationRepository.findById(variant.animationId)
         }.toMap
 
         new AnimationSelector(variantMapped)
-    }.toMap
+    }
 
     def findByName(name: String): Option[AnimationSelector] = animationSelectorByName.get(name)
 }
