@@ -39,4 +39,6 @@ enum DecimalExpr extends OrderedExpr[Double] {
 
     def toDecimalExpr: DecimalExpr = this
 
+    def toStringExpr: StringExpr = StringExpr.DecimalToString(this)
+
 }

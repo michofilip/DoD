@@ -16,4 +16,6 @@ object Expr {
 
     def apply(value: Double): DecimalExpr = DecimalExpr.Constant(value)
 
+    def apply(value: String): StringExpr = StringExpr.Constant(value)
+
 }

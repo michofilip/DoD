@@ -42,4 +42,6 @@ enum IntegerExpr extends OrderedExpr[Int] {
 
     def toDecimalExpr: DecimalExpr = DecimalExpr.IntegerToDecimal(this)
 
+    def toStringExpr: StringExpr = StringExpr.IntegerToString(this)
+
 }
