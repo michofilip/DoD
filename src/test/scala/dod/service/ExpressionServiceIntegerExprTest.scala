@@ -1,10 +1,12 @@
 package dod.service
 
 import dod.game.expression.{BooleanExpr, Expr}
+import dod.game.gameobject.GameObjectRepository
 import org.scalatest.funsuite.AnyFunSuite
 
 class ExpressionServiceIntegerExprTest extends AnyFunSuite {
 
+    given GameObjectRepository = GameObjectRepository()
     private val expressionService = new ExpressionService
 
     test("IntegerExpr::Constant test") {

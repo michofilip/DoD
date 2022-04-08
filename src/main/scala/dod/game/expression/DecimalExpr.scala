@@ -1,17 +1,8 @@
 package dod.game.expression
 
-enum DecimalExpr extends OrderedExpr[Double] {
+import dod.game.expression.DecimalExpr.{Addition, Division, Multiplication, Negation, Subtraction}
 
-    case Constant(value: Double)
-
-    case Negation(expr: DecimalExpr)
-    case Addition(expr1: DecimalExpr, expr2: DecimalExpr)
-    case Subtraction(expr1: DecimalExpr, expr2: DecimalExpr)
-    case Multiplication(expr1: DecimalExpr, expr2: DecimalExpr)
-    case Division(expr1: DecimalExpr, expr2: DecimalExpr)
-
-    case IntegerToDecimal(expr: IntegerExpr)
-
+abstract class DecimalExpr extends OrderedExpr[Double] {
 
     override def compare(x: Double, y: Double): Int = java.lang.Double.compare(x, y)
 
@@ -40,5 +31,23 @@ enum DecimalExpr extends OrderedExpr[Double] {
     def toDecimalExpr: DecimalExpr = this
 
     def toStringExpr: StringExpr = StringExpr.DecimalToString(this)
+
+}
+
+object DecimalExpr {
+
+    final case class Constant(value: Double) extends DecimalExpr
+
+    final case class Negation(expr: DecimalExpr) extends DecimalExpr
+
+    final case class Addition(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr
+
+    final case class Subtraction(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr
+
+    final case class Multiplication(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr
+
+    final case class Division(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr
+
+    final case class IntegerToDecimal(expr: IntegerExpr) extends DecimalExpr
 
 }

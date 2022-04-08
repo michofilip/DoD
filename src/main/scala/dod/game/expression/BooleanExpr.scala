@@ -1,26 +1,37 @@
 package dod.game.expression
 
-enum BooleanExpr extends Expr[Boolean] {
+import dod.game.expression.BooleanExpr.{And, Not, Or}
 
-    case Constant(value: Boolean)
-    
-    case Not(expr: BooleanExpr)
-    case And(expr1: BooleanExpr, expr2: BooleanExpr)
-    case Or(expr1: BooleanExpr, expr2: BooleanExpr)
+abstract class BooleanExpr extends Expr[Boolean] {
 
-    case Equals[T](expr1: Expr[T], expr2: Expr[T])
-    case UnEquals[T](expr1: Expr[T], expr2: Expr[T])
-
-    case Less[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T])
-    case LessEquals[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T])
-    case Greater[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T])
-    case GreaterEquals[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T])
-
-    
     def unary_! : BooleanExpr = Not(this)
 
     def &&(that: BooleanExpr): BooleanExpr = And(this, that)
 
     def ||(that: BooleanExpr): BooleanExpr = Or(this, that)
+
+}
+
+object BooleanExpr {
+
+    final case class Constant(value: Boolean) extends BooleanExpr
+
+    final case class Not(expr: BooleanExpr) extends BooleanExpr
+
+    final case class And(expr1: BooleanExpr, expr2: BooleanExpr) extends BooleanExpr
+
+    final case class Or(expr1: BooleanExpr, expr2: BooleanExpr) extends BooleanExpr
+
+    final case class Equals[T](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr
+
+    final case class UnEquals[T](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr
+
+    final case class Less[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr
+
+    final case class LessEquals[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr
+
+    final case class Greater[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr
+
+    final case class GreaterEquals[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr
 
 }

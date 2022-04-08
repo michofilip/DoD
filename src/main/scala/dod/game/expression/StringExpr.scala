@@ -1,14 +1,21 @@
 package dod.game.expression
 
-enum StringExpr extends Expr[String] {
+import dod.game.expression.StringExpr.Concatenate
 
-    case Constant(value: String)
-
-    case Concatenate(expr1: StringExpr, expr2: StringExpr)
-
-    case IntegerToString(expr: IntegerExpr)
-    case DecimalToString(expr: DecimalExpr)
-
+abstract class StringExpr extends Expr[String] {
 
     def +(that: StringExpr): StringExpr = Concatenate(this, that)
+
+}
+
+object StringExpr {
+
+    final case class Constant(value: String) extends StringExpr
+
+    final case class Concatenate(expr1: StringExpr, expr2: StringExpr) extends StringExpr
+
+    final case class IntegerToString(expr: IntegerExpr) extends StringExpr
+
+    final case class DecimalToString(expr: DecimalExpr) extends StringExpr
+
 }
