@@ -1,5 +1,8 @@
 package dod.game.expression
 
+import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Direction, Shift}
+
 abstract class Expr[T] {
 
     def ===(that: Expr[T]): BooleanExpr = BooleanExpr.Equals(this, that)
@@ -17,5 +20,13 @@ object Expr {
     def apply(value: Double): DecimalExpr = DecimalExpr.Constant(value)
 
     def apply(value: String): StringExpr = StringExpr.Constant(value)
+
+    def apply(value: Timestamp): TimestampExpr = TimestampExpr.Constant(value)
+
+    def apply(value: Coordinates): CoordinatesExpr = CoordinatesExpr.Constant(value)
+
+    def apply(value: Shift): ShiftExpr = ShiftExpr.Constant(value)
+
+    def apply(value: Direction): DirectionExpr = DirectionExpr.Constant(value)
 
 }

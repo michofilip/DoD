@@ -17,7 +17,7 @@ object Timestamps {
     }
 
     extension (timestamp: Timestamp) {
-        private[model] def value: Long = timestamp
+        def value: Long = timestamp
 
         @targetName("add")
         def +(duration: Duration): Timestamp = timestamp + duration.value

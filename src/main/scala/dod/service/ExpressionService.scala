@@ -1,6 +1,6 @@
 package dod.service
 
-import dod.game.expression.{BooleanExpr, DecimalExpr, Expr, GameObjectExpr, IntegerExpr, StringExpr}
+import dod.game.expression.{BooleanExpr, CoordinatesExpr, DecimalExpr, DirectionExpr, Expr, GameObjectExpr, IntegerExpr, ShiftExpr, StringExpr, TimestampExpr}
 import dod.game.gameobject.GameObjectRepository
 
 import scala.math
@@ -42,7 +42,20 @@ class ExpressionService {
         case StringExpr.IntegerToString(expr) => res1(expr) { x => Some(x.toString) }
         case StringExpr.DecimalToString(expr) => res1(expr) { x => Some(x.toString) }
 
+        case TimestampExpr.Constant(value) => Some(value)
+
+        case CoordinatesExpr.Constant(value) => Some(value)
+        case CoordinatesExpr.MoveBy(expr1, expr2) => res2(expr1, expr2) { (x, y) => Some(x.moveBy(y)) }
+
+        case ShiftExpr.Constant(value) => Some(value)
+
+        case DirectionExpr.Constant(value) => Some(value)
+
         case GameObjectExpr.GetName(id) => gor.findById(id).map(_.name)
+        case GameObjectExpr.GetCreationTimestamp(id) => gor.findById(id).map(_.creationTimestamp)
+        case GameObjectExpr.GetCoordinates(id) => gor.findById(id).flatMap(_.position.coordinates)
+        case GameObjectExpr.GetDirection(id) => gor.findById(id).flatMap(_.position.direction)
+        case GameObjectExpr.GetPositionTimestamp(id) => gor.findById(id).flatMap(_.position.positionTimestamp)
 
         case _ => None
     }
