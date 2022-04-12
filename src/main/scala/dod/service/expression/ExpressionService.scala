@@ -1,4 +1,4 @@
-package dod.service
+package dod.service.expression
 
 import dod.game.expression.{BooleanExpr, CoordinatesExpr, DecimalExpr, DirectionExpr, Expr, GameObjectExpr, IntegerExpr, ShiftExpr, StringExpr, TimestampExpr}
 import dod.game.gameobject.GameObjectRepository
