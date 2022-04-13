@@ -1,10 +1,11 @@
 package dod.service.expression
 
-import dod.game.expression.{BooleanExpr, CoordinatesExpr, DecimalExpr, DirectionExpr, Expr, GameObjectExpr, IntegerExpr, ShiftExpr, StringExpr, TimestampExpr}
+import dod.game.expression.{BooleanExpr, CoordinatesExpr, DecimalExpr, DirectionExpr, Expr, GameObjectExpr, IntegerExpr, ShiftExpr, StateExpr, StringExpr, TimestampExpr}
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction, Shift}
+import dod.game.model.{Coordinates, Direction, Shift, State}
 
+import java.util.UUID
 import scala.math
 import scala.math.Ordered
 
@@ -16,6 +17,9 @@ class ExpressionService {
         case GameObjectExpr.GetCoordinates(id) => gor.findById(id).flatMap(_.position.coordinates)
         case GameObjectExpr.GetDirection(id) => gor.findById(id).flatMap(_.position.direction)
         case GameObjectExpr.GetPositionTimestamp(id) => gor.findById(id).flatMap(_.position.positionTimestamp)
+        case GameObjectExpr.GetState(id) => gor.findById(id).flatMap(_.states.state)
+        case GameObjectExpr.GetStateTimestamp(id) => gor.findById(id).flatMap(_.states.stateTimestamp)
+        case GameObjectExpr.GetSolid(id) => gor.findById(id).flatMap(_.physics).map(_.solid)
 
         case expr: BooleanExpr => resolveBooleanExpr(expr)
         case expr: IntegerExpr => resolveIntegerExpr(expr)
@@ -25,6 +29,7 @@ class ExpressionService {
         case expr: CoordinatesExpr => resolveCoordinatesExpr(expr)
         case expr: ShiftExpr => resolveShiftExpr(expr)
         case expr: DirectionExpr => resolveDirectionExpr(expr)
+        case expr: StateExpr => resolveStateExpr(expr)
 
         case _ => None
     }
@@ -85,6 +90,10 @@ class ExpressionService {
 
     private inline def resolveDirectionExpr(expr: DirectionExpr)(using gor: GameObjectRepository): Option[Direction] = expr match {
         case DirectionExpr.Constant(value) => Some(value)
+    }
+
+    private inline def resolveStateExpr(expr: StateExpr)(using gor: GameObjectRepository): Option[State] = expr match {
+        case StateExpr.Constant(value) => Some(value)
     }
 
 
