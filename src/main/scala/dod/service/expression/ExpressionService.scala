@@ -11,6 +11,12 @@ import scala.math.Ordered
 class ExpressionService {
 
     def resolve[T](expr: Expr[T])(using gor: GameObjectRepository): Option[T] = expr match {
+        case GameObjectExpr.GetName(id) => gor.findById(id).map(_.name)
+        case GameObjectExpr.GetCreationTimestamp(id) => gor.findById(id).map(_.creationTimestamp)
+        case GameObjectExpr.GetCoordinates(id) => gor.findById(id).flatMap(_.position.coordinates)
+        case GameObjectExpr.GetDirection(id) => gor.findById(id).flatMap(_.position.direction)
+        case GameObjectExpr.GetPositionTimestamp(id) => gor.findById(id).flatMap(_.position.positionTimestamp)
+
         case expr: BooleanExpr => resolveBooleanExpr(expr)
         case expr: IntegerExpr => resolveIntegerExpr(expr)
         case expr: DecimalExpr => resolveDecimalExpr(expr)
@@ -19,12 +25,6 @@ class ExpressionService {
         case expr: CoordinatesExpr => resolveCoordinatesExpr(expr)
         case expr: ShiftExpr => resolveShiftExpr(expr)
         case expr: DirectionExpr => resolveDirectionExpr(expr)
-
-        //        case GameObjectExpr.GetName(id) => gor.findById(id).map(_.name)
-        //        case GameObjectExpr.GetCreationTimestamp(id) => gor.findById(id).map(_.creationTimestamp)
-        //        case GameObjectExpr.GetCoordinates(id) => gor.findById(id).flatMap(_.position.coordinates)
-        //        case GameObjectExpr.GetDirection(id) => gor.findById(id).flatMap(_.position.direction)
-        //        case GameObjectExpr.GetPositionTimestamp(id) => gor.findById(id).flatMap(_.position.positionTimestamp)
 
         case _ => None
     }

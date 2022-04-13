@@ -2,9 +2,7 @@ package dod.game.expression
 
 import dod.game.model.Shift
 
-abstract class ShiftExpr extends Expr[Shift] {
-
-}
+abstract class ShiftExpr extends Expr[Shift]
 
 object ShiftExpr {
 
