@@ -1,7 +1,7 @@
 package dod.game.gameobject
 
 import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Behavior, Coordinates, Scheduler, Timer}
+import dod.game.model.{Behavior, Coordinates, Scheduler, Script, Timer}
 
 import java.util.UUID
 import scala.annotation.targetName
@@ -88,6 +88,10 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     def findBehavior(id: UUID, key: String): Option[Behavior] =
         findById(id).flatMap(_.behavior(key))
+
+    def findScript(id: UUID, key: String): Option[Script] =
+        findById(id).flatMap(_.script(key))
+        
 }
 
 object GameObjectRepository {
