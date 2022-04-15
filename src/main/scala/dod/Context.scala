@@ -2,6 +2,7 @@ package dod
 
 import dod.data.{AnimationRepository, AnimationSelectorRepository, FrameRepository, PhysicsRepository, PhysicsSelectorRepository, PositionRepository, SpriteRepository, StateRepository, TileRepository, TilesetRepository}
 import dod.service.event.EventService
+import dod.service.expression.ExpressionService
 import dod.service.{GameObjectService, GameStageService, GraphicsService, KeyEventService, PhysicsService, PositionService, StateService}
 
 class Context {
@@ -28,7 +29,8 @@ class Context {
     val gameObjectService = new GameObjectService(positionService, stateService, physicsService, graphicsService)
     val gameStageService = new GameStageService(gameObjectService)
 
-    val eventService = new EventService
+    private val expressionService = new ExpressionService
+    val eventService = new EventService(expressionService)
     val keyEventService = new KeyEventService
 
 }
