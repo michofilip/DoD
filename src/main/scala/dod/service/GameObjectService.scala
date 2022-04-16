@@ -8,6 +8,7 @@ import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
 import dod.game.gameobject.position.*
 import dod.game.gameobject.scheduler.SchedulerProperty
+import dod.game.gameobject.script.ScriptProperty
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
 import dod.game.model.Timestamps.Timestamp
@@ -29,7 +30,8 @@ class GameObjectService(positionService: PositionService,
             graphicsProperty = graphicsService.getGraphicsProperty(name),
             timersProperty = Some(TimersProperty()),
             schedulerProperty = Some(SchedulerProperty()),
-            behaviorProperty = Some(BehaviorProperty())
+            behaviorProperty = Some(BehaviorProperty()),
+            scriptProperty = Some(ScriptProperty())
         )
     }
 
