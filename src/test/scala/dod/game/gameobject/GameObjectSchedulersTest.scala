@@ -19,89 +19,89 @@ class GameObjectSchedulersTest extends AnyFunSuite {
     private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::schedulers no SchedulerProperty test") {
-        val key = "scheduler_1"
+        val schedulerName = "scheduler_1"
         val gameObject = GameObject(commonsProperty = commonsProperty)
 
-        assertResult(false)(gameObject.scheduler(key).isDefined)
+        assertResult(false)(gameObject.scheduler(schedulerName).isDefined)
     }
 
     test("GameObject::schedulers no scheduler test") {
-        val key = "scheduler_1"
+        val schedulerName = "scheduler_1"
         val schedulerProperty = SchedulerProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
 
-        assertResult(false)(gameObject.scheduler(key).isDefined)
+        assertResult(false)(gameObject.scheduler(schedulerName).isDefined)
     }
 
     test("GameObject::schedulers test") {
-        val key = "scheduler_1"
+        val schedulerName = "scheduler_1"
         val scheduler = Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
-        val schedulerProperty = SchedulerProperty(Map(key -> scheduler))
+        val schedulerProperty = SchedulerProperty(Map(schedulerName -> scheduler))
         val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
 
-        assertResult(true)(gameObject.scheduler(key).isDefined)
+        assertResult(true)(gameObject.scheduler(schedulerName).isDefined)
 
         for {
-            schedulerActual <- gameObject.scheduler(key)
+            schedulerActual <- gameObject.scheduler(schedulerName)
         } yield {
             assertResult(scheduler)(schedulerActual)
         }
     }
 
     test("GameObject::schedulers scheduleOnce test") {
-        val key = "scheduler_1"
+        val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, repeating = false, events = Seq.empty)
         val schedulerProperty = SchedulerProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
-            .updateSchedulers(SchedulerTransformer.scheduleOnce(key, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
+            .updateSchedulers(SchedulerTransformer.scheduleOnce(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
 
-        assertResult(true)(gameObject.scheduler(key).isDefined)
+        assertResult(true)(gameObject.scheduler(schedulerName).isDefined)
 
         for {
-            schedulerActual <- gameObject.scheduler(key)
+            schedulerActual <- gameObject.scheduler(schedulerName)
         } yield {
             assertResult(scheduler)(schedulerActual)
         }
     }
 
     test("GameObject::schedulers scheduleAtFixedRate test") {
-        val key = "scheduler_1"
+        val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, repeating = true, events = Seq.empty)
         val schedulerProperty = SchedulerProperty(Map.empty)
         val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
-            .updateSchedulers(SchedulerTransformer.scheduleAtFixedRate(key, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
+            .updateSchedulers(SchedulerTransformer.scheduleAtFixedRate(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
 
-        assertResult(true)(gameObject.scheduler(key).isDefined)
+        assertResult(true)(gameObject.scheduler(schedulerName).isDefined)
 
         for {
-            schedulerActual <- gameObject.scheduler(key)
+            schedulerActual <- gameObject.scheduler(schedulerName)
         } yield {
             assertResult(scheduler)(schedulerActual)
         }
     }
 
     test("GameObject::schedulers removeScheduler test") {
-        val key = "scheduler_1"
+        val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
-        val schedulerProperty = SchedulerProperty(Map(key -> scheduler))
+        val schedulerProperty = SchedulerProperty(Map(schedulerName -> scheduler))
         val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
-            .updateSchedulers(SchedulerTransformer.removeScheduler(key))
+            .updateSchedulers(SchedulerTransformer.removeScheduler(schedulerName))
 
-        assertResult(false)(gameObject.scheduler(key).isDefined)
+        assertResult(false)(gameObject.scheduler(schedulerName).isDefined)
     }
 
     test("GameObject::schedulers delaySchedulerBy test") {
-        val key = "scheduler_1"
+        val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
         val schedulerExpected = scheduler.copy(initialTimeStamp = Timestamp(1000))
-        val schedulerProperty = SchedulerProperty(Map(key -> scheduler))
+        val schedulerProperty = SchedulerProperty(Map(schedulerName -> scheduler))
         val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
-            .updateSchedulers(SchedulerTransformer.delaySchedulerBy(key, Duration(1000)))
+            .updateSchedulers(SchedulerTransformer.delaySchedulerBy(schedulerName, Duration(1000)))
 
-        assertResult(true)(gameObject.scheduler(key).isDefined)
+        assertResult(true)(gameObject.scheduler(schedulerName).isDefined)
 
         for {
-            schedulerActual <- gameObject.scheduler(key)
+            schedulerActual <- gameObject.scheduler(schedulerName)
         } yield {
             assertResult(schedulerExpected)(schedulerActual)
         }

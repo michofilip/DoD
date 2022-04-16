@@ -10,21 +10,21 @@ import java.util.UUID
 private[event] final class BehaviorEventService {
 
     def processBehaviorEvent(gameObjectRepository: GameObjectRepository, behaviorEvent: BehaviorEvent): EventResponse = behaviorEvent match {
-        case BehaviorEvent.UseBehavior(gameObjectId, behaviorKey) =>
-            handleUseBehavior(gameObjectRepository, gameObjectId, behaviorKey)
+        case BehaviorEvent.UseBehavior(gameObjectId, behaviorName) =>
+            handleUseBehavior(gameObjectRepository, gameObjectId, behaviorName)
 
-        case BehaviorEvent.AddBehavior(gameObjectId, behaviorKey, behavior) =>
-            handleBehaviorUpdate(gameObjectRepository, gameObjectId, BehaviorTransformer.addBehavior(behaviorKey, behavior))
+        case BehaviorEvent.AddBehavior(gameObjectId, behaviorName, behavior) =>
+            handleBehaviorUpdate(gameObjectRepository, gameObjectId, BehaviorTransformer.addBehavior(behaviorName, behavior))
 
-        case BehaviorEvent.RemoveBehavior(gameObjectId, behaviorKey) =>
-            handleBehaviorUpdate(gameObjectRepository, gameObjectId, BehaviorTransformer.removeBehavior(behaviorKey))
+        case BehaviorEvent.RemoveBehavior(gameObjectId, behaviorName) =>
+            handleBehaviorUpdate(gameObjectRepository, gameObjectId, BehaviorTransformer.removeBehavior(behaviorName))
 
         case BehaviorEvent.RemoveAllBehavior(gameObjectId) =>
             handleBehaviorUpdate(gameObjectRepository, gameObjectId, BehaviorTransformer.removeAllBehavior)
     }
 
-    private inline def handleUseBehavior(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, behaviorKey: String): EventResponse =
-        gameObjectRepository.findBehavior(gameObjectId, behaviorKey).fold((gameObjectRepository, Seq.empty)) { behavior =>
+    private inline def handleUseBehavior(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, behaviorName: String): EventResponse =
+        gameObjectRepository.findBehavior(gameObjectId, behaviorName).fold((gameObjectRepository, Seq.empty)) { behavior =>
             (gameObjectRepository, behavior.events)
         }
 

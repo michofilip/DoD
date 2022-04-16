@@ -13,17 +13,17 @@ trait SchedulerTransformer extends (Map[String, Scheduler] => Map[String, Schedu
 
 object SchedulerTransformer {
 
-    def scheduleOnce(schedulerKey: String, timerId: UUID, timerKey: String, initialTimeStamp: Timestamp, delay: Duration, events: Seq[Event]): SchedulerTransformer =
-        schedulers => schedulers + (schedulerKey -> model.Scheduler(timerId, timerKey, initialTimeStamp, delay, repeating = false, events))
+    def scheduleOnce(schedulerName: String, timerId: UUID, timerName: String, initialTimeStamp: Timestamp, delay: Duration, events: Seq[Event]): SchedulerTransformer =
+        schedulers => schedulers + (schedulerName -> model.Scheduler(timerId, timerName, initialTimeStamp, delay, repeating = false, events))
 
-    def scheduleAtFixedRate(schedulerKey: String, timerId: UUID, timerKey: String, initialTimeStamp: Timestamp, delay: Duration, events: Seq[Event]): SchedulerTransformer =
-        schedulers => schedulers + (schedulerKey -> model.Scheduler(timerId, timerKey, initialTimeStamp, delay, repeating = true, events))
+    def scheduleAtFixedRate(schedulerName: String, timerId: UUID, timerName: String, initialTimeStamp: Timestamp, delay: Duration, events: Seq[Event]): SchedulerTransformer =
+        schedulers => schedulers + (schedulerName -> model.Scheduler(timerId, timerName, initialTimeStamp, delay, repeating = true, events))
 
-    def removeScheduler(schedulerKey: String): SchedulerTransformer = schedulers => schedulers - schedulerKey
+    def removeScheduler(schedulerName: String): SchedulerTransformer = schedulers => schedulers - schedulerName
 
-    def delaySchedulerBy(schedulerKey: String, duration: Duration): SchedulerTransformer =
-        schedulers => schedulers.get(schedulerKey) match {
-            case Some(scheduler) => schedulers + (schedulerKey -> scheduler.delayBy(duration))
+    def delaySchedulerBy(schedulerName: String, duration: Duration): SchedulerTransformer =
+        schedulers => schedulers.get(schedulerName) match {
+            case Some(scheduler) => schedulers + (schedulerName -> scheduler.delayBy(duration))
             case None => schedulers
         }
 

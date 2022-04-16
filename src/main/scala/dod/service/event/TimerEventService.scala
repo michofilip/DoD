@@ -11,23 +11,23 @@ import java.util.UUID
 private[event] final class TimerEventService {
 
     def processTimerEvent(gameObjectRepository: GameObjectRepository, timerEvent: TimerEvent): EventResponse = timerEvent match {
-        case TimerEvent.AddTimer(gameObjectId, timerKey, initialTimestamp) =>
-            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimer(timerKey, initialTimestamp))
+        case TimerEvent.AddTimer(gameObjectId, timerName, initialTimestamp) =>
+            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimer(timerName, initialTimestamp))
 
-        case TimerEvent.AddTimerAndStart(gameObjectId, timerKey, initialTimestamp) =>
-            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimerAndStart(timerKey, initialTimestamp))
+        case TimerEvent.AddTimerAndStart(gameObjectId, timerName, initialTimestamp) =>
+            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimerAndStart(timerName, initialTimestamp))
 
-        case TimerEvent.RemoveTimer(gameObjectId, timerKey) =>
-            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.removeTimer(timerKey))
+        case TimerEvent.RemoveTimer(gameObjectId, timerName) =>
+            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.removeTimer(timerName))
 
         case TimerEvent.RemoveAllTimers(gameObjectId) =>
             handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.removeAllTimers)
 
-        case TimerEvent.StartTimer(gameObjectId, timerKey) =>
-            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.startTimer(timerKey))
+        case TimerEvent.StartTimer(gameObjectId, timerName) =>
+            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.startTimer(timerName))
 
-        case TimerEvent.StopTimer(gameObjectId, timerKey) =>
-            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.stopTimer(timerKey))
+        case TimerEvent.StopTimer(gameObjectId, timerName) =>
+            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.stopTimer(timerName))
 
         case TimerEvent.StartAllTimers(gameObjectId) =>
             handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.startAllTimers)

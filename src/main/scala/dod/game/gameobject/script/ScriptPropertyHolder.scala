@@ -13,7 +13,7 @@ trait ScriptPropertyHolder {
 
     protected val scriptProperty: Option[ScriptProperty]
 
-    final def script(name: String): Option[Script] = self.scriptProperty.flatMap(_.scripts.get(name))
+    final def script(scriptName: String): Option[Script] = self.scriptProperty.flatMap(_.scripts.get(scriptName))
 
     final def updateScripts(scriptTransformer: ScriptTransformer): GameObject =
         update(scriptProperty = self.scriptProperty.map(_.updateScripts(scriptTransformer)))

@@ -8,7 +8,7 @@ trait BehaviorPropertyHolder {
 
     protected val behaviorProperty: Option[BehaviorProperty]
 
-    final def behavior(key: String): Option[Behavior] = self.behaviorProperty.flatMap(_.behaviors.get(key))
+    final def behavior(behaviorName: String): Option[Behavior] = self.behaviorProperty.flatMap(_.behaviors.get(behaviorName))
 
     final def updateBehaviors(behaviorTransformer: BehaviorTransformer): GameObject =
         update(behaviorProperty = self.behaviorProperty.map(_.updateBehaviors(behaviorTransformer)))
