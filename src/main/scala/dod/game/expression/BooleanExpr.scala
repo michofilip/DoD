@@ -22,9 +22,9 @@ object BooleanExpr {
 
     final case class Or(expr1: BooleanExpr, expr2: BooleanExpr) extends BooleanExpr
 
-    final case class Equals[T](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr
+    final case class Equals[T1, T2](expr1: Expr[T1], expr2: Expr[T2]) extends BooleanExpr
 
-    final case class UnEquals[T](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr
+    final case class UnEquals[T1, T2](expr1: Expr[T1], expr2: Expr[T2]) extends BooleanExpr
 
     final case class Less[T](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr
 

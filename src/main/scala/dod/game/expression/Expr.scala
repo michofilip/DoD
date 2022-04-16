@@ -5,9 +5,9 @@ import dod.game.model.{Coordinates, Direction, Shift}
 
 abstract class Expr[T] {
 
-    def ===(that: Expr[T]): BooleanExpr = BooleanExpr.Equals(this, that)
+    def ===[T1](that: Expr[T1]): BooleanExpr = BooleanExpr.Equals(this, that)
 
-    def !==(that: Expr[T]): BooleanExpr = BooleanExpr.UnEquals(this, that)
+    def !==[T1](that: Expr[T1]): BooleanExpr = BooleanExpr.UnEquals(this, that)
 
 }
 
