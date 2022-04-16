@@ -16,13 +16,13 @@ private[event] final class ScriptEventService(expressionService: ExpressionServi
             handleRunScript(gameObjectRepository, gameObjectId, scriptName, lineNo)
     }
 
-    private def handleRunScript(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, scriptName: String, lineNo: Int): EventResponse = {
+    private inline def handleRunScript(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, scriptName: String, lineNo: Int): EventResponse = {
         for
             script <- gameObjectRepository.findScript(gameObjectId, scriptName)
         yield {
             given GameObjectRepository = gameObjectRepository
 
-            val responseEvents = script.getNext(lineNo) match {
+            val responseEvents = script.nextExecutableLine(lineNo) match {
                 case (_, EXIT(_)) => Seq.empty
                 case (nextLineNo, EXECUTE(events)) => ScriptEvent.RunScript(gameObjectId, scriptName, nextLineNo + 1) +: events
                 case (nextLineNo, TEST(condition)) => expressionService.resolve(condition) match {

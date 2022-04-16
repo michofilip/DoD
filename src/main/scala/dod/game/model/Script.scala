@@ -1,8 +1,10 @@
 package dod.game.model
 
-class Script(instructions: IndexedSeq[Instruction]) {
+import dod.game.model.Instruction.*
 
-    import Instruction.*
+import scala.annotation.tailrec
+
+final case class Script(instructions: IndexedSeq[Instruction]) {
 
     private val scriptLength = instructions.length
 
@@ -11,19 +13,22 @@ class Script(instructions: IndexedSeq[Instruction]) {
             case (LABEL(labelId), lineNo) => labelId -> lineNo
         }.toMap
 
-    private def getInstruction(lineNo: Int): Instruction =
+
+    @tailrec
+    def nextExecutableLine(lineNo: Int): (Int, Instruction) =
+        getInstruction(lineNo) match {
+            case LABEL(_) => nextExecutableLine(lineNo + 1)
+            case GOTO(labelId) => labelMap.get(labelId) match {
+                case Some(lineNo) => nextExecutableLine(lineNo + 1)
+                case None => (lineNo, EXIT(2))
+            }
+            case instruction => (lineNo, instruction)
+        }
+
+    private inline def getInstruction(lineNo: Int): Instruction =
         if (0 <= lineNo && lineNo < scriptLength)
             instructions(lineNo)
         else
             EXIT(1)
 
-    def getNext(lineNo: Int): (Int, Instruction) =
-        getInstruction(lineNo) match {
-            case LABEL(_) => getNext(lineNo + 1)
-            case GOTO(labelId) => labelMap.get(labelId) match {
-                case Some(lineNo) => getNext(lineNo + 1)
-                case None => (lineNo, EXIT(2))
-            }
-            case instruction => (lineNo, instruction)
-        }
 }

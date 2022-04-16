@@ -7,25 +7,6 @@ sealed abstract class Statement
 
 object Statement {
 
-    def execute(events: Event*): Statement =
-        Execute(events)
-
-    def block(statements: Statement*): Statement =
-        Block(statements)
-
-    def when(condition: BooleanExpr): When =
-        When(condition)
-
-    def loop(condition: BooleanExpr): Loop =
-        Loop(condition)
-
-    def variant[T](expression: Expr[T], expressions: Expr[T]*): Variant[T] =
-        Variant(expression +: expressions)
-
-    def choose[T](expression: Expr[T]): Choose[T] =
-        Choose(expression)
-
-
     final case class Execute(events: Seq[Event]) extends Statement
 
     final case class Block(statements: Seq[Statement]) extends Statement
