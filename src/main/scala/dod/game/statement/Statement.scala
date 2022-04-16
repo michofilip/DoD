@@ -19,10 +19,10 @@ object Statement {
     def loop(condition: BooleanExpr): Loop =
         Loop(condition)
 
-    def variant(expression: Expr[_], expressions: Expr[_]*): Variant =
+    def variant[T](expression: Expr[T], expressions: Expr[T]*): Variant[T] =
         Variant(expression +: expressions)
 
-    def choose(expression: Expr[_]): Choose =
+    def choose[T](expression: Expr[T]): Choose[T] =
         Choose(expression)
 
 
@@ -59,31 +59,31 @@ object Statement {
 
     final case class LoopBody(condition: BooleanExpr, body: Statement) extends Statement
 
-    final case class Variant(expressions: Seq[Expr[_]]) {
-        def when(condition: BooleanExpr): VariantWhen =
+    final case class Variant[T](expressions: Seq[Expr[T]]) {
+        def when(condition: BooleanExpr): VariantWhen[T] =
             VariantWhen(expressions, Some(condition))
 
-        def therefore(statements: Statement*): VariantWhenTherefore =
+        def therefore(statements: Statement*): VariantWhenTherefore[T] =
             VariantWhenTherefore(expressions, None, Block(statements))
     }
 
-    final case class VariantWhen(expressions: Seq[Expr[_]], conditionOpt: Option[BooleanExpr]) {
-        def therefore(statements: Statement*): VariantWhenTherefore =
+    final case class VariantWhen[T](expressions: Seq[Expr[T]], conditionOpt: Option[BooleanExpr]) {
+        def therefore(statements: Statement*): VariantWhenTherefore[T] =
             VariantWhenTherefore(expressions, conditionOpt, Block(statements))
     }
 
-    final case class VariantWhenTherefore(expressions: Seq[Expr[_]], conditionOpt: Option[BooleanExpr], therefore: Statement)
+    final case class VariantWhenTherefore[T](expressions: Seq[Expr[T]], conditionOpt: Option[BooleanExpr], therefore: Statement)
 
-    final case class Choose(expression: Expr[_]) {
-        def from(variant: VariantWhenTherefore, variants: VariantWhenTherefore*): ChooseVariants =
+    final case class Choose[T](expression: Expr[T]) {
+        def from(variant: VariantWhenTherefore[T], variants: VariantWhenTherefore[T]*): ChooseVariants[T] =
             ChooseVariants(expression, variant +: variants)
     }
 
-    final case class ChooseVariants(expression: Expr[_], variants: Seq[VariantWhenTherefore]) extends Statement {
-        def otherwise(statements: Statement*): ChooseVariantsOtherwise =
+    final case class ChooseVariants[T](expression: Expr[T], variants: Seq[VariantWhenTherefore[T]]) extends Statement {
+        def otherwise(statements: Statement*): ChooseVariantsOtherwise[T] =
             ChooseVariantsOtherwise(expression, variants, Block(statements))
     }
 
-    final case class ChooseVariantsOtherwise(expression: Expr[_], variants: Seq[VariantWhenTherefore], otherwise: Statement) extends Statement
+    final case class ChooseVariantsOtherwise[T](expression: Expr[T], variants: Seq[VariantWhenTherefore[T]], otherwise: Statement) extends Statement
 
 }

@@ -99,7 +99,7 @@ class StatementService {
         (instructions ++ newInstructions, afterLoopLabelIdId)
     }
 
-    private inline def compileVariant(variantWhenTherefore: VariantWhenTherefore, chooseExpr: Expr[_], exitLabelId: Int, labelId: Int): CompilerResponse = {
+    private inline def compileVariant[T](variantWhenTherefore: VariantWhenTherefore[T], chooseExpr: Expr[T], exitLabelId: Int, labelId: Int): CompilerResponse = {
         val variantExitLabelId = labelId
         val (variantInstructions, afterVariantLabelId) = compile(variantWhenTherefore.therefore, IndexedSeq.empty, variantExitLabelId + 1)
 
@@ -122,7 +122,7 @@ class StatementService {
         (newInstructions, afterVariantLabelId)
     }
 
-    private inline def compileChoose(expression: Expr[_], variants: Seq[VariantWhenTherefore], otherwise: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
+    private inline def compileChoose[T](expression: Expr[T], variants: Seq[VariantWhenTherefore[T]], otherwise: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         val exitLabelId = labelId
 
         val (variantInstructions, afterVariantLabelId) = variants.foldLeft((IndexedSeq.empty[Instruction], exitLabelId + 1)) {
