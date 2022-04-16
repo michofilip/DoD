@@ -1,7 +1,7 @@
 package dod.game.gameobject
 
 import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Behavior, Coordinates, Scheduler, Timer}
+import dod.game.model.{Behavior, Coordinates, Scheduler, Script, Timer}
 
 import java.util.UUID
 import scala.annotation.targetName
@@ -80,14 +80,18 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         .map(_.timestamp)
         .getOrElse(Timestamp.zero)
 
-    def findTimer(id: UUID, key: String): Option[Timer] =
-        findById(id).flatMap(_.timer(key))
+    def findTimer(id: UUID, timerName: String): Option[Timer] =
+        findById(id).flatMap(_.timer(timerName))
 
-    def findScheduler(id: UUID, key: String): Option[Scheduler] =
-        findById(id).flatMap(_.scheduler(key))
+    def findScheduler(id: UUID, schedulerName: String): Option[Scheduler] =
+        findById(id).flatMap(_.scheduler(schedulerName))
 
-    def findBehavior(id: UUID, key: String): Option[Behavior] =
-        findById(id).flatMap(_.behavior(key))
+    def findBehavior(id: UUID, behaviorName: String): Option[Behavior] =
+        findById(id).flatMap(_.behavior(behaviorName))
+
+    def findScript(id: UUID, scriptName: String): Option[Script] =
+        findById(id).flatMap(_.script(scriptName))
+        
 }
 
 object GameObjectRepository {
