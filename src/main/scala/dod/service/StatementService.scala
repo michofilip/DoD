@@ -9,39 +9,43 @@ import dod.game.statement.Statement.*
 
 class StatementService {
 
-    private given[T]: Conversion[T, IndexedSeq[T]] with
-        override def apply(x: T): IndexedSeq[T] = IndexedSeq(x)
+    private given[T]: Conversion[T, IndexedSeq[T]] = IndexedSeq(_)
+
+    private type CompilerResponse = (IndexedSeq[Instruction], Int)
 
     def compile(statement: Statement): Script = {
         val (instructions, _) = compile(statement, IndexedSeq.empty, 0)
         Script(instructions :+ EXIT(0))
     }
 
-    private def compile(statement: Statement, instructions: IndexedSeq[Instruction], labelId: Int): (IndexedSeq[Instruction], Int) = statement match {
+    private def compile(statement: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = statement match {
         case Execute(events) =>
             compileExecute(events, instructions, labelId)
+
         case Block(statements) =>
             compileBlock(statements, instructions, labelId)
+
         case MultiWhenTherefore(whenThereforeSeq) =>
             compileWhen(whenThereforeSeq, Block(Seq.empty), instructions, labelId)
+
         case MultiWhenThereforeOtherwise(whenThereforeSeq, otherwiseStatement) =>
             compileWhen(whenThereforeSeq, otherwiseStatement, instructions, labelId)
+
         case LoopBody(condition, body) =>
             compileLoop(condition, body, instructions, labelId)
+
         case ChooseVariants(expression, variants) =>
             compileChoose(expression, variants, Block(Seq.empty), instructions, labelId)
+
         case ChooseVariantsOtherwise(expression, variants, otherwise) =>
             compileChoose(expression, variants, otherwise, instructions, labelId)
     }
 
-    private def compileExecute(events: Seq[Event],
-                               instructions: IndexedSeq[Instruction],
-                               labelId: Int): (IndexedSeq[Instruction], Int) = {
+    private inline def compileExecute(events: Seq[Event], instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         (instructions :+ EXECUTE(events), labelId)
     }
 
-    private def compileBlock(statements: Seq[Statement],
-                             instructions: IndexedSeq[Instruction], labelId: Int): (IndexedSeq[Instruction], Int) = {
+    private inline def compileBlock(statements: Seq[Statement], instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         val (newInstructions, afterBlockLabelId) = statements.foldLeft((instructions, labelId)) {
             case ((instructions, labelId), statement) => compile(statement, instructions, labelId)
         }
@@ -49,41 +53,36 @@ class StatementService {
         (instructions ++ newInstructions, afterBlockLabelId)
     }
 
-    private def compileWhen(whenThereforeSeq: IndexedSeq[WhenTherefore], otherwiseStatement: Statement,
-                            instructions: IndexedSeq[Instruction], labelId: Int): (IndexedSeq[Instruction], Int) = {
-        val (newInstructions, afterWhenLabelId) =
-            compileWhenThereforeSeq(whenThereforeSeq, otherwiseStatement, labelId)
+    private inline def compileWhen(whenThereforeSeq: IndexedSeq[WhenTherefore], otherwiseStatement: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
+        val (newInstructions, afterWhenLabelId) = compileWhenThereforeSeq(whenThereforeSeq, otherwiseStatement, labelId)
 
         (instructions ++ newInstructions, afterWhenLabelId)
     }
 
-    private def compileWhenThereforeSeq(whenThereforeSeq: IndexedSeq[WhenTherefore], otherwiseStatement: Statement,
-                                        labelId: Int): (IndexedSeq[Instruction], Int) = {
-        whenThereforeSeq match {
-            case WhenTherefore(condition, thereforeStatement) +: rest =>
-                val elseLabelId = labelId
-                val exitLabelId = labelId + 1
+    private def compileWhenThereforeSeq(whenThereforeSeq: IndexedSeq[WhenTherefore], otherwiseStatement: Statement, labelId: Int): CompilerResponse = whenThereforeSeq match {
+        case WhenTherefore(condition, thereforeStatement) +: rest =>
+            val elseLabelId = labelId
+            val exitLabelId = labelId + 1
 
-                val (thenInstructions, afterThenLabelId) = compile(thereforeStatement, IndexedSeq.empty, exitLabelId + 1)
-                val (elseInstructions, afterElseLabelId) = compileWhenThereforeSeq(rest, otherwiseStatement, afterThenLabelId + 1)
+            val (thenInstructions, afterThenLabelId) = compile(thereforeStatement, IndexedSeq.empty, exitLabelId + 1)
+            val (elseInstructions, afterElseLabelId) = compileWhenThereforeSeq(rest, otherwiseStatement, afterThenLabelId + 1)
 
-                val newInstructions =
-                    TEST(condition) ++
-                        GOTO(elseLabelId) ++
-                        thenInstructions ++
-                        GOTO(exitLabelId) ++
-                        LABEL(elseLabelId) ++
-                        elseInstructions ++
-                        LABEL(exitLabelId)
+            val newInstructions =
+                TEST(condition) ++
+                    GOTO(elseLabelId) ++
+                    thenInstructions ++
+                    GOTO(exitLabelId) ++
+                    LABEL(elseLabelId) ++
+                    elseInstructions ++
+                    LABEL(exitLabelId)
 
-                (newInstructions, afterElseLabelId)
-            case _ =>
-                compile(otherwiseStatement, IndexedSeq.empty, labelId)
-        }
+            (newInstructions, afterElseLabelId)
+
+        case _ =>
+            compile(otherwiseStatement, IndexedSeq.empty, labelId)
     }
 
-    private def compileLoop(condition: BooleanExpr, body: Statement,
-                            instructions: IndexedSeq[Instruction], labelId: Int): (IndexedSeq[Instruction], Int) = {
+    private inline def compileLoop(condition: BooleanExpr, body: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         val loopLabelId = labelId
         val exitLabelId = labelId + 1
 
@@ -100,8 +99,7 @@ class StatementService {
         (instructions ++ newInstructions, afterLoopLabelIdId)
     }
 
-    private def compileVariant(variantWhenTherefore: VariantWhenTherefore, chooseExpr: Expr[_], exitLabelId: Int,
-                               labelId: Int): (IndexedSeq[Instruction], Int) = {
+    private inline def compileVariant(variantWhenTherefore: VariantWhenTherefore, chooseExpr: Expr[_], exitLabelId: Int, labelId: Int): CompilerResponse = {
         val variantExitLabelId = labelId
         val (variantInstructions, afterVariantLabelId) = compile(variantWhenTherefore.therefore, IndexedSeq.empty, variantExitLabelId + 1)
 
@@ -124,8 +122,7 @@ class StatementService {
         (newInstructions, afterVariantLabelId)
     }
 
-    private def compileChoose(expression: Expr[_], variants: Seq[VariantWhenTherefore], otherwise: Statement,
-                              instructions: IndexedSeq[Instruction], labelId: Int): (IndexedSeq[Instruction], Int) = {
+    private inline def compileChoose(expression: Expr[_], variants: Seq[VariantWhenTherefore], otherwise: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         val exitLabelId = labelId
 
         val (variantInstructions, afterVariantLabelId) = variants.foldLeft((IndexedSeq.empty[Instruction], exitLabelId + 1)) {
@@ -133,6 +130,7 @@ class StatementService {
                 val (newInstructions, afterVariantLabelId) = compileVariant(variant, expression, exitLabelId, labelId)
                 (instructions ++ newInstructions, afterVariantLabelId)
         }
+
         val (otherwiseInstructions, afterOtherwiseLabelId) = compile(otherwise, IndexedSeq.empty, afterVariantLabelId)
 
         val newInstructions =
