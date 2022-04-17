@@ -15,11 +15,16 @@ import dod.game.model.Timestamps.Timestamp
 import dod.game.model.{Coordinates, Direction}
 
 import java.util.UUID
+import scala.util.chaining.scalaUtilChainingOps
 
 class GameObjectService(positionService: PositionService,
                         stateService: StateService,
                         physicsService: PhysicsService,
                         graphicsService: GraphicsService) {
+
+    extension[T] (t: T) {
+        private def conditionalUpdate(condition: Boolean)(f: T => T): T = t.pipe(t => if (condition) f(t) else t)
+    }
 
     private def createGameObject(id: UUID, name: String, timestamp: Timestamp): GameObject = {
         GameObject(id = id, name = name, creationTimestamp = timestamp)
@@ -46,25 +51,15 @@ class GameObjectService(positionService: PositionService,
     }
 
     def createDoor(id: UUID, timestamp: Timestamp, coordinates: Coordinates, closed: Boolean): GameObject = {
-        val gameObject = createGameObject(id, "door", timestamp)
+        createGameObject(id, "door", timestamp)
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
-
-        if (closed) {
-            gameObject.updateState(StateTransformer.close, timestamp)
-        } else {
-            gameObject
-        }
+            .conditionalUpdate(closed)(_.updateState(StateTransformer.close, timestamp))
     }
 
     def createSwitch(id: UUID, timestamp: Timestamp, coordinates: Coordinates, on: Boolean): GameObject = {
-        val gameObject = createGameObject(id, "switch", timestamp)
+        createGameObject(id, "switch", timestamp)
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
-
-        if (on) {
-            gameObject.updateState(StateTransformer.switchOn, timestamp)
-        } else {
-            gameObject
-        }
+            .conditionalUpdate(on)(_.updateState(StateTransformer.switchOn, timestamp))
     }
 
     def crateGlobalTimer(id: UUID, timestamp: Timestamp): GameObject = {
