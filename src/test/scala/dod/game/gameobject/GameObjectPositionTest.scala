@@ -3,24 +3,22 @@ package dod.game.gameobject
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsProperty
 import dod.game.gameobject.position.{PositionProperty, PositionTransformer}
-import dod.game.model.{Coordinates, Direction, Position, Shift}
 import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Direction, Position, Shift}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID
 
 class GameObjectPositionTest extends AnyFunSuite {
 
-    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
     private val positionProperty = PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.North), positionTimestamp = Timestamp.zero)
-    private val gameObject = GameObject(commonsProperty = commonsProperty, positionProperty = Some(positionProperty))
+    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val gameObject = baseGameObject.withPositionProperty(positionProperty)
 
     test("GameObject::positionAccessor no PositionProperty test") {
-        val gameObject = GameObject(commonsProperty = commonsProperty)
-
-        assertResult(None)(gameObject.position.coordinates)
-        assertResult(None)(gameObject.position.direction)
-        assertResult(None)(gameObject.position.positionTimestamp)
+        assertResult(None)(baseGameObject.position.coordinates)
+        assertResult(None)(baseGameObject.position.direction)
+        assertResult(None)(baseGameObject.position.positionTimestamp)
     }
 
     test("GameObject::positionAccessor test") {

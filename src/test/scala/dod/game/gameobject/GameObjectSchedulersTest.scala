@@ -7,52 +7,34 @@ import dod.game.gameobject.scheduler.{SchedulerProperty, SchedulerTransformer}
 import dod.game.gameobject.state.{StateProperty, StateTransformer}
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
 import dod.game.model
-import dod.game.model.{Scheduler, Timer}
 import dod.game.model.Durations.Duration
 import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Scheduler, Timer}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID
 
 class GameObjectSchedulersTest extends AnyFunSuite {
 
-    private val commonsProperty = CommonsProperty(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val gameObject = baseGameObject.withSchedulerProperty()
 
     test("GameObject::schedulers no SchedulerProperty test") {
         val schedulerName = "scheduler_1"
-        val gameObject = GameObject(commonsProperty = commonsProperty)
 
-        assertResult(false)(gameObject.scheduler(schedulerName).isDefined)
+        assertResult(false)(baseGameObject.scheduler(schedulerName).isDefined)
     }
 
     test("GameObject::schedulers no scheduler test") {
         val schedulerName = "scheduler_1"
-        val schedulerProperty = SchedulerProperty(Map.empty)
-        val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
 
         assertResult(false)(gameObject.scheduler(schedulerName).isDefined)
-    }
-
-    test("GameObject::schedulers test") {
-        val schedulerName = "scheduler_1"
-        val scheduler = Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
-        val schedulerProperty = SchedulerProperty(Map(schedulerName -> scheduler))
-        val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
-
-        assertResult(true)(gameObject.scheduler(schedulerName).isDefined)
-
-        for {
-            schedulerActual <- gameObject.scheduler(schedulerName)
-        } yield {
-            assertResult(scheduler)(schedulerActual)
-        }
     }
 
     test("GameObject::schedulers scheduleOnce test") {
         val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, repeating = false, events = Seq.empty)
-        val schedulerProperty = SchedulerProperty(Map.empty)
-        val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
+        val gameObject = this.gameObject
             .updateSchedulers(SchedulerTransformer.scheduleOnce(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
 
         assertResult(true)(gameObject.scheduler(schedulerName).isDefined)
@@ -67,8 +49,7 @@ class GameObjectSchedulersTest extends AnyFunSuite {
     test("GameObject::schedulers scheduleAtFixedRate test") {
         val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, repeating = true, events = Seq.empty)
-        val schedulerProperty = SchedulerProperty(Map.empty)
-        val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
+        val gameObject = this.gameObject
             .updateSchedulers(SchedulerTransformer.scheduleAtFixedRate(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
 
         assertResult(true)(gameObject.scheduler(schedulerName).isDefined)
@@ -83,8 +64,8 @@ class GameObjectSchedulersTest extends AnyFunSuite {
     test("GameObject::schedulers removeScheduler test") {
         val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
-        val schedulerProperty = SchedulerProperty(Map(schedulerName -> scheduler))
-        val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
+        val gameObject = this.gameObject
+            .updateSchedulers(SchedulerTransformer.scheduleOnce(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
             .updateSchedulers(SchedulerTransformer.removeScheduler(schedulerName))
 
         assertResult(false)(gameObject.scheduler(schedulerName).isDefined)
@@ -94,8 +75,8 @@ class GameObjectSchedulersTest extends AnyFunSuite {
         val schedulerName = "scheduler_1"
         val scheduler = model.Scheduler(UUID.randomUUID(), "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
         val schedulerExpected = scheduler.copy(initialTimeStamp = Timestamp(1000))
-        val schedulerProperty = SchedulerProperty(Map(schedulerName -> scheduler))
-        val gameObject = GameObject(commonsProperty = commonsProperty, schedulerProperty = Some(schedulerProperty))
+        val gameObject = this.gameObject
+            .updateSchedulers(SchedulerTransformer.scheduleOnce(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
             .updateSchedulers(SchedulerTransformer.delaySchedulerBy(schedulerName, Duration(1000)))
 
         assertResult(true)(gameObject.scheduler(schedulerName).isDefined)

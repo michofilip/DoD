@@ -10,4 +10,9 @@ private[gameobject] trait PhysicsPropertyHolder {
     protected val physicsProperty: Option[PhysicsProperty]
 
     final def physics: Option[Physics] = self.physicsProperty.map(_.physics(states.state))
+
+    final def withPhysicsProperty(physicsProperty: PhysicsProperty): GameObject =
+        if (self.physicsProperty.isEmpty)
+            update(physicsProperty = Some(physicsProperty))
+        else this
 }

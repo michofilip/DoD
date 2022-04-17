@@ -5,6 +5,8 @@ import dod.game.model.Durations.Duration
 import dod.game.model.Timer
 import dod.game.model.Timestamps.Timestamp
 
+import java.sql.Time
+
 trait TimersPropertyHolder {
     self: GameObject =>
 
@@ -14,5 +16,10 @@ trait TimersPropertyHolder {
 
     final def updateTimers(timersTransformer: TimersTransformer): GameObject =
         update(timersProperty = self.timersProperty.map(_.updateTimers(timersTransformer)))
+
+    final def withTimersProperty(): GameObject =
+        if (self.timersProperty.isEmpty)
+            update(timersProperty = Some(TimersProperty()))
+        else this
 
 }

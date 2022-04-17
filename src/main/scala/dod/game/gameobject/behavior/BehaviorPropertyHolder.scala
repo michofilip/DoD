@@ -13,4 +13,9 @@ trait BehaviorPropertyHolder {
     final def updateBehaviors(behaviorTransformer: BehaviorTransformer): GameObject =
         update(behaviorProperty = self.behaviorProperty.map(_.updateBehaviors(behaviorTransformer)))
 
+    final def withBehaviorProperty(): GameObject =
+        if (self.behaviorProperty.isEmpty)
+            update(behaviorProperty = Some(BehaviorProperty()))
+        else this
+
 }
