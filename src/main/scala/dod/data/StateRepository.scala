@@ -1,6 +1,6 @@
 package dod.data
 
-import dod.game.gameobject.state.State
+import dod.game.model.State
 
 class StateRepository {
     case class StateData(name: String, state: State)

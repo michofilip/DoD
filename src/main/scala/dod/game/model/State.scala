@@ -1,4 +1,4 @@
-package dod.game.gameobject.state
+package dod.game.model
 
 enum State {
     case Off

@@ -1,6 +1,6 @@
-package dod.game.temporal
+package dod.game.model
 
-import dod.game.temporal.Timestamps.Timestamp
+import Timestamps.Timestamp
 
 import scala.annotation.targetName
 

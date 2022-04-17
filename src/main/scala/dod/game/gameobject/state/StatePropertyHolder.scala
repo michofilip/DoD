@@ -1,7 +1,8 @@
 package dod.game.gameobject.state
 
 import dod.game.gameobject.GameObject
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.State
+import dod.game.model.Timestamps.Timestamp
 
 private[gameobject] trait StatePropertyHolder {
     self: GameObject =>
@@ -16,5 +17,10 @@ private[gameobject] trait StatePropertyHolder {
 
     final def updateState(stateTransformer: StateTransformer, timestamp: Timestamp): GameObject =
         update(stateProperty = self.stateProperty.map(_.updatedState(stateTransformer, timestamp)))
+
+    final def withStateProperty(stateProperty: StateProperty): GameObject =
+        if (self.stateProperty.isEmpty)
+            update(stateProperty = Some(stateProperty))
+        else this
 
 }

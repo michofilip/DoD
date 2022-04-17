@@ -1,5 +1,7 @@
 package dod.game.gameobject.state
 
+import dod.game.model.State
+
 trait StateTransformer extends (State => State)
 
 object StateTransformer {

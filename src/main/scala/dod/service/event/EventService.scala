@@ -1,19 +1,22 @@
 package dod.service.event
 
-import dod.game.event.{Event, PositionEvent, SchedulerEvent, StateEvent, TimerEvent}
+import dod.game.event.{BehaviorEvent, Event, PositionEvent, SchedulerEvent, ScriptEvent, StateEvent, TimerEvent}
 import dod.game.gameobject.GameObjectRepository
 import dod.service.event.EventService.EventResponse
 import dod.service.event.{PositionEventService, StateEventService}
+import dod.service.expression.ExpressionService
 
 import scala.annotation.tailrec
 import scala.collection.immutable.Queue
 
-final class EventService {
+final class EventService(expressionService: ExpressionService) {
 
     private val positionEventService = new PositionEventService
     private val stateEventService = new StateEventService
-    private val schedulerService = new SchedulerService
+    private val schedulerService = new SchedulerEventService
     private val timerEventService = new TimerEventService
+    private val behaviorEventService = new BehaviorEventService
+    private val scriptEventService = new ScriptEventService(expressionService)
 
     def processEvents(gameObjectRepository: GameObjectRepository, events: Queue[Event]): EventResponse = {
         @tailrec
@@ -33,6 +36,8 @@ final class EventService {
         case stateEvent: StateEvent => stateEventService.processStateEvent(gameObjectRepository, stateEvent)
         case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(gameObjectRepository, schedulerEvent)
         case timerEvent: TimerEvent => timerEventService.processTimerEvent(gameObjectRepository, timerEvent)
+        case behaviorEvent: BehaviorEvent => behaviorEventService.processBehaviorEvent(gameObjectRepository, behaviorEvent)
+        case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(gameObjectRepository, scriptEvent)
         case _ => (gameObjectRepository, Seq.empty)
     }
 }

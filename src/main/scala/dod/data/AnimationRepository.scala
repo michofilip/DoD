@@ -1,7 +1,6 @@
 package dod.data
 
-import dod.game.gameobject.graphics.{Animation, AnimationSelector, Frame}
-import dod.game.gameobject.position.Direction
+import dod.game.model.{Animation, Direction, Frame}
 
 class AnimationRepository(frameRepository: FrameRepository) {
     case class AnimationData(id: Int, description: String, looping: Boolean, layer: Int, fps: Double, frames: Seq[Int])

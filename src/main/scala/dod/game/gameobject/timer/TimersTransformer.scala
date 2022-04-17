@@ -1,27 +1,27 @@
 package dod.game.gameobject.timer
 
-import dod.game.temporal.Timer
-import dod.game.temporal.Timestamps.Timestamp
+import dod.game.model.Timer
+import dod.game.model.Timestamps.Timestamp
 
 trait TimersTransformer extends (Map[String, Timer] => Map[String, Timer])
 
 object TimersTransformer {
 
-    def addTimer(key: String, initialTimestamp: Timestamp): TimersTransformer = timers => timers + (key -> Timer(initialTimestamp))
+    def addTimer(timerName: String, initialTimestamp: Timestamp): TimersTransformer = timers => timers + (timerName -> Timer(initialTimestamp))
 
-    def addTimerAndStart(key: String, initialTimestamp: Timestamp): TimersTransformer = timers => (addTimer(key, initialTimestamp) andThen startTimer(key)) (timers)
+    def addTimerAndStart(timerName: String, initialTimestamp: Timestamp): TimersTransformer = timers => (addTimer(timerName, initialTimestamp) andThen startTimer(timerName)) (timers)
 
-    def removeTimer(key: String): TimersTransformer = timers => timers - key
+    def removeTimer(timerName: String): TimersTransformer = timers => timers - timerName
 
     def removeAllTimers: TimersTransformer = _ => Map.empty
 
-    def startTimer(key: String): TimersTransformer = timers => timers.get(key) match {
-        case Some(timer) => timers + (key -> timer.started)
+    def startTimer(timerName: String): TimersTransformer = timers => timers.get(timerName) match {
+        case Some(timer) => timers + (timerName -> timer.started)
         case None => timers
     }
 
-    def stopTimer(key: String): TimersTransformer = timers => timers.get(key) match {
-        case Some(timer) => timers + (key -> timer.stopped)
+    def stopTimer(timerName: String): TimersTransformer = timers => timers.get(timerName) match {
+        case Some(timer) => timers + (timerName -> timer.stopped)
         case None => timers
     }
 

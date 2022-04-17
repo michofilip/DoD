@@ -1,4 +1,6 @@
-package dod.game.gameobject.position
+package dod.game.model
+
+import dod.game.model.{Coordinates, Direction, Position}
 
 case class Position(coordinates: Coordinates, direction: Option[Direction])
 

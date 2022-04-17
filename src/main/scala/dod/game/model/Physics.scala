@@ -1,3 +1,3 @@
-package dod.game.gameobject.physics
+package dod.game.model
 
 final case class Physics(solid: Boolean)

@@ -1,6 +1,6 @@
-package dod.game.gameobject.graphics
+package dod.game.model
 
-import dod.game.temporal.Durations.*
+import Durations.*
 import dod.utils.MathUtils
 
 sealed abstract class Animation {

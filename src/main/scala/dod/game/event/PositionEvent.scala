@@ -1,6 +1,6 @@
 package dod.game.event
 
-import dod.game.gameobject.position.{Coordinates, Direction, Shift}
+import dod.game.model.{Coordinates, Direction, Shift}
 
 import java.util.UUID
 
