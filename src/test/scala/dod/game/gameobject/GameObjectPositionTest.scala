@@ -12,15 +12,13 @@ import java.util.UUID
 class GameObjectPositionTest extends AnyFunSuite {
 
     private val positionProperty = PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.North), positionTimestamp = Timestamp.zero)
-    private val gameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
-        .withPositionProperty(Some(positionProperty))
+    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val gameObject = baseGameObject.withPositionProperty(positionProperty)
 
     test("GameObject::positionAccessor no PositionProperty test") {
-        val gameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
-
-        assertResult(None)(gameObject.position.coordinates)
-        assertResult(None)(gameObject.position.direction)
-        assertResult(None)(gameObject.position.positionTimestamp)
+        assertResult(None)(baseGameObject.position.coordinates)
+        assertResult(None)(baseGameObject.position.direction)
+        assertResult(None)(baseGameObject.position.positionTimestamp)
     }
 
     test("GameObject::positionAccessor test") {

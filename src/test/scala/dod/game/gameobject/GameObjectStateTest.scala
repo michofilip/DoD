@@ -12,16 +12,16 @@ import java.util.UUID
 
 class GameObjectStateTest extends AnyFunSuite {
 
-    private val gameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::stateAccessor no StateProperty test") {
-        assertResult(None)(gameObject.states.state)
-        assertResult(None)(gameObject.states.stateTimestamp)
+        assertResult(None)(baseGameObject.states.state)
+        assertResult(None)(baseGameObject.states.stateTimestamp)
     }
 
     test("GameObject::stateAccessor test") {
         val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
 
         assertResult(Some(State.Off))(gameObject.states.state)
         assertResult(Some(Timestamp.zero))(gameObject.states.stateTimestamp)
@@ -29,7 +29,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState switchOff if off test") {
         val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.switchOff, Timestamp(1000))
 
         assertResult(Some(State.Off))(gameObject.states.state)
@@ -38,7 +38,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState switchOff if on test") {
         val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.switchOff, Timestamp(1000))
 
         assertResult(Some(State.Off))(gameObject.states.state)
@@ -47,7 +47,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState switchOn if off test") {
         val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.switchOn, Timestamp(1000))
 
         assertResult(Some(State.On))(gameObject.states.state)
@@ -56,7 +56,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState switchOn if on test") {
         val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.switchOn, Timestamp(1000))
 
         assertResult(Some(State.On))(gameObject.states.state)
@@ -65,7 +65,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState switch if off test") {
         val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.switch, Timestamp(1000))
 
         assertResult(Some(State.On))(gameObject.states.state)
@@ -74,7 +74,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState switch if on test") {
         val stateProperty = StateProperty(state = State.On, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.switch, Timestamp(1000))
 
         assertResult(Some(State.Off))(gameObject.states.state)
@@ -83,7 +83,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState open if open test") {
         val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.open, Timestamp(1000))
 
         assertResult(Some(State.Open))(gameObject.states.state)
@@ -92,7 +92,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState open if closed test") {
         val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.open, Timestamp(1000))
 
         assertResult(Some(State.Open))(gameObject.states.state)
@@ -101,7 +101,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState close if open test") {
         val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.close, Timestamp(1000))
 
         assertResult(Some(State.Closed))(gameObject.states.state)
@@ -110,7 +110,7 @@ class GameObjectStateTest extends AnyFunSuite {
 
     test("GameObject::updateState close if closed test") {
         val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject.withStateProperty(stateProperty)
             .updateState(StateTransformer.close, Timestamp(1000))
 
         assertResult(Some(State.Closed))(gameObject.states.state)

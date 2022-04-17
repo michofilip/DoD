@@ -18,7 +18,9 @@ private[gameobject] trait StatePropertyHolder {
     final def updateState(stateTransformer: StateTransformer, timestamp: Timestamp): GameObject =
         update(stateProperty = self.stateProperty.map(_.updatedState(stateTransformer, timestamp)))
 
-    final def withStateProperty(stateProperty: Option[StateProperty]): GameObject =
-        update(stateProperty = stateProperty)
+    final def withStateProperty(stateProperty: StateProperty): GameObject =
+        if (self.stateProperty.isEmpty)
+            update(stateProperty = Some(stateProperty))
+        else this
 
 }

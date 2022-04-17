@@ -18,6 +18,8 @@ trait TimersPropertyHolder {
         update(timersProperty = self.timersProperty.map(_.updateTimers(timersTransformer)))
 
     final def withTimersProperty(): GameObject =
-        update(timersProperty = Some(TimersProperty()))
+        if (self.timersProperty.isEmpty)
+            update(timersProperty = Some(TimersProperty()))
+        else this
 
 }

@@ -16,14 +16,13 @@ import java.util.UUID
 
 class GameObjectSchedulersTest extends AnyFunSuite {
 
-    private val gameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
-        .withSchedulerProperty()
+    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val gameObject = baseGameObject.withSchedulerProperty()
 
     test("GameObject::schedulers no SchedulerProperty test") {
         val schedulerName = "scheduler_1"
-        val gameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
-        assertResult(false)(gameObject.scheduler(schedulerName).isDefined)
+        assertResult(false)(baseGameObject.scheduler(schedulerName).isDefined)
     }
 
     test("GameObject::schedulers no scheduler test") {

@@ -19,6 +19,8 @@ trait ScriptPropertyHolder {
         update(scriptProperty = self.scriptProperty.map(_.updateScripts(scriptTransformer)))
 
     final def withScriptProperty(): GameObject =
-        update(scriptProperty = Some(ScriptProperty()))
+        if (self.scriptProperty.isEmpty)
+            update(scriptProperty = Some(ScriptProperty()))
+        else this
 
 }

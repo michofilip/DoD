@@ -15,24 +15,26 @@ class GameObjectPhysicsTest extends AnyFunSuite {
 
     private val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp.zero)
     private val physicsProperty = PhysicsProperty(PhysicsSelector(Some(State.Open) -> Physics(false), Some(State.Closed) -> Physics(true)))
-    private val gameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
-        .withStateProperty(Some(stateProperty))
-        .withPhysicsProperty(Some(physicsProperty))
 
+    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::physicsAccessor no PhysicsProperty test") {
-        val gameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
-
-        assertResult(None)(gameObject.physics)
+        assertResult(None)(baseGameObject.physics)
     }
 
     test("GameObject::physicsAccessor test") {
+        val gameObject = baseGameObject
+            .withStateProperty(stateProperty)
+            .withPhysicsProperty(physicsProperty)
+
         assertResult(Some(Physics(solid = false)))(gameObject.physics)
     }
 
     test("GameObject::physicsAccessor open test") {
         val stateProperty = StateProperty(state = State.Closed, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject
+            .withStateProperty(stateProperty)
+            .withPhysicsProperty(physicsProperty)
             .updateState(StateTransformer.open, Timestamp(1000))
 
         assertResult(Some(Physics(solid = false)))(gameObject.physics)
@@ -40,7 +42,9 @@ class GameObjectPhysicsTest extends AnyFunSuite {
 
     test("GameObject::physicsAccessor close test") {
         val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp.zero)
-        val gameObject = this.gameObject.withStateProperty(Some(stateProperty))
+        val gameObject = baseGameObject
+            .withStateProperty(stateProperty)
+            .withPhysicsProperty(physicsProperty)
             .updateState(StateTransformer.close, Timestamp(1000))
 
         assertResult(Some(Physics(solid = true)))(gameObject.physics)

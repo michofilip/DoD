@@ -18,6 +18,8 @@ trait SchedulerPropertyHolder {
         update(schedulerProperty = self.schedulerProperty.map(_.updateSchedulers(schedulerTransformer)))
 
     final def withSchedulerProperty(): GameObject =
-        update(schedulerProperty = Some(SchedulerProperty()))
+        if (self.schedulerProperty.isEmpty)
+            update(schedulerProperty = Some(SchedulerProperty()))
+        else this
 
 }

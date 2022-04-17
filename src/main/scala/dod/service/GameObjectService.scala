@@ -15,7 +15,6 @@ import dod.game.model.Timestamps.Timestamp
 import dod.game.model.{Coordinates, Direction}
 
 import java.util.UUID
-import scala.util.chaining.scalaUtilChainingOps
 
 class GameObjectService(positionService: PositionService,
                         stateService: StateService,
@@ -23,15 +22,22 @@ class GameObjectService(positionService: PositionService,
                         graphicsService: GraphicsService) {
 
     extension[T] (t: T) {
-        private def conditionalUpdate(condition: Boolean)(f: T => T): T = t.pipe(t => if (condition) f(t) else t)
+        private def conditionalUpdate(condition: Boolean)(f: T => T): T = if (condition) f(t) else t
+
+        private def optionalUpdate[U](option: Option[U])(f: (T, U) => T): T = option.fold(t)(f(t, _))
     }
 
     private def createGameObject(id: UUID, name: String, timestamp: Timestamp): GameObject = {
+        val positionProperty = positionService.getPositionProperty(name, timestamp)
+        val stateProperty = stateService.getStateProperty(name, timestamp)
+        val physicsProperty = physicsService.getPhysicsProperty(name)
+        val graphicsProperty = graphicsService.getGraphicsProperty(name)
+
         GameObject(id = id, name = name, creationTimestamp = timestamp)
-            .withPositionProperty(positionService.getPositionProperty(name, timestamp))
-            .withStateProperty(stateService.getStateProperty(name, timestamp))
-            .withPhysicsProperty(physicsService.getPhysicsProperty(name))
-            .withGraphicsProperty(graphicsService.getGraphicsProperty(name))
+            .optionalUpdate(positionProperty)(_ withPositionProperty _)
+            .optionalUpdate(stateProperty)(_ withStateProperty _)
+            .optionalUpdate(physicsProperty)(_ withPhysicsProperty _)
+            .optionalUpdate(graphicsProperty)(_ withGraphicsProperty _)
     }
 
     def createFloor(id: UUID, timestamp: Timestamp, coordinates: Coordinates): GameObject = {

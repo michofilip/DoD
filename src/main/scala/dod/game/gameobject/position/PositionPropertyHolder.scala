@@ -21,7 +21,9 @@ private[gameobject] trait PositionPropertyHolder {
     final def updatePosition(positionTransformer: PositionTransformer, timestamp: Timestamp): GameObject =
         update(positionProperty = self.positionProperty.map(_.updatePosition(positionTransformer, timestamp)))
 
-    final def withPositionProperty(positionProperty: Option[PositionProperty]): GameObject =
-        update(positionProperty = positionProperty)
+    final def withPositionProperty(positionProperty: PositionProperty): GameObject =
+        if (self.positionProperty.isEmpty)
+            update(positionProperty = Some(positionProperty))
+        else this
 
 }

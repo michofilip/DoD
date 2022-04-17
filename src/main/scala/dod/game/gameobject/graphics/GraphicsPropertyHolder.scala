@@ -27,7 +27,9 @@ private[gameobject] trait GraphicsPropertyHolder {
             }
     }
 
-    final def withGraphicsProperty(graphicsProperty: Option[GraphicsProperty]): GameObject =
-        update(graphicsProperty = graphicsProperty)
+    final def withGraphicsProperty(graphicsProperty: GraphicsProperty): GameObject =
+        if (self.graphicsProperty.isEmpty)
+            update(graphicsProperty = Some(graphicsProperty))
+        else this
 
 }
