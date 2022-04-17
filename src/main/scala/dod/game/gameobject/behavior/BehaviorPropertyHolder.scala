@@ -13,4 +13,7 @@ trait BehaviorPropertyHolder {
     final def updateBehaviors(behaviorTransformer: BehaviorTransformer): GameObject =
         update(behaviorProperty = self.behaviorProperty.map(_.updateBehaviors(behaviorTransformer)))
 
+    final def withBehaviorProperty(): GameObject =
+        update(behaviorProperty = Some(BehaviorProperty()))
+
 }

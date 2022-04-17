@@ -4,8 +4,8 @@ import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsPropertyHolder
 import dod.game.gameobject.position.PositionPropertyHolder
 import dod.game.gameobject.state.StatePropertyHolder
-import dod.game.model.Frame
 import dod.game.model.Durations.Duration
+import dod.game.model.Frame
 import dod.game.model.Timestamps.Timestamp
 
 private[gameobject] trait GraphicsPropertyHolder {
@@ -26,5 +26,8 @@ private[gameobject] trait GraphicsPropertyHolder {
                 graphicsProperty.animation(states.state, position.direction).frame(duration)
             }
     }
+
+    final def withGraphicsProperty(graphicsProperty: Option[GraphicsProperty]): GameObject =
+        update(graphicsProperty = graphicsProperty)
 
 }

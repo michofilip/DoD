@@ -22,17 +22,11 @@ class GameObjectService(positionService: PositionService,
                         graphicsService: GraphicsService) {
 
     private def createGameObject(id: UUID, name: String, timestamp: Timestamp): GameObject = {
-        GameObject(
-            commonsProperty = CommonsProperty(id = id, name = name, creationTimestamp = timestamp),
-            positionProperty = positionService.getPositionProperty(name, timestamp),
-            stateProperty = stateService.getStateProperty(name, timestamp),
-            physicsProperty = physicsService.getPhysicsProperty(name),
-            graphicsProperty = graphicsService.getGraphicsProperty(name),
-            timersProperty = Some(TimersProperty()),
-            schedulerProperty = Some(SchedulerProperty()),
-            behaviorProperty = Some(BehaviorProperty()),
-            scriptProperty = Some(ScriptProperty())
-        )
+        GameObject(id = id, name = name, creationTimestamp = timestamp)
+            .withPositionProperty(positionService.getPositionProperty(name, timestamp))
+            .withStateProperty(stateService.getStateProperty(name, timestamp))
+            .withPhysicsProperty(physicsService.getPhysicsProperty(name))
+            .withGraphicsProperty(graphicsService.getGraphicsProperty(name))
     }
 
     def createFloor(id: UUID, timestamp: Timestamp, coordinates: Coordinates): GameObject = {
@@ -75,6 +69,7 @@ class GameObjectService(positionService: PositionService,
 
     def crateGlobalTimer(id: UUID, timestamp: Timestamp): GameObject = {
         createGameObject(id, "global_timer", timestamp)
+            .withTimersProperty()
             .updateTimers(TimersTransformer.addTimerAndStart("global_timer_1", Timestamp.zero))
     }
 }

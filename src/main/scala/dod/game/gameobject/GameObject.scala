@@ -11,15 +11,17 @@ import dod.game.gameobject.state.{StateProperty, StatePropertyHolder, StateTrans
 import dod.game.gameobject.timer.{TimersProperty, TimersPropertyHolder}
 import dod.game.model.Timestamps.Timestamp
 
-final class GameObject(override protected val commonsProperty: CommonsProperty,
-                       override protected val positionProperty: Option[PositionProperty] = None,
-                       override protected val stateProperty: Option[StateProperty] = None,
-                       override protected val physicsProperty: Option[PhysicsProperty] = None,
-                       override protected val graphicsProperty: Option[GraphicsProperty] = None,
-                       override protected val timersProperty: Option[TimersProperty] = None,
-                       override protected val schedulerProperty: Option[SchedulerProperty] = None,
-                       override protected val behaviorProperty: Option[BehaviorProperty] = None,
-                       override protected val scriptProperty: Option[ScriptProperty] = None)
+import java.util.UUID
+
+final class GameObject private(override protected val commonsProperty: CommonsProperty,
+                               override protected val positionProperty: Option[PositionProperty] = None,
+                               override protected val stateProperty: Option[StateProperty] = None,
+                               override protected val physicsProperty: Option[PhysicsProperty] = None,
+                               override protected val graphicsProperty: Option[GraphicsProperty] = None,
+                               override protected val timersProperty: Option[TimersProperty] = None,
+                               override protected val schedulerProperty: Option[SchedulerProperty] = None,
+                               override protected val behaviorProperty: Option[BehaviorProperty] = None,
+                               override protected val scriptProperty: Option[ScriptProperty] = None)
     extends CommonsPropertyHolder
         with PositionPropertyHolder
         with StatePropertyHolder
@@ -30,13 +32,15 @@ final class GameObject(override protected val commonsProperty: CommonsProperty,
         with BehaviorPropertyHolder
         with ScriptPropertyHolder {
 
-    inline protected def update(positionProperty: Option[PositionProperty] = positionProperty,
-                                stateProperty: Option[StateProperty] = stateProperty,
-                                timersProperty: Option[TimersProperty] = timersProperty,
-                                schedulerProperty: Option[SchedulerProperty] = schedulerProperty,
-                                behaviorProperty: Option[BehaviorProperty] = behaviorProperty,
-                                scriptProperty: Option[ScriptProperty] = scriptProperty): GameObject =
-        GameObject(
+    protected def update(positionProperty: Option[PositionProperty] = positionProperty,
+                         stateProperty: Option[StateProperty] = stateProperty,
+                         physicsProperty: Option[PhysicsProperty] = physicsProperty,
+                         graphicsProperty: Option[GraphicsProperty] = graphicsProperty,
+                         timersProperty: Option[TimersProperty] = timersProperty,
+                         schedulerProperty: Option[SchedulerProperty] = schedulerProperty,
+                         behaviorProperty: Option[BehaviorProperty] = behaviorProperty,
+                         scriptProperty: Option[ScriptProperty] = scriptProperty): GameObject =
+        new GameObject(
             commonsProperty = commonsProperty,
             positionProperty = positionProperty,
             stateProperty = stateProperty,
@@ -47,5 +51,12 @@ final class GameObject(override protected val commonsProperty: CommonsProperty,
             behaviorProperty = behaviorProperty,
             scriptProperty = scriptProperty
         )
+
+}
+
+object GameObject {
+
+    def apply(id: UUID, name: String, creationTimestamp: Timestamp): GameObject =
+        new GameObject(commonsProperty = CommonsProperty(id = id, name = name, creationTimestamp = creationTimestamp))
 
 }

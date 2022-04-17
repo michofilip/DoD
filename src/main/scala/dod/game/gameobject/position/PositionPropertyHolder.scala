@@ -2,8 +2,8 @@ package dod.game.gameobject.position
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsPropertyHolder
-import dod.game.model.{Coordinates, Direction}
 import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Direction}
 
 private[gameobject] trait PositionPropertyHolder {
     self: GameObject =>
@@ -20,5 +20,8 @@ private[gameobject] trait PositionPropertyHolder {
 
     final def updatePosition(positionTransformer: PositionTransformer, timestamp: Timestamp): GameObject =
         update(positionProperty = self.positionProperty.map(_.updatePosition(positionTransformer, timestamp)))
+
+    final def withPositionProperty(positionProperty: Option[PositionProperty]): GameObject =
+        update(positionProperty = positionProperty)
 
 }
