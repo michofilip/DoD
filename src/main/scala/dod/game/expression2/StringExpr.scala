@@ -6,9 +6,9 @@ import scala.annotation.targetName
 
 object StringExpr {
 
-    extension (expr: Expr2[String])
+    extension (expr1: Expr2[String])
         @targetName("concat")
-        def +(expr2: Expr2[String]): Expr2[String] = StringExpr.Concatenate(expr, expr2)
+        def +(expr2: Expr2[String]): Expr2[String] = StringExpr.Concatenate(expr1, expr2)
 
 
     final case class Constant(value: String) extends Expr2[String] :

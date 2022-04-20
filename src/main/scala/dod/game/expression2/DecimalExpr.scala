@@ -6,40 +6,40 @@ import scala.annotation.targetName
 
 object DecimalExpr {
 
-    extension (expr: Expr2[Double])
-        @targetName("pos_dec")
-        def unary_+ : Expr2[Double] = expr
+    extension (expr1: Expr2[Double])
+        @targetName("pos")
+        def unary_+ : Expr2[Double] = expr1
 
-        @targetName("neg_dec")
-        def unary_- : Expr2[Double] = DecimalExpr.Negation(expr)
+        @targetName("neg")
+        def unary_- : Expr2[Double] = DecimalExpr.Negation(expr1)
 
-        @targetName("add_dec_int")
-        def +(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Addition(expr, expr2.toDecimalExpr)
+        @targetName("addInt")
+        def +(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Addition(expr1, expr2.toDecimalExpr)
 
-        @targetName("add_dec_dec")
-        def +(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Addition(expr, expr2)
+        @targetName("addDec")
+        def +(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Addition(expr1, expr2)
 
-        @targetName("sub_dec_int")
-        def -(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Subtraction(expr, expr2.toDecimalExpr)
+        @targetName("subInt")
+        def -(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Subtraction(expr1, expr2.toDecimalExpr)
 
-        @targetName("sub_dec_dec")
-        def -(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Subtraction(expr, expr2)
+        @targetName("subDec")
+        def -(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Subtraction(expr1, expr2)
 
-        @targetName("mul_dec_int")
-        def *(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Multiplication(expr, expr2.toDecimalExpr)
+        @targetName("mulInt")
+        def *(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Multiplication(expr1, expr2.toDecimalExpr)
 
-        @targetName("mul_dec_dec")
-        def *(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Multiplication(expr, expr2)
+        @targetName("mulDec")
+        def *(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Multiplication(expr1, expr2)
 
-        @targetName("div_dec_int")
-        def /(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Division(expr, expr2.toDecimalExpr)
+        @targetName("divInt")
+        def /(expr2: Expr2[Int]): Expr2[Double] = DecimalExpr.Division(expr1, expr2.toDecimalExpr)
 
-        @targetName("div_dec_dec")
-        def /(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Division(expr, expr2)
+        @targetName("divDec")
+        def /(expr2: Expr2[Double]): Expr2[Double] = DecimalExpr.Division(expr1, expr2)
 
-        def toIntegerExpr: Expr2[Int] = IntegerExpr.DecimalToInteger(expr)
+        def toIntegerExpr: Expr2[Int] = IntegerExpr.DecimalToInteger(expr1)
 
-        def toStringExpr: Expr2[String] = StringExpr.DecimalToString(expr)
+        def toStringExpr: Expr2[String] = StringExpr.DecimalToString(expr1)
 
 
     final case class Constant(value: Double) extends Expr2[Double] :

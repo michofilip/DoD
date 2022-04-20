@@ -31,25 +31,25 @@ object Expr2 {
         private[expression2] def ~>(f: (T1, T2) => Option[R]): Option[R] = Expr2.resolve2(pair._1, pair._2)(f)
 
 
-    extension[T] (expr: Expr2[T])
+    extension[T] (expr1: Expr2[T])
         @targetName("equive")
-        def ===(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Equals(expr, expr2)
+        def ===(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Equals(expr1, expr2)
 
         @targetName("unequive")
-        def !==(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Unequals(expr, expr2)
+        def !==(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Unequals(expr1, expr2)
 
 
-    extension[T: Ordering] (expr: Expr2[T])
+    extension[T: Ordering] (expr1: Expr2[T])
         @targetName("less")
-        def <(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Less(expr, expr2)
+        def <(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Less(expr1, expr2)
 
-        @targetName("lesEq")
-        def <=(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.LessEquals(expr, expr2)
+        @targetName("lessEq")
+        def <=(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.LessEquals(expr1, expr2)
 
         @targetName("greater")
-        def >(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Greater(expr, expr2)
+        def >(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Greater(expr1, expr2)
 
         @targetName("greaterEq")
-        def >=(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.GreaterEquals(expr, expr2)
+        def >=(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.GreaterEquals(expr1, expr2)
 
 }
