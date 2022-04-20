@@ -29,8 +29,7 @@ class Context {
     val gameObjectService = new GameObjectService(positionService, stateService, physicsService, graphicsService)
     val gameStageService = new GameStageService(gameObjectService)
 
-    private val expressionService = new ExpressionService
-    val eventService = new EventService(expressionService)
+    val eventService = new EventService
     val keyEventService = new KeyEventService
 
 }

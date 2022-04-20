@@ -9,14 +9,14 @@ import dod.service.expression.ExpressionService
 import scala.annotation.tailrec
 import scala.collection.immutable.Queue
 
-final class EventService(expressionService: ExpressionService) {
+final class EventService {
 
     private val positionEventService = new PositionEventService
     private val stateEventService = new StateEventService
     private val schedulerService = new SchedulerEventService
     private val timerEventService = new TimerEventService
     private val behaviorEventService = new BehaviorEventService
-    private val scriptEventService = new ScriptEventService(expressionService)
+    private val scriptEventService = new ScriptEventService
 
     def processEvents(gameObjectRepository: GameObjectRepository, events: Queue[Event]): EventResponse = {
         @tailrec
