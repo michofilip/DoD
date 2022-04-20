@@ -1,5 +1,8 @@
 package dod.game.expression2
 
+import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Direction, Shift}
+
 import scala.annotation.targetName
 
 abstract class Expr2[T]:
@@ -15,6 +18,14 @@ object Expr2 {
     def apply(value: Double): Expr2[Double] = DecimalExpr.Constant(value)
 
     def apply(value: String): Expr2[String] = StringExpr.Constant(value)
+
+    def apply(value: Timestamp): Expr2[Timestamp] = TimestampExpr.Constant(value)
+
+    def apply(value: Coordinates): Expr2[Coordinates] = CoordinatesExpr.Constant(value)
+
+    def apply(value: Shift): Expr2[Shift] = ShiftExpr.Constant(value)
+
+    def apply(value: Direction): Expr2[Direction] = DirectionExpr.Constant(value)
 
 
     private[expression2] def resolve1[T, R](expr: Expr2[T])(f: T => Option[R]): Option[R] =
