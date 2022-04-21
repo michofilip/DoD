@@ -4,7 +4,6 @@ import dod.game.event.{BehaviorEvent, Event, PositionEvent, SchedulerEvent, Scri
 import dod.game.gameobject.GameObjectRepository
 import dod.service.event.EventService.EventResponse
 import dod.service.event.{PositionEventService, StateEventService}
-import dod.service.expression.ExpressionService
 
 import scala.annotation.tailrec
 import scala.collection.immutable.Queue
