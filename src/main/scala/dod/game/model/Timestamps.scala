@@ -25,13 +25,21 @@ object Timestamps {
         @targetName("subtract")
         def -(duration: Duration): Timestamp = timestamp - duration.value
 
-        def >(that: Timestamp): Boolean = value > that.value
+        @targetName("less")
+        def <(that: Timestamp): Boolean = value.compare(that) < 0
 
-        def >=(that: Timestamp): Boolean = value >= that.value
+        @targetName("lessEq")
+        def <=(that: Timestamp): Boolean = value.compare(that) <= 0
 
-        def <(that: Timestamp): Boolean = value < that.value
+        @targetName("greater")
+        def >(that: Timestamp): Boolean = value.compare(that) > 0
 
-        def <=(that: Timestamp): Boolean = value <= that.value
+        @targetName("greaterEq")
+        def >=(that: Timestamp): Boolean = value.compare(that) >= 0
+    }
+
+    given Ordering[Timestamp] with {
+        override def compare(x: Timestamp, y: Timestamp): Int = java.lang.Long.compare(x.value, y.value)
     }
 
 }
