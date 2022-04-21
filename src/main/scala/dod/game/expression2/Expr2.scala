@@ -40,27 +40,5 @@ object Expr2 {
 
     extension[T1, T2, R] (pair: (Expr2[T1], Expr2[T2]))
         private[expression2] def ~>(f: (T1, T2) => Option[R]): Option[R] = Expr2.resolve2(pair._1, pair._2)(f)
-
-
-    extension[T] (expr1: Expr2[T])
-        @targetName("equive")
-        def ===(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Equals(expr1, expr2)
-
-        @targetName("unequive")
-        def !==(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Unequals(expr1, expr2)
-
-
-    extension[T: Ordering] (expr1: Expr2[T])
-        @targetName("less")
-        def <(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Less(expr1, expr2)
-
-        @targetName("lessEq")
-        def <=(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.LessEquals(expr1, expr2)
-
-        @targetName("greater")
-        def >(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.Greater(expr1, expr2)
-
-        @targetName("greaterEq")
-        def >=(expr2: Expr2[T]): Expr2[Boolean] = BooleanExpr.GreaterEquals(expr1, expr2)
-
+        
 }

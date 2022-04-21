@@ -4,17 +4,6 @@ import scala.annotation.targetName
 
 object BooleanExpr {
 
-    extension (expr1: Expr2[Boolean])
-        @targetName("not")
-        def unary_! : Expr2[Boolean] = BooleanExpr.Not(expr1)
-
-        @targetName("and")
-        def &&(expr2: Expr2[Boolean]): Expr2[Boolean] = BooleanExpr.And(expr1, expr2)
-
-        @targetName("or")
-        def ||(expr2: Expr2[Boolean]): Expr2[Boolean] = BooleanExpr.Or(expr1, expr2)
-
-
     final case class Constant(value: Boolean) extends Expr2[Boolean] :
         override def resolve: Option[Boolean] = Some(value)
 

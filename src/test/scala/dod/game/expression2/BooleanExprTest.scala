@@ -1,7 +1,7 @@
 package dod.game.expression2
 
 import dod.game.expression2.Expr2.*
-import dod.game.expression2.BooleanExpr.*
+import dod.game.expression2.Includes.*
 import org.scalatest.funsuite.AnyFunSuite
 
 class BooleanExprTest extends AnyFunSuite {
