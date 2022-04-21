@@ -1,9 +1,7 @@
 package dod.service
 
 import dod.game.event.Event
-import dod.game.expression2.Includes.*
-import dod.game.expression2.Expr2
-import dod.game.expression2.Expr2.*
+import dod.game.expression.{BooleanExpr, Expr}
 import dod.game.model.Instruction.*
 import dod.game.model.{Instruction, Script}
 import dod.game.statement.Statement
@@ -84,7 +82,7 @@ class StatementService {
             compile(otherwiseStatement, IndexedSeq.empty, labelId)
     }
 
-    private inline def compileLoop(condition: Expr2[Boolean], body: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
+    private inline def compileLoop(condition: BooleanExpr, body: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         val loopLabelId = labelId
         val exitLabelId = labelId + 1
 
@@ -101,7 +99,7 @@ class StatementService {
         (instructions ++ newInstructions, afterLoopLabelIdId)
     }
 
-    private inline def compileVariant[T](variantWhenTherefore: VariantWhenTherefore[T], chooseExpr: Expr2[T], exitLabelId: Int, labelId: Int): CompilerResponse = {
+    private inline def compileVariant[T](variantWhenTherefore: VariantWhenTherefore[T], chooseExpr: Expr[T], exitLabelId: Int, labelId: Int): CompilerResponse = {
         val variantExitLabelId = labelId
         val (variantInstructions, afterVariantLabelId) = compile(variantWhenTherefore.therefore, IndexedSeq.empty, variantExitLabelId + 1)
 
@@ -124,7 +122,7 @@ class StatementService {
         (newInstructions, afterVariantLabelId)
     }
 
-    private inline def compileChoose[T](expression: Expr2[T], variants: Seq[VariantWhenTherefore[T]], otherwise: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
+    private inline def compileChoose[T](expression: Expr[T], variants: Seq[VariantWhenTherefore[T]], otherwise: Statement, instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         val exitLabelId = labelId
 
         val (variantInstructions, afterVariantLabelId) = variants.foldLeft((IndexedSeq.empty[Instruction], exitLabelId + 1)) {

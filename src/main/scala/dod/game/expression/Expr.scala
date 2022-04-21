@@ -10,9 +10,9 @@ abstract class Expr[T] {
 
     def get(using GameObjectRepository): Option[T]
 
-    final   def ===(that: Expr[T]): BooleanExpr = BooleanExpr.Equals(this, that)
+    final def ===(that: Expr[T]): BooleanExpr = BooleanExpr.Equals(this, that)
 
-    final    def !==(that: Expr[T]): BooleanExpr = BooleanExpr.UnEquals(this, that)
+    final def !==(that: Expr[T]): BooleanExpr = BooleanExpr.UnEquals(this, that)
 
 }
 
@@ -47,6 +47,7 @@ object Expr {
     def apply(value: Shift): ShiftExpr = ShiftExpr.Constant(value)
 
     def apply(value: Direction): DirectionExpr = DirectionExpr.Constant(value)
+
 
     extension[T: Ordering] (expr1: Expr[T])
         @targetName("less")
