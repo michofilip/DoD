@@ -4,7 +4,7 @@ import dod.game.expression.Expr.ExprContext
 import dod.game.expression.IntegerExpr.*
 import dod.game.gameobject.GameObjectRepository
 
-abstract class IntegerExpr extends Expr[Int] {
+abstract class IntegerExpr extends OrderedExpr[Int] {
 
     final def unary_+ : IntegerExpr = this
 

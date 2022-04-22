@@ -5,7 +5,7 @@ import dod.game.gameobject.GameObjectRepository
 import dod.game.model.State
 import dod.game.model.Timestamps.Timestamp
 
-abstract class TimestampExpr extends Expr[Timestamp]
+abstract class TimestampExpr extends OrderedExpr[Timestamp]
 
 object TimestampExpr {
 

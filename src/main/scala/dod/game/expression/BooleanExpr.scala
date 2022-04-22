@@ -34,16 +34,16 @@ object BooleanExpr {
     final case class UnEquals[T](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr :
         override def get(using ExprContext): Option[Boolean] = (expr1, expr2) ~> ((x, y) => Some(x != y))
 
-    final case class Less[T: Ordering](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr :
+    final case class Less[T: Ordering](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr :
         override def get(using ExprContext): Option[Boolean] = (expr1, expr2) ~> ((x, y) => Some(summon[Ordering[T]].compare(x, y) < 0))
 
-    final case class LessEquals[T: Ordering](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr :
+    final case class LessEquals[T: Ordering](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr :
         override def get(using ExprContext): Option[Boolean] = (expr1, expr2) ~> ((x, y) => Some(summon[Ordering[T]].compare(x, y) <= 0))
 
-    final case class Greater[T: Ordering](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr :
+    final case class Greater[T: Ordering](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr :
         override def get(using ExprContext): Option[Boolean] = (expr1, expr2) ~> ((x, y) => Some(summon[Ordering[T]].compare(x, y) > 0))
 
-    final case class GreaterEquals[T: Ordering](expr1: Expr[T], expr2: Expr[T]) extends BooleanExpr :
+    final case class GreaterEquals[T: Ordering](expr1: OrderedExpr[T], expr2: OrderedExpr[T]) extends BooleanExpr :
         override def get(using ExprContext): Option[Boolean] = (expr1, expr2) ~> ((x, y) => Some(summon[Ordering[T]].compare(x, y) >= 0))
 
 }

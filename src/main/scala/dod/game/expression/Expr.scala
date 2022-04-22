@@ -53,18 +53,4 @@ object Expr {
 
     def apply(value: State): StateExpr = StateExpr.Constant(value)
 
-
-    extension[T: Ordering] (expr1: Expr[T])
-        @targetName("less")
-        def <(expr2: Expr[T]): BooleanExpr = BooleanExpr.Less(expr1, expr2)
-
-        @targetName("lessEq")
-        def <=(expr2: Expr[T]): BooleanExpr = BooleanExpr.LessEquals(expr1, expr2)
-
-        @targetName("greater")
-        def >(expr2: Expr[T]): BooleanExpr = BooleanExpr.Greater(expr1, expr2)
-
-        @targetName("greaterEq")
-        def >=(expr2: Expr[T]): BooleanExpr = BooleanExpr.GreaterEquals(expr1, expr2)
-
 }
