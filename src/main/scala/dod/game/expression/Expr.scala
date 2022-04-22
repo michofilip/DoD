@@ -3,7 +3,7 @@ package dod.game.expression
 import dod.game.expression.Expr.ExprContext
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction, Shift}
+import dod.game.model.{Coordinates, Direction, Shift, State}
 
 import scala.annotation.targetName
 
@@ -50,6 +50,8 @@ object Expr {
     def apply(value: Shift): ShiftExpr = ShiftExpr.Constant(value)
 
     def apply(value: Direction): DirectionExpr = DirectionExpr.Constant(value)
+
+    def apply(value: State): StateExpr = StateExpr.Constant(value)
 
 
     extension[T: Ordering] (expr1: Expr[T])
