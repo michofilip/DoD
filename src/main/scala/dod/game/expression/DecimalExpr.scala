@@ -1,6 +1,7 @@
 package dod.game.expression
 
 import dod.game.expression.DecimalExpr.{Addition, Division, Multiplication, Negation, Subtraction}
+import dod.game.expression.Expr.ExprContext
 import dod.game.gameobject.GameObjectRepository
 
 abstract class DecimalExpr extends Expr[Double] {
@@ -36,24 +37,24 @@ abstract class DecimalExpr extends Expr[Double] {
 object DecimalExpr {
 
     final case class Constant(value: Double) extends DecimalExpr :
-        override def get(using GameObjectRepository): Option[Double] = Some(value)
+        override def get(using ExprContext): Option[Double] = Some(value)
 
     final case class Negation(expr: DecimalExpr) extends DecimalExpr :
-        override def get(using GameObjectRepository): Option[Double] = expr ~> (x => Some(-x))
+        override def get(using ExprContext): Option[Double] = expr ~> (x => Some(-x))
 
     final case class Addition(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr :
-        override def get(using GameObjectRepository): Option[Double] = (expr1, expr2) ~> ((x, y) => Some(x + y))
+        override def get(using ExprContext): Option[Double] = (expr1, expr2) ~> ((x, y) => Some(x + y))
 
     final case class Subtraction(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr :
-        override def get(using GameObjectRepository): Option[Double] = (expr1, expr2) ~> ((x, y) => Some(x - y))
+        override def get(using ExprContext): Option[Double] = (expr1, expr2) ~> ((x, y) => Some(x - y))
 
     final case class Multiplication(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr :
-        override def get(using GameObjectRepository): Option[Double] = (expr1, expr2) ~> ((x, y) => Some(x * y))
+        override def get(using ExprContext): Option[Double] = (expr1, expr2) ~> ((x, y) => Some(x * y))
 
     final case class Division(expr1: DecimalExpr, expr2: DecimalExpr) extends DecimalExpr :
-        override def get(using GameObjectRepository): Option[Double] = (expr1, expr2) ~> ((x, y) => if (y != 0) Some(x / y) else None)
+        override def get(using ExprContext): Option[Double] = (expr1, expr2) ~> ((x, y) => if (y != 0) Some(x / y) else None)
 
     final case class IntegerToDecimal(expr: IntegerExpr) extends DecimalExpr :
-        override def get(using GameObjectRepository): Option[Double] = expr ~> (x => Some(x.toDouble))
+        override def get(using ExprContext): Option[Double] = expr ~> (x => Some(x.toDouble))
 
 }
