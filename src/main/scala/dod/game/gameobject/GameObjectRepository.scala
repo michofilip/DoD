@@ -1,5 +1,6 @@
 package dod.game.gameobject
 
+import dod.game.expression.Expr.ExprContext
 import dod.game.model.Timestamps.Timestamp
 import dod.game.model.{Behavior, Coordinates, Scheduler, Script, Timer}
 
@@ -9,7 +10,7 @@ import scala.util.chaining.scalaUtilChainingOps
 
 class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
                                    gameObjectsByCoordinates: Map[Coordinates, Map[UUID, GameObject]],
-                                   gameObjectIdByName: Map[String, UUID]) {
+                                   gameObjectIdByName: Map[String, UUID]) extends ExprContext {
 
     @targetName("add")
     def +(gameObject: GameObject): GameObjectRepository = {
@@ -91,7 +92,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
     def findScript(id: UUID, scriptName: String): Option[Script] =
         findById(id).flatMap(_.script(scriptName))
-        
+
 }
 
 object GameObjectRepository {

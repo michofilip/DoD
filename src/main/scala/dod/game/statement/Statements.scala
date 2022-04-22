@@ -9,8 +9,8 @@ object Statements {
     def execute(event: Event, events: Event*): Statement =
         Execute(event +: events)
 
-    def block(statements: Statement*): Statement =
-        Block(statements)
+    def block(statement: Statement, statements: Statement*): Statement =
+        Block(statement +: statements)
 
     def when(condition: BooleanExpr): When =
         When(condition)
@@ -23,5 +23,5 @@ object Statements {
 
     def choose[T](expression: Expr[T]): Choose[T] =
         Choose(expression)
-        
+
 }

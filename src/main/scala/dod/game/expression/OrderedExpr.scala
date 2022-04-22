@@ -1,6 +1,8 @@
 package dod.game.expression
 
-trait OrderedExpr[T] extends Expr[T] with Ordering[T] {
+import scala.annotation.targetName
+
+trait OrderedExpr[T: Ordering] extends Expr[T] {
 
     def <(that: OrderedExpr[T]): BooleanExpr = BooleanExpr.Less(this, that)
 

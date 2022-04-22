@@ -1,6 +1,6 @@
 package dod.game.model
 
-import Timestamps.Timestamp
+import dod.game.model.Timestamps.Timestamp
 
 import scala.annotation.targetName
 
@@ -38,12 +38,20 @@ object Durations {
         @targetName("subtract")
         def -(that: Duration): Duration = duration - that
 
-        def >(that: Duration): Boolean = value > that.value
+        @targetName("less")
+        def <(that: Duration): Boolean = value.compare(that) < 0
 
-        def >=(that: Duration): Boolean = value >= that.value
+        @targetName("lessEq")
+        def <=(that: Duration): Boolean = value.compare(that) <= 0
 
-        def <(that: Duration): Boolean = value < that.value
+        @targetName("greater")
+        def >(that: Duration): Boolean = value.compare(that) > 0
 
-        def <=(that: Duration): Boolean = value <= that.value
+        @targetName("greaterEq")
+        def >=(that: Duration): Boolean = value.compare(that) >= 0
+    }
+
+    given Ordering[Duration] with {
+        override def compare(x: Duration, y: Duration): Int = java.lang.Long.compare(x.value, y.value)
     }
 }
