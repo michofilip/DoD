@@ -14,9 +14,9 @@ abstract class CoordinatesExpr extends Expr[Coordinates] {
 object CoordinatesExpr {
 
     final case class Constant(value: Coordinates) extends CoordinatesExpr :
-        override def get(using GameObjectRepository): Option[Coordinates] = Some(value)
+        override def get(using ExprContext): Option[Coordinates] = Some(value)
 
     final case class MoveBy(expr1: CoordinatesExpr, expr2: ShiftExpr) extends CoordinatesExpr :
-        override def get(using GameObjectRepository): Option[Coordinates] = (expr1, expr2) ~> ((x, y) => Some(x.moveBy(y)))
+        override def get(using ExprContext): Option[Coordinates] = (expr1, expr2) ~> ((x, y) => Some(x.moveBy(y)))
 
 }
