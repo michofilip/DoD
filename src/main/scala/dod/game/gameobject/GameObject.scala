@@ -1,6 +1,5 @@
 package dod.game.gameobject
 
-import dod.game.gameobject.behavior.{BehaviorProperty, BehaviorPropertyHolder}
 import dod.game.gameobject.commons.{CommonsProperty, CommonsPropertyHolder}
 import dod.game.gameobject.graphics.{GraphicsProperty, GraphicsPropertyHolder}
 import dod.game.gameobject.physics.{PhysicsProperty, PhysicsPropertyHolder}
@@ -20,7 +19,6 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
                                override protected val graphicsProperty: Option[GraphicsProperty] = None,
                                override protected val timersProperty: Option[TimersProperty] = None,
                                override protected val schedulerProperty: Option[SchedulerProperty] = None,
-                               override protected val behaviorProperty: Option[BehaviorProperty] = None,
                                override protected val scriptProperty: Option[ScriptProperty] = None)
     extends CommonsPropertyHolder
         with PositionPropertyHolder
@@ -29,7 +27,6 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
         with GraphicsPropertyHolder
         with TimersPropertyHolder
         with SchedulerPropertyHolder
-        with BehaviorPropertyHolder
         with ScriptPropertyHolder {
 
     protected def update(positionProperty: Option[PositionProperty] = positionProperty,
@@ -38,7 +35,6 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
                          graphicsProperty: Option[GraphicsProperty] = graphicsProperty,
                          timersProperty: Option[TimersProperty] = timersProperty,
                          schedulerProperty: Option[SchedulerProperty] = schedulerProperty,
-                         behaviorProperty: Option[BehaviorProperty] = behaviorProperty,
                          scriptProperty: Option[ScriptProperty] = scriptProperty): GameObject =
         new GameObject(
             commonsProperty = commonsProperty,
@@ -48,7 +44,6 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
             graphicsProperty = graphicsProperty,
             timersProperty = timersProperty,
             schedulerProperty = schedulerProperty,
-            behaviorProperty = behaviorProperty,
             scriptProperty = scriptProperty
         )
 

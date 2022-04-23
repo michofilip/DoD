@@ -2,7 +2,6 @@ package dod.service
 
 import dod.data.PhysicsSelectorRepository
 import dod.game.gameobject.*
-import dod.game.gameobject.behavior.BehaviorProperty
 import dod.game.gameobject.commons.*
 import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*

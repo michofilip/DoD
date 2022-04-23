@@ -73,9 +73,6 @@ class GameObjectRepository private(gameObjectsById: Map[String, GameObject],
     def findScheduler(id: String, schedulerName: String): Option[Scheduler] =
         findById(id).flatMap(_.scheduler(schedulerName))
 
-    def findBehavior(id: String, behaviorName: String): Option[Behavior] =
-        findById(id).flatMap(_.behavior(behaviorName))
-
     def findScript(id: String, scriptName: String): Option[Script] =
         findById(id).flatMap(_.script(scriptName))
 
