@@ -71,6 +71,6 @@ class GameObjectService(positionService: PositionService,
     def crateGlobalTimer(id: String, timestamp: Timestamp): GameObject = {
         createGameObject(id, "global_timer", timestamp)
             .withTimersProperty()
-            .updateTimers(TimersTransformer.addTimerAndStart("global_timer_1", Timestamp.zero))
+            .updateTimers(TimersTransformer.addTimerAndStart("timer_1", Timestamp.zero))
     }
 }

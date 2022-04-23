@@ -22,11 +22,11 @@ final class DisplayActor private(screen: Screen) {
             val gameObjects = gameObjectRepository.findAll
 
             val focus = gameObjectRepository
-                .findByName("player")
+                .findById("player")
                 .flatMap(_.position.coordinates)
                 .getOrElse(Coordinates(0, 0))
 
-            val timestamp = gameObjectRepository.globalTimestamp
+            val timestamp = gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
             Platform.runLater {
                 screen.drawGameObjects(gameObjects, focus, timestamp)
