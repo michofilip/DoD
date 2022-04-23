@@ -3,6 +3,7 @@ package dod.service.event
 import dod.game.event.StateEvent
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
+import dod.game.model.Timestamps.Timestamp
 import dod.service.event.EventService.EventResponse
 
 import java.util.UUID
@@ -26,9 +27,11 @@ private[event] final class StateEventService {
             handleStateUpdate(gameObjectRepository, gameObjectId, StateTransformer.close)
     }
 
-    private def handleStateUpdate(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, stateTransformer: StateTransformer): EventResponse = {
+    private def handleStateUpdate(gameObjectRepository: GameObjectRepository, gameObjectId: String, stateTransformer: StateTransformer): EventResponse = {
         gameObjectRepository.findById(gameObjectId).map { gameObject =>
-            (gameObjectRepository - gameObject, gameObject.updateState(stateTransformer, gameObjectRepository.globalTimestamp))
+            val timestamp = gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+
+            (gameObjectRepository - gameObject, gameObject.updateState(stateTransformer, timestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdateState(gameObjectRepository, gameObject) =>
             (gameObjectRepository + gameObject, Seq.empty)
         }.getOrElse {

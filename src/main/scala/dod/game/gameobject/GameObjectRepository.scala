@@ -8,9 +8,8 @@ import java.util.UUID
 import scala.annotation.targetName
 import scala.util.chaining.scalaUtilChainingOps
 
-class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
-                                   gameObjectsByCoordinates: Map[Coordinates, Map[UUID, GameObject]],
-                                   gameObjectIdByName: Map[String, UUID]) extends ExprContext {
+class GameObjectRepository private(gameObjectsById: Map[String, GameObject],
+                                   gameObjectsByCoordinates: Map[Coordinates, Map[String, GameObject]]) extends ExprContext {
 
     @targetName("add")
     def +(gameObject: GameObject): GameObjectRepository = {
@@ -22,7 +21,7 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
         val newGameObjectsById = gameObjectsById + (gameObject.id -> gameObject)
 
-        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
+        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates)
     }
 
     @targetName("addAll")
@@ -42,27 +41,20 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
 
         val newGameObjectsById = gameObjectsById - gameObject.id
 
-        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates, gameObjectIdByName)
+        new GameObjectRepository(newGameObjectsById, newGameObjectsByCoordinates)
     }
 
     @targetName("removeAll")
     def --(gameObjects: Seq[GameObject]): GameObjectRepository =
         gameObjects.foldLeft(this)(_ - _)
 
-    def addByName(name: String, id: UUID): GameObjectRepository = {
-        new GameObjectRepository(gameObjectsById, gameObjectsByCoordinates, gameObjectIdByName + (name -> id))
-    }
-
     def findAll: Seq[GameObject] =
         gameObjectsById.values.toSeq
 
-    def findById(id: UUID): Option[GameObject] =
+    def findById(id: String): Option[GameObject] =
         gameObjectsById.get(id)
 
-    def findByName(name: String): Option[GameObject] =
-        gameObjectIdByName.get(name).flatMap(findById)
-
-    def findByCoordinates(coordinates: Coordinates): Map[UUID, GameObject] =
+    def findByCoordinates(coordinates: Coordinates): Map[String, GameObject] =
         gameObjectsByCoordinates.getOrElse(coordinates, Map.empty)
 
     def existAtCoordinates(coordinates: Coordinates)(predicate: GameObject => Boolean): Boolean =
@@ -75,27 +67,21 @@ class GameObjectRepository private(gameObjectsById: Map[UUID, GameObject],
         gameObject.physics.fold(false)(_.solid)
     }
 
-    @Deprecated
-    def globalTimestamp: Timestamp = findByName("global_timers")
-        .flatMap(_.timer("global_timer_1"))
-        .map(_.timestamp)
-        .getOrElse(Timestamp.zero)
-
-    def findTimer(id: UUID, timerName: String): Option[Timer] =
+    def findTimer(id: String, timerName: String): Option[Timer] =
         findById(id).flatMap(_.timer(timerName))
 
-    def findScheduler(id: UUID, schedulerName: String): Option[Scheduler] =
+    def findScheduler(id: String, schedulerName: String): Option[Scheduler] =
         findById(id).flatMap(_.scheduler(schedulerName))
 
-    def findBehavior(id: UUID, behaviorName: String): Option[Behavior] =
+    def findBehavior(id: String, behaviorName: String): Option[Behavior] =
         findById(id).flatMap(_.behavior(behaviorName))
 
-    def findScript(id: UUID, scriptName: String): Option[Script] =
+    def findScript(id: String, scriptName: String): Option[Script] =
         findById(id).flatMap(_.script(scriptName))
 
 }
 
 object GameObjectRepository {
     def apply(gameObjects: Seq[GameObject] = Seq.empty): GameObjectRepository =
-        new GameObjectRepository(Map.empty, Map.empty, Map.empty) ++ gameObjects
+        new GameObjectRepository(Map.empty, Map.empty) ++ gameObjects
 }

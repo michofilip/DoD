@@ -56,7 +56,7 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
 
 object GameObject {
 
-    def apply(id: UUID, name: String, creationTimestamp: Timestamp): GameObject =
+    def apply(id: String, name: String, creationTimestamp: Timestamp): GameObject =
         new GameObject(commonsProperty = CommonsProperty(id = id, name = name, creationTimestamp = creationTimestamp))
 
 }

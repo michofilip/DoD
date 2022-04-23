@@ -15,7 +15,7 @@ import scala.util.chaining.scalaUtilChainingOps
 
 class GameObjectTimersTest extends AnyFunSuite {
 
-    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val baseGameObject = GameObject(id = "game_object_id", name = "TestGameObject", creationTimestamp = Timestamp.zero)
     private val gameObject = baseGameObject.withTimersProperty()
 
     test("GameObject::timers no TimersProperty test") {

@@ -9,7 +9,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import java.util.UUID
 
 class GameObjectCommonsTest extends AnyFunSuite {
-    private val id = UUID.randomUUID()
+    private val id = "game_object_id"
     private val gameObject = GameObject(id = id, name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::commonsAccessor test") {

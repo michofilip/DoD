@@ -28,7 +28,7 @@ private[event] final class SchedulerEventService {
             handleSchedulerUpdate(gameObjectRepository, gameObjectId, SchedulerTransformer.delaySchedulerBy(schedulerName, duration))
     }
 
-    private inline def handleCheckScheduler(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerName: String): EventResponse = {
+    private inline def handleCheckScheduler(gameObjectRepository: GameObjectRepository, gameObjectId: String, schedulerName: String): EventResponse = {
         import SchedulerEvent.*
 
         for
@@ -50,7 +50,7 @@ private[event] final class SchedulerEventService {
         (gameObjectRepository, Seq.empty)
     }
 
-    private inline def handleScheduleOnce(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerName: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event]): EventResponse = {
+    private inline def handleScheduleOnce(gameObjectRepository: GameObjectRepository, gameObjectId: String, schedulerName: String, timerId: String, timerKey: String, delay: Duration, events: Seq[Event]): EventResponse = {
         import SchedulerEvent.*
 
         for
@@ -65,7 +65,7 @@ private[event] final class SchedulerEventService {
         (gameObjectRepository, Seq.empty)
     }
 
-    private inline def handleScheduleAtFixedRate(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, schedulerName: String, timerId: UUID, timerKey: String, delay: Duration, events: Seq[Event]): EventResponse = {
+    private inline def handleScheduleAtFixedRate(gameObjectRepository: GameObjectRepository, gameObjectId: String, schedulerName: String, timerId: String, timerKey: String, delay: Duration, events: Seq[Event]): EventResponse = {
         import SchedulerEvent.*
 
         for
@@ -81,7 +81,7 @@ private[event] final class SchedulerEventService {
     }
 
     private inline def handleSchedulerUpdate(gameObjectRepository: GameObjectRepository,
-                                             gameObjectId: UUID,
+                                             gameObjectId: String,
                                              schedulerTransformer: SchedulerTransformer,
                                              events: Seq[Event] = Seq.empty): EventResponse =
         gameObjectRepository.findById(gameObjectId).fold((gameObjectRepository, Seq.empty)) { gameObject =>

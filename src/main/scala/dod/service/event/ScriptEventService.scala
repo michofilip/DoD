@@ -15,7 +15,7 @@ private[event] final class ScriptEventService {
             handleRunScript(gameObjectRepository, gameObjectId, scriptName, lineNo)
     }
 
-    private inline def handleRunScript(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, scriptName: String, lineNo: Int): EventResponse = {
+    private inline def handleRunScript(gameObjectRepository: GameObjectRepository, gameObjectId: String, scriptName: String, lineNo: Int): EventResponse = {
         for
             script <- gameObjectRepository.findScript(gameObjectId, scriptName)
         yield {

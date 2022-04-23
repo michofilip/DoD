@@ -12,7 +12,7 @@ import java.util.UUID
 
 class GameObjectStateTest extends AnyFunSuite {
 
-    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val baseGameObject = GameObject(id = "game_object_id", name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::stateAccessor no StateProperty test") {
         assertResult(None)(baseGameObject.states.state)

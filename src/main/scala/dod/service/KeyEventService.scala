@@ -7,7 +7,7 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
 
 class KeyEventService {
     def processKeyEvent(gameObjectRepository: GameObjectRepository, keyEvent: KeyEvent): Seq[Event] = {
-        gameObjectRepository.findByName("player") match {
+        gameObjectRepository.findById("player") match {
             case Some(player) => keyEvent.code match {
                 case KeyCode.Numpad8 | KeyCode.Up => Seq(PositionEvent.StepAndFace(player.id, Direction.North))
                 case KeyCode.Numpad6 | KeyCode.Right => Seq(PositionEvent.StepAndFace(player.id, Direction.East))
