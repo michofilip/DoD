@@ -27,7 +27,7 @@ class GameObjectService(positionService: PositionService,
         private def optionalUpdate[U](option: Option[U])(f: (T, U) => T): T = option.fold(t)(f(t, _))
     }
 
-    private def createGameObject(id: UUID, name: String, timestamp: Timestamp): GameObject = {
+    private def createGameObject(id: String, name: String, timestamp: Timestamp): GameObject = {
         val positionProperty = positionService.getPositionProperty(name, timestamp)
         val stateProperty = stateService.getStateProperty(name, timestamp)
         val physicsProperty = physicsService.getPhysicsProperty(name)
@@ -40,35 +40,35 @@ class GameObjectService(positionService: PositionService,
             .optionalUpdate(graphicsProperty)(_ withGraphicsProperty _)
     }
 
-    def createFloor(id: UUID, timestamp: Timestamp, coordinates: Coordinates): GameObject = {
+    def createFloor(id: String, timestamp: Timestamp, coordinates: Coordinates): GameObject = {
         createGameObject(id, "floor", timestamp)
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
     }
 
-    def createWall(id: UUID, timestamp: Timestamp, coordinates: Coordinates): GameObject = {
+    def createWall(id: String, timestamp: Timestamp, coordinates: Coordinates): GameObject = {
         createGameObject(id, "wall", timestamp)
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
     }
 
-    def createPlayer(id: UUID, timestamp: Timestamp, coordinates: Coordinates, direction: Direction): GameObject = {
+    def createPlayer(id: String, timestamp: Timestamp, coordinates: Coordinates, direction: Direction): GameObject = {
         createGameObject(id, "player", timestamp)
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
             .updatePosition(PositionTransformer.turnTo(direction), timestamp)
     }
 
-    def createDoor(id: UUID, timestamp: Timestamp, coordinates: Coordinates, closed: Boolean): GameObject = {
+    def createDoor(id: String, timestamp: Timestamp, coordinates: Coordinates, closed: Boolean): GameObject = {
         createGameObject(id, "door", timestamp)
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
             .conditionalUpdate(closed)(_.updateState(StateTransformer.close, timestamp))
     }
 
-    def createSwitch(id: UUID, timestamp: Timestamp, coordinates: Coordinates, on: Boolean): GameObject = {
+    def createSwitch(id: String, timestamp: Timestamp, coordinates: Coordinates, on: Boolean): GameObject = {
         createGameObject(id, "switch", timestamp)
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
             .conditionalUpdate(on)(_.updateState(StateTransformer.switchOn, timestamp))
     }
 
-    def crateGlobalTimer(id: UUID, timestamp: Timestamp): GameObject = {
+    def crateGlobalTimer(id: String, timestamp: Timestamp): GameObject = {
         createGameObject(id, "global_timer", timestamp)
             .withTimersProperty()
             .updateTimers(TimersTransformer.addTimerAndStart("global_timer_1", Timestamp.zero))

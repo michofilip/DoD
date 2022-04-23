@@ -23,13 +23,13 @@ private[event] final class BehaviorEventService {
             handleBehaviorUpdate(gameObjectRepository, gameObjectId, BehaviorTransformer.removeAllBehavior)
     }
 
-    private inline def handleUseBehavior(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, behaviorName: String): EventResponse =
+    private inline def handleUseBehavior(gameObjectRepository: GameObjectRepository, gameObjectId: String, behaviorName: String): EventResponse =
         gameObjectRepository.findBehavior(gameObjectId, behaviorName).fold((gameObjectRepository, Seq.empty)) { behavior =>
             (gameObjectRepository, behavior.events)
         }
 
     private inline def handleBehaviorUpdate(gameObjectRepository: GameObjectRepository,
-                                            gameObjectId: UUID,
+                                            gameObjectId: String,
                                             behaviorTransformer: BehaviorTransformer): EventResponse =
         gameObjectRepository.findById(gameObjectId).fold((gameObjectRepository, Seq.empty)) { gameObject =>
             (gameObjectRepository - gameObject + gameObject.updateBehaviors(behaviorTransformer), Seq.empty)

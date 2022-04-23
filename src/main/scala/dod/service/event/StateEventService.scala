@@ -26,7 +26,7 @@ private[event] final class StateEventService {
             handleStateUpdate(gameObjectRepository, gameObjectId, StateTransformer.close)
     }
 
-    private def handleStateUpdate(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, stateTransformer: StateTransformer): EventResponse = {
+    private def handleStateUpdate(gameObjectRepository: GameObjectRepository, gameObjectId: String, stateTransformer: StateTransformer): EventResponse = {
         gameObjectRepository.findById(gameObjectId).map { gameObject =>
             (gameObjectRepository - gameObject, gameObject.updateState(stateTransformer, gameObjectRepository.globalTimestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdateState(gameObjectRepository, gameObject) =>

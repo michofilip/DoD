@@ -12,7 +12,7 @@ import java.util.UUID
 
 class GameObjectExprTest extends AnyFunSuite {
 
-    private val id = UUID.randomUUID()
+    private val id = "game_object_id"
     private val baseGameObject = GameObject(id = id, name = "TestGameObject", creationTimestamp = Timestamp.zero)
     private val positionProperty = PositionProperty(Position(coordinates = Coordinates(0, 0), direction = Direction.North), positionTimestamp = Timestamp.zero)
     private val stateProperty = StateProperty(state = State.Off, stateTimestamp = Timestamp.zero)

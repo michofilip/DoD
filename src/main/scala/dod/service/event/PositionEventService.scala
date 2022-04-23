@@ -59,7 +59,7 @@ private[event] final class PositionEventService {
     }
 
 
-    private def handlePositionUpdate(gameObjectRepository: GameObjectRepository, gameObjectId: UUID, positionTransformer: PositionTransformer): EventResponse = {
+    private def handlePositionUpdate(gameObjectRepository: GameObjectRepository, gameObjectId: String, positionTransformer: PositionTransformer): EventResponse = {
         gameObjectRepository.findById(gameObjectId).map { gameObject =>
             (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, gameObjectRepository.globalTimestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdatePosition(gameObjectRepository, gameObject) =>

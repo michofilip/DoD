@@ -1,13 +1,9 @@
 package dod.game.event
 
-import dod.game.gameobject.state.StateTransformer
-
-import java.util.UUID
-
 enum StateEvent extends Event {
-    case SwitchOff(gameObjectId: UUID)
-    case SwitchOn(gameObjectId: UUID)
-    case Switch(gameObjectId: UUID)
-    case Open(gameObjectId: UUID)
-    case Close(gameObjectId: UUID)
+    case SwitchOff(gameObjectId: String)
+    case SwitchOn(gameObjectId: String)
+    case Switch(gameObjectId: String)
+    case Open(gameObjectId: String)
+    case Close(gameObjectId: String)
 }

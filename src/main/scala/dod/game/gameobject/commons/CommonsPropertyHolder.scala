@@ -10,7 +10,7 @@ private[gameobject] trait CommonsPropertyHolder {
 
     protected val commonsProperty: CommonsProperty
 
-    final def id: UUID = self.commonsProperty.id
+    final def id: String = self.commonsProperty.id
 
     final def name: String = self.commonsProperty.name
 

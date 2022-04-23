@@ -16,7 +16,7 @@ class GameObjectPhysicsTest extends AnyFunSuite {
     private val stateProperty = StateProperty(state = State.Open, stateTimestamp = Timestamp.zero)
     private val physicsProperty = PhysicsProperty(PhysicsSelector(Some(State.Open) -> Physics(false), Some(State.Closed) -> Physics(true)))
 
-    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val baseGameObject = GameObject(id = "game_object_id", name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::physicsAccessor no PhysicsProperty test") {
         assertResult(None)(baseGameObject.physics)

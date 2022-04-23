@@ -17,17 +17,17 @@ class GameStageService(gameObjectService: GameObjectService) {
             x <- 0 to 11
             y <- 0 to 11
             coordinates = Coordinates(x, y)
-        } yield gameObjectService.createFloor(UUID.randomUUID(), Timestamp.zero, coordinates)
+        } yield gameObjectService.createFloor(UUID.randomUUID().toString, Timestamp.zero, coordinates)
 
         val walls = for {
             x <- 0 to 11
             y <- 0 to 11
             if x == 0 || x == 11 || y == 0 || y == 11
             coordinates = Coordinates(x, y)
-        } yield gameObjectService.createWall(UUID.randomUUID(), Timestamp.zero, coordinates)
+        } yield gameObjectService.createWall(UUID.randomUUID().toString, Timestamp.zero, coordinates)
 
-        val player = gameObjectService.createPlayer(UUID.randomUUID(), Timestamp.zero, Coordinates(1, 1), Direction.North)
-        val globalTimer = gameObjectService.crateGlobalTimer(UUID.randomUUID(), Timestamp.zero)
+        val player = gameObjectService.createPlayer(UUID.randomUUID().toString, Timestamp.zero, Coordinates(1, 1), Direction.North)
+        val globalTimer = gameObjectService.crateGlobalTimer(UUID.randomUUID().toString, Timestamp.zero)
 
         val gameObjects = floors ++ walls ++ Seq(player) ++ Seq(globalTimer)
 
@@ -73,22 +73,22 @@ class GameStageService(gameObjectService: GameObjectService) {
                 (gameObjectRepository, Queue.empty)
 
             case '.' | 'X' =>
-                val floor = gameObjectService.createFloor(UUID.randomUUID(), timestamp, coordinates)
+                val floor = gameObjectService.createFloor(UUID.randomUUID().toString, timestamp, coordinates)
                 (gameObjectRepository + floor, Queue.empty)
 
             case '#' =>
-                val floor = gameObjectService.createFloor(UUID.randomUUID(), timestamp, coordinates)
-                val wall = gameObjectService.createWall(UUID.randomUUID(), timestamp, coordinates)
+                val floor = gameObjectService.createFloor(UUID.randomUUID().toString, timestamp, coordinates)
+                val wall = gameObjectService.createWall(UUID.randomUUID().toString, timestamp, coordinates)
                 (gameObjectRepository + floor + wall, Queue.empty)
 
             case '+' =>
-                val floor = gameObjectService.createFloor(UUID.randomUUID(), timestamp, coordinates)
-                val door = gameObjectService.createDoor(UUID.randomUUID(), timestamp, coordinates, closed = false)
+                val floor = gameObjectService.createFloor(UUID.randomUUID().toString, timestamp, coordinates)
+                val door = gameObjectService.createDoor(UUID.randomUUID().toString, timestamp, coordinates, closed = false)
                 (gameObjectRepository + floor + door, Queue.empty)
 
             case '@' =>
-                val floor = gameObjectService.createFloor(UUID.randomUUID(), timestamp, coordinates)
-                val player = gameObjectService.createPlayer(UUID.randomUUID(), timestamp, coordinates, Direction.East)
+                val floor = gameObjectService.createFloor(UUID.randomUUID().toString, timestamp, coordinates)
+                val player = gameObjectService.createPlayer(UUID.randomUUID().toString, timestamp, coordinates, Direction.East)
                 ((gameObjectRepository + floor + player).addByName("player", player.id), Queue.empty)
 
             case _ =>

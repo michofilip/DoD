@@ -20,7 +20,7 @@ class GameObjectGraphicsTest extends AnyFunSuite {
         (Some(State.Closed), None) -> Animation.LoopingAnimation(layer = 0, fps = 4, frames = Vector(Frame(4, 0, 0), Frame(5, 0, 0), Frame(6, 0, 0), Frame(7, 0, 0)))
     ))
 
-    private val baseGameObject = GameObject(id = UUID.randomUUID(), name = "TestGameObject", creationTimestamp = Timestamp.zero)
+    private val baseGameObject = GameObject(id = "game_object_id", name = "TestGameObject", creationTimestamp = Timestamp.zero)
 
     test("GameObject::graphicsAccessor no GraphicsProperty test") {
         assertResult(None)(baseGameObject.graphics.layer)
