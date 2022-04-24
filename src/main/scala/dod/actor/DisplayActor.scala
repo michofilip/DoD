@@ -42,6 +42,6 @@ object DisplayActor {
 
     private[actor] final case class Display(gameObjectRepository: GameObjectRepository) extends Command
 
-
+    @Deprecated
     def apply(screen: Screen): Behavior[Command] = new DisplayActor(screen).behaviors()
 }
