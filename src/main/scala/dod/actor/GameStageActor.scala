@@ -21,9 +21,13 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
             behavior(setup.copy(processing = processing))
 
         case GameStageActor.SetDisplaying(displaying) =>
+            updateDisplay(setup.gameStage, displaying)
+
             behavior(setup.copy(displaying = displaying))
 
         case GameStageActor.SetGameState(gameStage) =>
+            updateDisplay(gameStage, setup.displaying)
+
             behavior(setup.copy(gameStage = gameStage))
 
         case GameStageActor.ProcessEvents =>
@@ -32,15 +36,13 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
                 behavior(setup.copy(gameStage = Some(gameStage.clearEvents())))
             }
 
-        case GameStageActor.Display =>
-            setup.gameStage.filter(_ => setup.displaying).fold(Behaviors.same) { gameStage =>
-                displayActor ! DisplayActor.Display(gameStage.gameObjectRepository)
-                Behaviors.same
-            }
-
         case GameStageActor.UpdateGameObjectRepository(gameObjectRepository) =>
+
             setup.gameStage.fold(Behaviors.same) { gameStage =>
-                behavior(setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository))))
+                val setupUpdated = setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository)))
+                updateDisplay(setupUpdated.gameStage, setup.displaying)
+
+                behavior(setupUpdated)
             }
 
         case GameStageActor.AddEvents(events) =>
@@ -56,6 +58,16 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
 
 
     }
+
+    private def updateDisplay(gameStage: Option[GameStage], displaying: Boolean): Unit = {
+        displayActor ! DisplayActor.SetGameObjectRepository {
+            if (displaying) {
+                gameStage.map(_.gameObjectRepository)
+            } else {
+                None
+            }
+        }
+    }
 }
 
 object GameStageActor {
@@ -68,16 +80,14 @@ object GameStageActor {
 
     final case class SetGameState(gameState: Option[GameStage]) extends Command
 
-    private case object ProcessEvents extends Command
-
-    private case object Display extends Command
-
-    private[actor] final case class UpdateGameObjectRepository(gameObjectRepository: GameObjectRepository) extends Command
-
     final case class AddEvents(events: Seq[Event]) extends Command
 
     final case class ProcessKeyEvent(keyEvent: KeyEvent) extends Command
 
+    private[actor] final case class UpdateGameObjectRepository(gameObjectRepository: GameObjectRepository) extends Command
+
+    private case object ProcessEvents extends Command
+    
 
     private final case class Setup(gameStage: Option[GameStage], processing: Boolean, displaying: Boolean)
 
@@ -91,7 +101,6 @@ object GameStageActor {
             val keyEventActor = context.spawn(KeyEventActor(keyEventService, context.self), "KeyEventActor")
 
             timer.startTimerAtFixedRate(ProcessEvents, 2000.milliseconds, 33.milliseconds)
-            timer.startTimerAtFixedRate(Display, 1000.milliseconds, 33.milliseconds)
 
             new GameStageActor(eventProcessorActor, displayActor, keyEventActor).behavior(setup)
         }
