@@ -20,29 +20,36 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
                                   (using timer: TimerScheduler[Command]) {
     private def behavior(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
         case GameStageActor.SetProcessing(processing) =>
-            setup.copy(processing = processing).pipe(behavior)
+            setup.copy(processing = processing)
+                .pipe(behavior)
 
         case GameStageActor.SetDisplaying(displaying) =>
-            setup.copy(displaying = displaying).tap(updateDisplay).pipe(behavior)
+            setup.copy(displaying = displaying).tap(updateDisplay)
+                .pipe(behavior)
 
         case GameStageActor.SetGameState(gameStage) =>
-            setup.copy(gameStage = gameStage).tap(updateDisplay).pipe(behavior)
+            setup.copy(gameStage = gameStage).tap(updateDisplay)
+                .pipe(behavior)
 
         case GameStageActor.ProcessEvents =>
             setup.gameStage.filter(_ => setup.processing).filter(_.events.nonEmpty).fold(Behaviors.same) { gameStage =>
                 eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage.gameObjectRepository, gameStage.events)
 
-                setup.copy(gameStage = Some(gameStage.clearEvents())).pipe(behavior)
+                setup.copy(gameStage = Some(gameStage.clearEvents()))
+                    .pipe(behavior)
             }
 
         case GameStageActor.UpdateGameObjectRepository(gameObjectRepository) =>
             setup.gameStage.fold(Behaviors.same) { gameStage =>
-                setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository))).tap(updateDisplay).pipe(behavior)
+                setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository)))
+                    .tap(updateDisplay)
+                    .pipe(behavior)
             }
 
         case GameStageActor.AddEvents(events) =>
             setup.gameStage.fold(Behaviors.same) { gameStage =>
-                setup.copy(gameStage = Some(gameStage.addEvents(events))).pipe(behavior)
+                setup.copy(gameStage = Some(gameStage.addEvents(events)))
+                    .pipe(behavior)
             }
 
         case GameStageActor.ProcessKeyEvent(keyEvent) =>

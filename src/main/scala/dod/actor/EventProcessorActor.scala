@@ -9,17 +9,18 @@ import dod.service.event.EventService
 
 import scala.collection.immutable.Queue
 import scala.concurrent.duration.DurationInt
+import scala.util.chaining.scalaUtilChainingOps
 
 final class EventProcessorActor private(eventService: EventService, gameStageActor: ActorRef[GameStageActor.Command]) {
     private def behavior(): Behavior[Command] = Behaviors.receiveMessage {
         case EventProcessorActor.ProcessEvents(gameObjectRepository, events) =>
-            eventService.processEvents(gameObjectRepository, events) match
-                case (gameObjectRepository, events) =>
-                    gameStageActor ! GameStageActor.UpdateGameObjectRepository(gameObjectRepository)
-                    if (events.nonEmpty) {
-                        gameStageActor ! GameStageActor.AddEvents(events)
-                    }
-                    Behaviors.same
+            eventService.processEvents(gameObjectRepository, events).pipe { case (gameObjectRepository, events) =>
+                gameStageActor ! GameStageActor.UpdateGameObjectRepository(gameObjectRepository)
+                if (events.nonEmpty) {
+                    gameStageActor ! GameStageActor.AddEvents(events)
+                }
+            }
+            Behaviors.same
     }
 }
 
