@@ -12,42 +12,37 @@ import dod.ui.Screen
 import scalafx.scene.input.KeyEvent
 
 import scala.concurrent.duration.DurationInt
+import scala.util.chaining.scalaUtilChainingOps
 
 final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorActor.Command],
                                    displayActor: ActorRef[DisplayActor.Command],
-                                   keyEventActor: ActorRef[KeyEventActor.Command]) {
+                                   keyEventActor: ActorRef[KeyEventActor.Command])
+                                  (using timer: TimerScheduler[Command]) {
     private def behavior(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
         case GameStageActor.SetProcessing(processing) =>
-            behavior(setup.copy(processing = processing))
+            setup.copy(processing = processing).pipe(behavior)
 
         case GameStageActor.SetDisplaying(displaying) =>
-            updateDisplay(setup.gameStage, displaying)
-
-            behavior(setup.copy(displaying = displaying))
+            setup.copy(displaying = displaying).tap(updateDisplay).pipe(behavior)
 
         case GameStageActor.SetGameState(gameStage) =>
-            updateDisplay(gameStage, setup.displaying)
-
-            behavior(setup.copy(gameStage = gameStage))
+            setup.copy(gameStage = gameStage).tap(updateDisplay).pipe(behavior)
 
         case GameStageActor.ProcessEvents =>
             setup.gameStage.filter(_ => setup.processing).filter(_.events.nonEmpty).fold(Behaviors.same) { gameStage =>
                 eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage.gameObjectRepository, gameStage.events)
-                behavior(setup.copy(gameStage = Some(gameStage.clearEvents())))
+
+                setup.copy(gameStage = Some(gameStage.clearEvents())).pipe(behavior)
             }
 
         case GameStageActor.UpdateGameObjectRepository(gameObjectRepository) =>
-
             setup.gameStage.fold(Behaviors.same) { gameStage =>
-                val setupUpdated = setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository)))
-                updateDisplay(setupUpdated.gameStage, setup.displaying)
-
-                behavior(setupUpdated)
+                setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository))).tap(updateDisplay).pipe(behavior)
             }
 
         case GameStageActor.AddEvents(events) =>
             setup.gameStage.fold(Behaviors.same) { gameStage =>
-                behavior(setup.copy(gameStage = Some(gameStage.addEvents(events))))
+                setup.copy(gameStage = Some(gameStage.addEvents(events))).pipe(behavior)
             }
 
         case GameStageActor.ProcessKeyEvent(keyEvent) =>
@@ -56,16 +51,14 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
                 Behaviors.same
             }
 
-
     }
 
-    private def updateDisplay(gameStage: Option[GameStage], displaying: Boolean): Unit = {
+    private def updateDisplay(setup: Setup): Unit = {
         displayActor ! DisplayActor.SetGameObjectRepository {
-            if (displaying) {
-                gameStage.map(_.gameObjectRepository)
-            } else {
+            if (setup.displaying)
+                setup.gameStage.map(_.gameObjectRepository)
+            else
                 None
-            }
         }
     }
 }
@@ -87,14 +80,15 @@ object GameStageActor {
     private[actor] final case class UpdateGameObjectRepository(gameObjectRepository: GameObjectRepository) extends Command
 
     private case object ProcessEvents extends Command
-    
 
-    private final case class Setup(gameStage: Option[GameStage], processing: Boolean, displaying: Boolean)
 
+    private final case class Setup(gameStage: Option[GameStage] = None,
+                                   processing: Boolean = false,
+                                   displaying: Boolean = false)
 
     def apply(eventService: EventService, screen: Screen, keyEventService: KeyEventService): Behavior[Command] = Behaviors.setup { context =>
         Behaviors.withTimers { timer =>
-            val setup = Setup(gameStage = None, processing = false, displaying = false)
+            given TimerScheduler[Command] = timer
 
             val eventProcessorActor = context.spawn(EventProcessorActor(eventService, context.self), "EventProcessorActor")
             val displayActor = context.spawn(DisplayActor(screen), "DisplayActor")
@@ -102,7 +96,7 @@ object GameStageActor {
 
             timer.startTimerAtFixedRate(ProcessEvents, 2000.milliseconds, 33.milliseconds)
 
-            new GameStageActor(eventProcessorActor, displayActor, keyEventActor).behavior(setup)
+            new GameStageActor(eventProcessorActor, displayActor, keyEventActor).behavior(Setup())
         }
     }
 }
