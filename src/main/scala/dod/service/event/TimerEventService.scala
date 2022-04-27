@@ -4,18 +4,22 @@ import dod.game.event.{Event, TimerEvent}
 import dod.game.gameobject.GameObjectRepository
 import dod.game.gameobject.scheduler.SchedulerTransformer
 import dod.game.gameobject.timer.TimersTransformer
-import dod.service.event.EventService.EventResponse
+import dod.service.event.EventService.{EventResponse, defaultResponse}
 
 import java.util.UUID
 
 private[event] final class TimerEventService {
 
-    def processTimerEvent(gameObjectRepository: GameObjectRepository, timerEvent: TimerEvent): EventResponse = timerEvent match {
+    def processTimerEvent(timerEvent: TimerEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = timerEvent match {
         case TimerEvent.AddTimer(gameObjectId, timerName, initialTimestamp) =>
-            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimer(timerName, initialTimestamp))
+            initialTimestamp.get.fold(defaultResponse) { initialTimestamp =>
+                handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimer(timerName, initialTimestamp))
+            }
 
         case TimerEvent.AddTimerAndStart(gameObjectId, timerName, initialTimestamp) =>
-            handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimerAndStart(timerName, initialTimestamp))
+            initialTimestamp.get.fold(defaultResponse) { initialTimestamp =>
+                handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.addTimerAndStart(timerName, initialTimestamp))
+            }
 
         case TimerEvent.RemoveTimer(gameObjectId, timerName) =>
             handleTimerUpdate(gameObjectRepository, gameObjectId, TimersTransformer.removeTimer(timerName))
