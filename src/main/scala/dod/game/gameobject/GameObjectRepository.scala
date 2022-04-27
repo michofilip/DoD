@@ -2,7 +2,7 @@ package dod.game.gameobject
 
 import dod.game.expression.Expr.ExprContext
 import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Behavior, Coordinates, Scheduler, Script, Timer}
+import dod.game.model.{Coordinates, Scheduler, Script, Timer}
 
 import java.util.UUID
 import scala.annotation.targetName
