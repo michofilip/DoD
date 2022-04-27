@@ -4,22 +4,28 @@ import dod.game.event.{Event, PositionEvent}
 import dod.game.gameobject.position.PositionTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.model.Timestamps.Timestamp
-import dod.service.event.EventService.EventResponse
+import dod.service.event.EventService.{EventResponse, defaultResponse}
 
 import java.util.UUID
 import scala.util.chaining.scalaUtilChainingOps
 
 private[event] final class PositionEventService {
 
-    def processPositionEvent(gameObjectRepository: GameObjectRepository, positionEvent: PositionEvent): EventResponse = positionEvent match {
+    def processPositionEvent(positionEvent: PositionEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = positionEvent match {
         case PositionEvent.MoveTo(gameObjectId, coordinates) =>
-            handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.moveTo(coordinates))
+            coordinates.get.fold(defaultResponse) { coordinates =>
+                handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.moveTo(coordinates))
+            }
 
         case PositionEvent.MoveBy(gameObjectId, shift) =>
-            handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.moveBy(shift))
+            shift.get.fold(defaultResponse) { shift =>
+                handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.moveBy(shift))
+            }
 
         case PositionEvent.TurnTo(gameObjectId, direction) =>
-            handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.turnTo(direction))
+            direction.get.fold(defaultResponse) { direction =>
+                handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.turnTo(direction))
+            }
 
         case PositionEvent.TurnClockwise(gameObjectId) =>
             handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.turnClockwise)
@@ -31,7 +37,9 @@ private[event] final class PositionEventService {
             handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.turnBack)
 
         case PositionEvent.Step(gameObjectId, direction) =>
-            handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.step(direction))
+            direction.get.fold(defaultResponse) { direction =>
+                handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.step(direction))
+            }
 
         case PositionEvent.StepForward(gameObjectId) =>
             handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.stepForward)
@@ -46,7 +54,9 @@ private[event] final class PositionEventService {
             handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.stepBack)
 
         case PositionEvent.StepAndFace(gameObjectId, direction) =>
-            handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.stepAndFace(direction))
+            direction.get.fold(defaultResponse) { direction =>
+                handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.stepAndFace(direction))
+            }
 
         case PositionEvent.StepRightAndFace(gameObjectId) =>
             handlePositionUpdate(gameObjectRepository, gameObjectId, PositionTransformer.stepRightAndFace)

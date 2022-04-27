@@ -2,7 +2,7 @@ package dod.service.event
 
 import dod.game.event.{Event, PositionEvent, SchedulerEvent, ScriptEvent, StateEvent, TimerEvent}
 import dod.game.gameobject.GameObjectRepository
-import dod.service.event.EventService.EventResponse
+import dod.service.event.EventService.{EventResponse, defaultResponse}
 import dod.service.event.{PositionEventService, StateEventService}
 
 import scala.annotation.tailrec
@@ -29,16 +29,22 @@ final class EventService {
         pe(gameObjectRepository, events, Queue.empty)
     }
 
-    inline private def processEvent(gameObjectRepository: GameObjectRepository, event: Event): EventResponse = event match {
-        case positionEvent: PositionEvent => positionEventService.processPositionEvent(gameObjectRepository, positionEvent)
-        case stateEvent: StateEvent => stateEventService.processStateEvent(gameObjectRepository, stateEvent)
-        case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(gameObjectRepository, schedulerEvent)
-        case timerEvent: TimerEvent => timerEventService.processTimerEvent(gameObjectRepository, timerEvent)
-        case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(gameObjectRepository, scriptEvent)
-        case _ => (gameObjectRepository, Seq.empty)
+    inline private def processEvent(gameObjectRepository: GameObjectRepository, event: Event): EventResponse = {
+        given GameObjectRepository = gameObjectRepository
+
+        event match {
+            case positionEvent: PositionEvent => positionEventService.processPositionEvent(positionEvent)
+            case stateEvent: StateEvent => stateEventService.processStateEvent(gameObjectRepository, stateEvent)
+            case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(gameObjectRepository, schedulerEvent)
+            case timerEvent: TimerEvent => timerEventService.processTimerEvent(gameObjectRepository, timerEvent)
+            case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(gameObjectRepository, scriptEvent)
+            case _ => defaultResponse
+        }
     }
 }
 
 object EventService {
     type EventResponse = (GameObjectRepository, Seq[Event])
+
+    def defaultResponse(using gameObjectRepository: GameObjectRepository): EventResponse = (gameObjectRepository, Seq.empty)
 }
