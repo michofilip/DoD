@@ -5,7 +5,7 @@ import dod.game.expression.Expr
 import dod.game.gameobject.position.PositionTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.model.Timestamps.Timestamp
-import dod.service.event.EventService.{EventResponse, defaultResponse}
+import dod.service.event.EventService.*
 
 import java.util.UUID
 import scala.util.chaining.scalaUtilChainingOps
@@ -73,22 +73,6 @@ private[event] final class PositionEventService {
             gameObjectId => handlePositionUpdate(gameObjectId, PositionTransformer.stepBackAndFace)
         }
     }
-
-    extension[T] (using GameObjectRepository)(expr: Expr[T]) {
-        private def ~>(f: T => EventResponse): EventResponse = handle1(expr)(f)
-    }
-
-    extension[T1, T2] (using GameObjectRepository)(pair: (Expr[T1], Expr[T2])) {
-        private def ~>(f: (T1, T2) => EventResponse): EventResponse = handle2(pair._1, pair._2)(f)
-    }
-
-    inline private def handle1[T](e: Expr[T])(f: T => EventResponse)(using GameObjectRepository): EventResponse = {
-        for (e <- e.get) yield f(e)
-    }.getOrElse(defaultResponse)
-
-    inline private def handle2[T1, T2](e1: Expr[T1], e2: Expr[T2])(f: (T1, T2) => EventResponse)(using GameObjectRepository): EventResponse = {
-        for (e1 <- e1.get; e2 <- e2.get) yield f(e1, e2)
-    }.getOrElse(defaultResponse)
 
     inline private def handlePositionUpdate(gameObjectId: String, positionTransformer: PositionTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse = {
         gameObjectRepository.findById(gameObjectId).map { gameObject =>

@@ -1,6 +1,7 @@
 package dod.service.event
 
 import dod.game.event.{Event, PositionEvent, SchedulerEvent, ScriptEvent, StateEvent, TimerEvent}
+import dod.game.expression.Expr
 import dod.game.gameobject.GameObjectRepository
 import dod.service.event.EventService.{EventResponse, defaultResponse}
 import dod.service.event.{PositionEventService, StateEventService}
@@ -47,4 +48,20 @@ object EventService {
     type EventResponse = (GameObjectRepository, Seq[Event])
 
     def defaultResponse(using gameObjectRepository: GameObjectRepository): EventResponse = (gameObjectRepository, Seq.empty)
+
+    extension[T] (using GameObjectRepository)(expr: Expr[T]) {
+        private[event] def ~>(f: T => EventResponse): EventResponse = handle1(expr)(f)
+    }
+
+    extension[T1, T2] (using GameObjectRepository)(pair: (Expr[T1], Expr[T2])) {
+        private[event] def ~>(f: (T1, T2) => EventResponse): EventResponse = handle2(pair._1, pair._2)(f)
+    }
+
+    inline private[event] def handle1[T](e: Expr[T])(f: T => EventResponse)(using GameObjectRepository): EventResponse = {
+        for (e <- e.get) yield f(e)
+    }.getOrElse(defaultResponse)
+
+    inline private[event] def handle2[T1, T2](e1: Expr[T1], e2: Expr[T2])(f: (T1, T2) => EventResponse)(using GameObjectRepository): EventResponse = {
+        for (e1 <- e1.get; e2 <- e2.get) yield f(e1, e2)
+    }.getOrElse(defaultResponse)
 }
