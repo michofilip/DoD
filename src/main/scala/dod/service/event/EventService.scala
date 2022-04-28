@@ -36,7 +36,7 @@ final class EventService {
         event match {
             case positionEvent: PositionEvent => positionEventService.processPositionEvent(positionEvent)
             case stateEvent: StateEvent => stateEventService.processStateEvent(stateEvent)
-            case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(gameObjectRepository, schedulerEvent)
+            case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(schedulerEvent)
             case timerEvent: TimerEvent => timerEventService.processTimerEvent(timerEvent)
             case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(scriptEvent)
             case _ => defaultResponse
@@ -61,6 +61,14 @@ object EventService {
         private[event] def ~>(f: (T1, T2, T3) => EventResponse): EventResponse = handle3(tuple._1, tuple._2, tuple._3)(f)
     }
 
+    extension[T1, T2, T3, T4] (using GameObjectRepository)(tuple: (Expr[T1], Expr[T2], Expr[T3], Expr[T4])) {
+        private[event] def ~>(f: (T1, T2, T3, T4) => EventResponse): EventResponse = handle4(tuple._1, tuple._2, tuple._3, tuple._4)(f)
+    }
+
+    extension[T1, T2, T3, T4, T5] (using GameObjectRepository)(tuple: (Expr[T1], Expr[T2], Expr[T3], Expr[T4], Expr[T5])) {
+        private[event] def ~>(f: (T1, T2, T3, T4, T5) => EventResponse): EventResponse = handle5(tuple._1, tuple._2, tuple._3, tuple._4, tuple._5)(f)
+    }
+
     inline private def handle1[T](e: Expr[T])(f: T => EventResponse)(using GameObjectRepository): EventResponse = {
         for (e <- e.get) yield f(e)
     }.getOrElse(defaultResponse)
@@ -71,5 +79,13 @@ object EventService {
 
     inline private def handle3[T1, T2, T3](e1: Expr[T1], e2: Expr[T2], e3: Expr[T3])(f: (T1, T2, T3) => EventResponse)(using GameObjectRepository): EventResponse = {
         for (e1 <- e1.get; e2 <- e2.get; e3 <- e3.get) yield f(e1, e2, e3)
+    }.getOrElse(defaultResponse)
+
+    inline private def handle4[T1, T2, T3, T4](e1: Expr[T1], e2: Expr[T2], e3: Expr[T3], e4: Expr[T4])(f: (T1, T2, T3, T4) => EventResponse)(using GameObjectRepository): EventResponse = {
+        for (e1 <- e1.get; e2 <- e2.get; e3 <- e3.get; e4 <- e4.get) yield f(e1, e2, e3, e4)
+    }.getOrElse(defaultResponse)
+
+    inline private def handle5[T1, T2, T3, T4, T5](e1: Expr[T1], e2: Expr[T2], e3: Expr[T3], e4: Expr[T4], e5: Expr[T5])(f: (T1, T2, T3, T4, T5) => EventResponse)(using GameObjectRepository): EventResponse = {
+        for (e1 <- e1.get; e2 <- e2.get; e3 <- e3.get; e4 <- e4.get; e5 <- e5.get) yield f(e1, e2, e3, e4, e5)
     }.getOrElse(defaultResponse)
 }
