@@ -2,6 +2,7 @@ package dod.game.expression
 
 import dod.game.expression.Expr.ExprContext
 import dod.game.gameobject.GameObjectRepository
+import dod.game.model.Durations.Duration
 import dod.game.model.Timestamps.Timestamp
 import dod.game.model.{Coordinates, Direction, Shift, State}
 
@@ -44,6 +45,8 @@ object Expr {
     def apply(value: String): StringExpr = StringExpr.Constant(value)
 
     def apply(value: Timestamp): TimestampExpr = TimestampExpr.Constant(value)
+
+    def apply(value: Duration): DurationExpr = DurationExpr.Constant(value)
 
     def apply(value: Coordinates): CoordinatesExpr = CoordinatesExpr.Constant(value)
 

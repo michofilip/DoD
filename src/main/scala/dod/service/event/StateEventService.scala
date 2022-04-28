@@ -4,30 +4,35 @@ import dod.game.event.StateEvent
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.model.Timestamps.Timestamp
-import dod.service.event.EventService.EventResponse
+import dod.service.event.EventService.*
 
 import java.util.UUID
 
 private[event] final class StateEventService {
 
-    def processStateEvent(gameObjectRepository: GameObjectRepository, stateEvent: StateEvent): EventResponse = stateEvent match {
-        case StateEvent.SwitchOff(gameObjectId) =>
-            handleStateUpdate(gameObjectRepository, gameObjectId, StateTransformer.switchOff)
+    private[event] def processStateEvent(stateEvent: StateEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = stateEvent match {
+        case StateEvent.SwitchOff(gameObjectId) => gameObjectId ~> {
+            gameObjectId => handleStateUpdate(gameObjectId, StateTransformer.switchOff)
+        }
 
-        case StateEvent.SwitchOn(gameObjectId) =>
-            handleStateUpdate(gameObjectRepository, gameObjectId, StateTransformer.switchOn)
+        case StateEvent.SwitchOn(gameObjectId) => gameObjectId ~> {
+            gameObjectId => handleStateUpdate(gameObjectId, StateTransformer.switchOn)
+        }
 
-        case StateEvent.Switch(gameObjectId) =>
-            handleStateUpdate(gameObjectRepository, gameObjectId, StateTransformer.switch)
+        case StateEvent.Switch(gameObjectId) => gameObjectId ~> {
+            gameObjectId => handleStateUpdate(gameObjectId, StateTransformer.switch)
+        }
 
-        case StateEvent.Open(gameObjectId) =>
-            handleStateUpdate(gameObjectRepository, gameObjectId, StateTransformer.open)
+        case StateEvent.Open(gameObjectId) => gameObjectId ~> {
+            gameObjectId => handleStateUpdate(gameObjectId, StateTransformer.open)
+        }
 
-        case StateEvent.Close(gameObjectId) =>
-            handleStateUpdate(gameObjectRepository, gameObjectId, StateTransformer.close)
+        case StateEvent.Close(gameObjectId) => gameObjectId ~> {
+            gameObjectId => handleStateUpdate(gameObjectId, StateTransformer.close)
+        }
     }
 
-    private def handleStateUpdate(gameObjectRepository: GameObjectRepository, gameObjectId: String, stateTransformer: StateTransformer): EventResponse = {
+    private def handleStateUpdate(gameObjectId: String, stateTransformer: StateTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse = {
         gameObjectRepository.findById(gameObjectId).map { gameObject =>
             val timestamp = gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
@@ -35,7 +40,7 @@ private[event] final class StateEventService {
         }.collect { case (gameObjectRepository, gameObject) if canUpdateState(gameObjectRepository, gameObject) =>
             (gameObjectRepository + gameObject, Seq.empty)
         }.getOrElse {
-            (gameObjectRepository, Seq.empty)
+            defaultResponse
         }
     }
 

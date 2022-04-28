@@ -1,21 +1,22 @@
 package dod.game.event
 
+import dod.game.expression.{CoordinatesExpr, DirectionExpr, ShiftExpr, StringExpr}
 import dod.game.model.{Coordinates, Direction, Shift}
 
 enum PositionEvent extends Event {
-    case MoveTo(gameObjectId: String, coordinates: Coordinates)
-    case MoveBy(gameObjectId: String, shift: Shift)
-    case TurnTo(gameObjectId: String, direction: Direction)
-    case TurnClockwise(gameObjectId: String)
-    case TurnCounterClockwise(gameObjectId: String)
-    case TurnBack(gameObjectId: String)
-    case Step(gameObjectId: String, direction: Direction)
-    case StepForward(gameObjectId: String)
-    case StepRight(gameObjectId: String)
-    case StepLeft(gameObjectId: String)
-    case StepBack(gameObjectId: String)
-    case StepAndFace(gameObjectId: String, direction: Direction)
-    case StepRightAndFace(gameObjectId: String)
-    case StepLeftAndFace(gameObjectId: String)
-    case StepBackAndFace(gameObjectId: String)
+    case MoveTo(gameObjectId: StringExpr, coordinates: CoordinatesExpr)
+    case MoveBy(gameObjectId: StringExpr, shift: ShiftExpr)
+    case TurnTo(gameObjectId: StringExpr, direction: DirectionExpr)
+    case TurnClockwise(gameObjectId: StringExpr)
+    case TurnCounterClockwise(gameObjectId: StringExpr)
+    case TurnBack(gameObjectId: StringExpr)
+    case Step(gameObjectId: StringExpr, direction: DirectionExpr)
+    case StepForward(gameObjectId: StringExpr)
+    case StepRight(gameObjectId: StringExpr)
+    case StepLeft(gameObjectId: StringExpr)
+    case StepBack(gameObjectId: StringExpr)
+    case StepAndFace(gameObjectId: StringExpr, direction: DirectionExpr)
+    case StepRightAndFace(gameObjectId: StringExpr)
+    case StepLeftAndFace(gameObjectId: StringExpr)
+    case StepBackAndFace(gameObjectId: StringExpr)
 }

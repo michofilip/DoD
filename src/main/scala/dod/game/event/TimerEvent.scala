@@ -1,14 +1,15 @@
 package dod.game.event
 
+import dod.game.expression.{StringExpr, TimestampExpr}
 import dod.game.model.Timestamps.Timestamp
 
 enum TimerEvent extends Event {
-    case AddTimer(gameObjectId: String, timerName: String, initialTimestamp: Timestamp)
-    case AddTimerAndStart(gameObjectId: String, timerName: String, initialTimestamp: Timestamp)
-    case RemoveTimer(gameObjectId: String, timerName: String)
-    case RemoveAllTimers(gameObjectId: String)
-    case StartTimer(gameObjectId: String, timerName: String)
-    case StopTimer(gameObjectId: String, timerName: String)
-    case StartAllTimers(gameObjectId: String)
-    case StopAllTimers(gameObjectId: String)
+    case AddTimer(gameObjectId: StringExpr, timerName: StringExpr, initialTimestamp: TimestampExpr)
+    case AddTimerAndStart(gameObjectId: StringExpr, timerName: StringExpr, initialTimestamp: TimestampExpr)
+    case RemoveTimer(gameObjectId: StringExpr, timerName: StringExpr)
+    case RemoveAllTimers(gameObjectId: StringExpr)
+    case StartTimer(gameObjectId: StringExpr, timerName: StringExpr)
+    case StopTimer(gameObjectId: StringExpr, timerName: StringExpr)
+    case StartAllTimers(gameObjectId: StringExpr)
+    case StopAllTimers(gameObjectId: StringExpr)
 }
