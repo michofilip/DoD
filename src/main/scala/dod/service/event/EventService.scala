@@ -47,7 +47,7 @@ final class EventService {
 object EventService {
     type EventResponse = (GameObjectRepository, Seq[Event])
 
-    def defaultResponse(using gameObjectRepository: GameObjectRepository): EventResponse = (gameObjectRepository, Seq.empty)
+    private[event] def defaultResponse(using gameObjectRepository: GameObjectRepository): EventResponse = (gameObjectRepository, Seq.empty)
 
     extension[T] (using GameObjectRepository)(expr: Expr[T]) {
         private[event] def ~>(f: T => EventResponse): EventResponse = handle1(expr)(f)
@@ -57,11 +57,19 @@ object EventService {
         private[event] def ~>(f: (T1, T2) => EventResponse): EventResponse = handle2(pair._1, pair._2)(f)
     }
 
-    inline private[event] def handle1[T](e: Expr[T])(f: T => EventResponse)(using GameObjectRepository): EventResponse = {
+    extension[T1, T2, T3] (using GameObjectRepository)(tuple: (Expr[T1], Expr[T2], Expr[T3])) {
+        private[event] def ~>(f: (T1, T2, T3) => EventResponse): EventResponse = handle3(tuple._1, tuple._2, tuple._3)(f)
+    }
+
+    inline private def handle1[T](e: Expr[T])(f: T => EventResponse)(using GameObjectRepository): EventResponse = {
         for (e <- e.get) yield f(e)
     }.getOrElse(defaultResponse)
 
-    inline private[event] def handle2[T1, T2](e1: Expr[T1], e2: Expr[T2])(f: (T1, T2) => EventResponse)(using GameObjectRepository): EventResponse = {
+    inline private def handle2[T1, T2](e1: Expr[T1], e2: Expr[T2])(f: (T1, T2) => EventResponse)(using GameObjectRepository): EventResponse = {
         for (e1 <- e1.get; e2 <- e2.get) yield f(e1, e2)
+    }.getOrElse(defaultResponse)
+
+    inline private def handle3[T1, T2, T3](e1: Expr[T1], e2: Expr[T2], e3: Expr[T3])(f: (T1, T2, T3) => EventResponse)(using GameObjectRepository): EventResponse = {
+        for (e1 <- e1.get; e2 <- e2.get; e3 <- e3.get) yield f(e1, e2, e3)
     }.getOrElse(defaultResponse)
 }
