@@ -38,7 +38,7 @@ final class EventService {
             case stateEvent: StateEvent => stateEventService.processStateEvent(stateEvent)
             case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(gameObjectRepository, schedulerEvent)
             case timerEvent: TimerEvent => timerEventService.processTimerEvent(timerEvent)
-            case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(gameObjectRepository, scriptEvent)
+            case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(scriptEvent)
             case _ => defaultResponse
         }
     }
