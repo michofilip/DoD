@@ -1,9 +1,11 @@
 package dod.game.event
 
+import dod.game.expression.StringExpr
+
 enum StateEvent extends Event {
-    case SwitchOff(gameObjectId: String)
-    case SwitchOn(gameObjectId: String)
-    case Switch(gameObjectId: String)
-    case Open(gameObjectId: String)
-    case Close(gameObjectId: String)
+    case SwitchOff(gameObjectId: StringExpr)
+    case SwitchOn(gameObjectId: StringExpr)
+    case Switch(gameObjectId: StringExpr)
+    case Open(gameObjectId: StringExpr)
+    case Close(gameObjectId: StringExpr)
 }

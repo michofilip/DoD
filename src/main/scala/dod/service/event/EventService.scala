@@ -35,7 +35,7 @@ final class EventService {
 
         event match {
             case positionEvent: PositionEvent => positionEventService.processPositionEvent(positionEvent)
-            case stateEvent: StateEvent => stateEventService.processStateEvent(gameObjectRepository, stateEvent)
+            case stateEvent: StateEvent => stateEventService.processStateEvent(stateEvent)
             case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(gameObjectRepository, schedulerEvent)
             case timerEvent: TimerEvent => timerEventService.processTimerEvent(timerEvent)
             case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(gameObjectRepository, scriptEvent)
