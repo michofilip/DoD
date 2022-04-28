@@ -11,7 +11,7 @@ import java.util.UUID
 
 private[event] final class ScriptEventService {
 
-    def processScriptEvent(scriptEvent: ScriptEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = scriptEvent match {
+    private[event] def processScriptEvent(scriptEvent: ScriptEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = scriptEvent match {
         case ScriptEvent.RunScript(gameObjectId, scriptName, lineNo) => (gameObjectId, scriptName) ~> {
             (gameObjectId, scriptName) => handleRunScript(gameObjectId, scriptName, lineNo)
         }

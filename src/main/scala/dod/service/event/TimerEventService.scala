@@ -10,7 +10,7 @@ import java.util.UUID
 
 private[event] final class TimerEventService {
 
-    def processTimerEvent(timerEvent: TimerEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = timerEvent match {
+    private[event] def processTimerEvent(timerEvent: TimerEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = timerEvent match {
         case TimerEvent.AddTimer(gameObjectId, timerName, initialTimestamp) => (gameObjectId, timerName, initialTimestamp) ~> {
             (gameObjectId, timerName, initialTimestamp) => handleTimerUpdate(gameObjectId, TimersTransformer.addTimer(timerName, initialTimestamp))
         }

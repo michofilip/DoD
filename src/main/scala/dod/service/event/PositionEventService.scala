@@ -12,7 +12,7 @@ import scala.util.chaining.scalaUtilChainingOps
 
 private[event] final class PositionEventService {
 
-    def processPositionEvent(positionEvent: PositionEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = positionEvent match {
+    private[event] def processPositionEvent(positionEvent: PositionEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = positionEvent match {
         case PositionEvent.MoveTo(gameObjectId, coordinates) => (gameObjectId, coordinates) ~> {
             (gameObjectId, coordinates) => handlePositionUpdate(gameObjectId, PositionTransformer.moveTo(coordinates))
         }

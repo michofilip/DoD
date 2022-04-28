@@ -10,7 +10,7 @@ import java.util.UUID
 
 private[event] final class StateEventService {
 
-    def processStateEvent(stateEvent: StateEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = stateEvent match {
+    private[event] def processStateEvent(stateEvent: StateEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = stateEvent match {
         case StateEvent.SwitchOff(gameObjectId) => gameObjectId ~> {
             gameObjectId => handleStateUpdate(gameObjectId, StateTransformer.switchOff)
         }
