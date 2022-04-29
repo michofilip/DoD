@@ -1,6 +1,6 @@
 package dod.service.event
 
-import dod.game.event.{Event, PositionEvent, SchedulerEvent, ScriptEvent, StateEvent, TimerEvent}
+import dod.game.event.{Event, ExpressionEvent, PositionEvent, SchedulerEvent, ScriptEvent, StateEvent, TimerEvent}
 import dod.game.expression.Expr
 import dod.game.gameobject.GameObjectRepository
 import dod.service.event.EventService.{EventResponse, defaultResponse}
@@ -16,6 +16,7 @@ final class EventService {
     private val schedulerService = new SchedulerEventService
     private val timerEventService = new TimerEventService
     private val scriptEventService = new ScriptEventService
+    private val expressionEventService = new ExpressionEventService
 
     def processEvents(gameObjectRepository: GameObjectRepository, events: Queue[Event]): EventResponse = {
         @tailrec
@@ -39,6 +40,7 @@ final class EventService {
             case schedulerEvent: SchedulerEvent => schedulerService.processSchedulerEvent(schedulerEvent)
             case timerEvent: TimerEvent => timerEventService.processTimerEvent(timerEvent)
             case scriptEvent: ScriptEvent => scriptEventService.processScriptEvent(scriptEvent)
+            case expressionEvent: ExpressionEvent => expressionEventService.processExpressionEvent(expressionEvent)
             case _ => defaultResponse
         }
     }
@@ -53,8 +55,8 @@ object EventService {
         private[event] def ~>(f: T => EventResponse): EventResponse = handle1(expr)(f)
     }
 
-    extension[T1, T2] (using GameObjectRepository)(pair: (Expr[T1], Expr[T2])) {
-        private[event] def ~>(f: (T1, T2) => EventResponse): EventResponse = handle2(pair._1, pair._2)(f)
+    extension[T1, T2] (using GameObjectRepository)(tuple: (Expr[T1], Expr[T2])) {
+        private[event] def ~>(f: (T1, T2) => EventResponse): EventResponse = handle2(tuple._1, tuple._2)(f)
     }
 
     extension[T1, T2, T3] (using GameObjectRepository)(tuple: (Expr[T1], Expr[T2], Expr[T3])) {

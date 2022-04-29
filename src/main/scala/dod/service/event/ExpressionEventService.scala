@@ -1,6 +1,5 @@
 package dod.service.event
 
-import akka.pattern.Patterns
 import dod.game.event.ExpressionEvent
 import dod.game.expression.*
 import dod.game.gameobject.GameObjectRepository
