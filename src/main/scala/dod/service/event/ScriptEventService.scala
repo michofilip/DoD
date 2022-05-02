@@ -9,6 +9,7 @@ import dod.service.ScriptService
 import dod.service.event.EventService.*
 
 import java.util.UUID
+import scala.collection.immutable.Queue
 
 private[event] final class ScriptEventService {
 
@@ -23,10 +24,8 @@ private[event] final class ScriptEventService {
             script <- gameObjectRepository.findScript(gameObjectId, scriptName)
         yield {
             val responseEvents = ScriptService.nextExecutableLine(script, lineNo) match {
-                case (_, EXIT(_)) => Seq.empty
-                // TODO possibly slow
                 case (nextLineNo, EXECUTE(events)) => events :+ ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1)
-                case _ => Seq.empty
+                case _ => Queue.empty
             }
 
             (gameObjectRepository, responseEvents)

@@ -3,11 +3,13 @@ package dod.game.statement
 import dod.game.event.Event
 import dod.game.expression.{BooleanExpr, Expr}
 
+import scala.collection.immutable.Queue
+
 sealed abstract class Statement
 
 object Statement {
 
-    final case class Execute(events: Seq[Event]) extends Statement
+    final case class Execute(events: Queue[Event]) extends Statement
 
     final case class Block(statements: Seq[Statement]) extends Statement
 

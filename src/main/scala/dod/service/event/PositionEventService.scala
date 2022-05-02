@@ -8,6 +8,7 @@ import dod.game.model.Timestamps.Timestamp
 import dod.service.event.EventService.*
 
 import java.util.UUID
+import scala.collection.immutable.Queue
 import scala.util.chaining.scalaUtilChainingOps
 
 private[event] final class PositionEventService {
@@ -80,7 +81,7 @@ private[event] final class PositionEventService {
 
             (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, timestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdatePosition(gameObjectRepository, gameObject) =>
-            (gameObjectRepository + gameObject, Seq.empty)
+            (gameObjectRepository + gameObject, Queue.empty)
         }.getOrElse {
             defaultResponse
         }

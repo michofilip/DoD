@@ -47,9 +47,9 @@ final class EventService {
 }
 
 object EventService {
-    type EventResponse = (GameObjectRepository, Seq[Event])
+    type EventResponse = (GameObjectRepository, Queue[Event])
 
-    private[event] def defaultResponse(using gameObjectRepository: GameObjectRepository): EventResponse = (gameObjectRepository, Seq.empty)
+    private[event] def defaultResponse(using gameObjectRepository: GameObjectRepository): EventResponse = (gameObjectRepository, Queue.empty)
 
     extension[T] (using GameObjectRepository)(expr: Expr[T]) {
         private[event] def ~>(f: T => EventResponse): EventResponse = handle1(expr)(f)

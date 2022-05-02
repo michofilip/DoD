@@ -7,6 +7,7 @@ import dod.game.gameobject.timer.TimersTransformer
 import dod.service.event.EventService.*
 
 import java.util.UUID
+import scala.collection.immutable.Queue
 
 private[event] final class TimerEventService {
 
@@ -46,7 +47,7 @@ private[event] final class TimerEventService {
 
     private inline def handleTimerUpdate(gameObjectId: String, timerTransformer: TimersTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse =
         gameObjectRepository.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameObjectRepository - gameObject + gameObject.updateTimers(timerTransformer), Seq.empty)
+            (gameObjectRepository - gameObject + gameObject.updateTimers(timerTransformer), Queue.empty)
         }
 
 }
