@@ -23,7 +23,8 @@ private[event] final class ScriptEventService {
         yield {
             val responseEvents = script.nextExecutableLine(lineNo) match {
                 case (_, EXIT(_)) => Seq.empty
-                case (nextLineNo, EXECUTE(events)) => ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1) +: events
+//                TODO possibly slow
+                case (nextLineNo, EXECUTE(events)) => events :+ ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1)
                 case (nextLineNo, TEST(condition)) => condition.get match {
                     case Some(true) => Seq(ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 2))
                     case Some(false) => Seq(ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1))
