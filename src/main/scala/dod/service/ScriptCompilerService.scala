@@ -7,6 +7,8 @@ import dod.game.model.{Instruction, Script}
 import dod.game.statement.Statement
 import dod.game.statement.Statement.*
 
+import scala.collection.immutable.Queue
+
 object ScriptCompilerService {
 
     private given[T]: Conversion[T, IndexedSeq[T]] = IndexedSeq(_)
@@ -41,7 +43,7 @@ object ScriptCompilerService {
             compileChoose(expression, variants, otherwise, instructions, labelId)
     }
 
-    private inline def compileExecute(events: Seq[Event], instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
+    private inline def compileExecute(events: Queue[Event], instructions: IndexedSeq[Instruction], labelId: Int): CompilerResponse = {
         (instructions :+ EXECUTE(events), labelId)
     }
 

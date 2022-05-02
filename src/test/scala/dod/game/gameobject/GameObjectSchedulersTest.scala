@@ -13,6 +13,7 @@ import dod.game.model.{Scheduler, Timer}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID
+import scala.collection.immutable.Queue
 
 class GameObjectSchedulersTest extends AnyFunSuite {
 
@@ -33,7 +34,7 @@ class GameObjectSchedulersTest extends AnyFunSuite {
 
     test("GameObject::schedulers scheduleOnce test") {
         val schedulerName = "scheduler_1"
-        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, repeating = false, events = Seq.empty)
+        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, repeating = false, events = Queue.empty)
         val gameObject = this.gameObject
             .updateSchedulers(SchedulerTransformer.scheduleOnce(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
 
@@ -48,7 +49,7 @@ class GameObjectSchedulersTest extends AnyFunSuite {
 
     test("GameObject::schedulers scheduleAtFixedRate test") {
         val schedulerName = "scheduler_1"
-        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, repeating = true, events = Seq.empty)
+        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, repeating = true, events = Queue.empty)
         val gameObject = this.gameObject
             .updateSchedulers(SchedulerTransformer.scheduleAtFixedRate(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
 
@@ -63,7 +64,7 @@ class GameObjectSchedulersTest extends AnyFunSuite {
 
     test("GameObject::schedulers removeScheduler test") {
         val schedulerName = "scheduler_1"
-        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
+        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, false, Queue.empty)
         val gameObject = this.gameObject
             .updateSchedulers(SchedulerTransformer.scheduleOnce(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))
             .updateSchedulers(SchedulerTransformer.removeScheduler(schedulerName))
@@ -73,7 +74,7 @@ class GameObjectSchedulersTest extends AnyFunSuite {
 
     test("GameObject::schedulers delaySchedulerBy test") {
         val schedulerName = "scheduler_1"
-        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, false, Seq.empty)
+        val scheduler = model.Scheduler("game_object_id", "timer_1", Timestamp.zero, Duration.zero, false, Queue.empty)
         val schedulerExpected = scheduler.copy(initialTimeStamp = Timestamp(1000))
         val gameObject = this.gameObject
             .updateSchedulers(SchedulerTransformer.scheduleOnce(schedulerName, scheduler.timerId, scheduler.timerKey, scheduler.initialTimeStamp, scheduler.delay, scheduler.events))

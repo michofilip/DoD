@@ -10,6 +10,8 @@ import dod.game.model.{Coordinates, Direction, Shift, State}
 import dod.service.event.EventService.*
 import javafx.beans.binding.DoubleExpression
 
+import scala.collection.immutable.Queue
+
 private[event] final class ExpressionEventService {
 
     private[event] def processExpressionEvent(expressionEvent: ExpressionEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = expressionEvent match {
@@ -47,7 +49,7 @@ private[event] final class ExpressionEventService {
 
     private inline def handleExpressionsUpdate(gameObjectId: String, expressionsTransformer: ExpressionsTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse =
         gameObjectRepository.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameObjectRepository - gameObject + gameObject.updateExpressions(expressionsTransformer), Seq.empty)
+            (gameObjectRepository - gameObject + gameObject.updateExpressions(expressionsTransformer), Queue.empty)
         }
 
 }

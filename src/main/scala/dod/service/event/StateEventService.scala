@@ -7,6 +7,7 @@ import dod.game.model.Timestamps.Timestamp
 import dod.service.event.EventService.*
 
 import java.util.UUID
+import scala.collection.immutable.Queue
 
 private[event] final class StateEventService {
 
@@ -38,7 +39,7 @@ private[event] final class StateEventService {
 
             (gameObjectRepository - gameObject, gameObject.updateState(stateTransformer, timestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdateState(gameObjectRepository, gameObject) =>
-            (gameObjectRepository + gameObject, Seq.empty)
+            (gameObjectRepository + gameObject, Queue.empty)
         }.getOrElse {
             defaultResponse
         }
