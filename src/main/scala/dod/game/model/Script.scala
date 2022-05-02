@@ -8,7 +8,8 @@ final case class Script(instructions: IndexedSeq[Instruction]) {
 
     private val scriptLength = instructions.length
 
-    private val labelMap: Map[Int, Int] =
+    //    private 
+    val labelMap: Map[Int, Int] =
         instructions.zipWithIndex.collect {
             case (LABEL(labelId), lineNo) => labelId -> lineNo
         }.toMap
@@ -25,7 +26,8 @@ final case class Script(instructions: IndexedSeq[Instruction]) {
             case instruction => (lineNo, instruction)
         }
 
-    private inline def getInstruction(lineNo: Int): Instruction =
+    //    private inline
+    def getInstruction(lineNo: Int): Instruction =
         if (0 <= lineNo && lineNo < scriptLength)
             instructions(lineNo)
         else
