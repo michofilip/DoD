@@ -5,6 +5,7 @@ import dod.game.expression.Expr
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Instruction.*
 import dod.game.model.Script
+import dod.service.ScriptService
 import dod.service.event.EventService.*
 
 import java.util.UUID
@@ -21,15 +22,10 @@ private[event] final class ScriptEventService {
         for
             script <- gameObjectRepository.findScript(gameObjectId, scriptName)
         yield {
-            val responseEvents = script.nextExecutableLine(lineNo) match {
+            val responseEvents = ScriptService.nextExecutableLine(script, lineNo) match {
                 case (_, EXIT(_)) => Seq.empty
-//                TODO possibly slow
+                // TODO possibly slow
                 case (nextLineNo, EXECUTE(events)) => events :+ ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1)
-                case (nextLineNo, TEST(condition)) => condition.get match {
-                    case Some(true) => Seq(ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 2))
-                    case Some(false) => Seq(ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1))
-                    case None => Seq.empty
-                }
                 case _ => Seq.empty
             }
 

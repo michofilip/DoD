@@ -7,7 +7,7 @@ import dod.game.model.{Instruction, Script}
 import dod.game.statement.Statement
 import dod.game.statement.Statement.*
 
-class StatementService {
+object ScriptCompilerService {
 
     private given[T]: Conversion[T, IndexedSeq[T]] = IndexedSeq(_)
 
