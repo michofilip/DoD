@@ -13,7 +13,7 @@ import scala.io.{BufferedSource, Source}
 
 class GameStageService(gameObjectService: GameObjectService) {
 
-    def getGameStageTest: GameStage = {
+    def getGameStageTest: (GameStage, Queue[Event]) = {
         val floors = for {
             x <- 0 to 11
             y <- 0 to 11
@@ -34,10 +34,10 @@ class GameStageService(gameObjectService: GameObjectService) {
 
         val gameObjectRepository = GameObjectRepository(gameObjects)
 
-        new GameStage(gameObjectRepository, Queue.empty)
+        (new GameStage(gameObjectRepository), Queue.empty)
     }
 
-    def getGameStageFomMap(mapName: String): GameStage = {
+    def getGameStageFomMap(mapName: String): (GameStage, Queue[Event]) = {
         val chars = {
             val map: BufferedSource = Source.fromFile(s"assets/maps/$mapName.lvl")
             val chars: Vector[Vector[Char]] = map.getLines().toVector.map(line => line.toVector)
@@ -62,7 +62,7 @@ class GameStageService(gameObjectService: GameObjectService) {
 
         val (gameObjectRepository, events) = f(chars, GameObjectRepository(), Queue.empty)
 
-        new GameStage(gameObjectRepository, events)
+        (new GameStage(gameObjectRepository), events)
     }
 
     private def getObjects(coordinates: Coordinates, char: Char, gameObjectRepository: GameObjectRepository): (GameObjectRepository, Queue[Event]) = {
