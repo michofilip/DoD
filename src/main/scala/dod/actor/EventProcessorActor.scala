@@ -3,6 +3,7 @@ package dod.actor
 import akka.actor.typed.scaladsl.Behaviors
 import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor.EventProcessorActor.Command
+import dod.game.GameStage
 import dod.game.event.Event
 import dod.game.gameobject.GameObjectRepository
 import dod.service.event.EventService
@@ -15,7 +16,7 @@ final class EventProcessorActor private(eventService: EventService, gameStageAct
     private def behavior(): Behavior[Command] = Behaviors.receiveMessage {
         case EventProcessorActor.ProcessEvents(gameObjectRepository, events) =>
             eventService.processEvents(gameObjectRepository, events).pipe { case (gameObjectRepository, events) =>
-                gameStageActor ! GameStageActor.UpdateGameObjectRepository(gameObjectRepository)
+                gameStageActor ! GameStageActor.SetGameStage(new GameStage(gameObjectRepository))
                 if (events.nonEmpty) {
                     gameStageActor ! GameStageActor.AddEvents(events)
                 }
