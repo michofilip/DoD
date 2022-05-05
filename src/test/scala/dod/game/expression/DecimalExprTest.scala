@@ -1,11 +1,12 @@
 package dod.game.expression
 
+import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
 import org.scalatest.funsuite.AnyFunSuite
 
 class DecimalExprTest extends AnyFunSuite {
 
-    given GameObjectRepository = GameObjectRepository()
+    given GameStage = new GameStage(GameObjectRepository())
 
     test("DecimalExpr::Constant test") {
         assertResult(Some(3.14)) {

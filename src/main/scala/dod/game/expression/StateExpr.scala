@@ -2,7 +2,7 @@ package dod.game.expression
 
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.{Direction, State}
-import dod.game.expression.Expr.ExprContext
+import dod.game.expression.ExprContext
 
 abstract class StateExpr extends Expr[State]
 

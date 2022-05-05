@@ -1,12 +1,13 @@
 package dod.game.expression
 
+import dod.game.GameStage
 import dod.game.expression.{BooleanExpr, Expr}
 import dod.game.gameobject.GameObjectRepository
 import org.scalatest.funsuite.AnyFunSuite
 
 class IntegerExprTest extends AnyFunSuite {
 
-    given GameObjectRepository = GameObjectRepository()
+    given GameStage = new GameStage(GameObjectRepository())
 
     test("IntegerExpr::Constant test") {
         assertResult(Some(0)) {

@@ -9,7 +9,7 @@ import scala.annotation.targetName
 import scala.util.chaining.scalaUtilChainingOps
 
 class GameObjectRepository private(gameObjectsById: Map[String, GameObject],
-                                   gameObjectsByCoordinates: Map[Coordinates, Map[String, GameObject]]) extends ExprContext {
+                                   gameObjectsByCoordinates: Map[Coordinates, Map[String, GameObject]]) {
 
     @targetName("add")
     def +(gameObject: GameObject): GameObjectRepository = {
