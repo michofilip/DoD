@@ -1,5 +1,6 @@
 package dod.game.expression
 
+import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Durations.Duration
 import dod.game.model.Timestamps.Timestamp
@@ -8,7 +9,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class DurationExprTest extends AnyFunSuite {
 
-    given GameObjectRepository = GameObjectRepository()
+    given GameStage = new GameStage(GameObjectRepository())
 
     test("DurationExpr::Constant test") {
         assertResult(Some(Duration.zero)) {

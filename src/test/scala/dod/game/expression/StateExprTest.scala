@@ -1,12 +1,13 @@
 package dod.game.expression
 
+import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.{Coordinates, Shift, State}
 import org.scalatest.funsuite.AnyFunSuite
 
 class StateExprTest extends AnyFunSuite {
 
-    given GameObjectRepository = GameObjectRepository()
+    given GameStage = new GameStage(GameObjectRepository())
 
     test("StateExpr::Constant test") {
         assertResult(Some(State.Off)) {

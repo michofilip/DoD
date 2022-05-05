@@ -1,6 +1,6 @@
 package dod.game.expression
 
-import dod.game.expression.Expr.ExprContext
+import dod.game.expression.ExprContext
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.State
 import dod.game.model.Timestamps.Timestamp

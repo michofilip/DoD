@@ -1,7 +1,7 @@
 package dod.game.expression
 
 import dod.game.expression.DecimalExpr.{Addition, Division, Multiplication, Negation, Subtraction}
-import dod.game.expression.Expr.ExprContext
+import dod.game.expression.ExprContext
 import dod.game.gameobject.GameObjectRepository
 
 abstract class DecimalExpr extends OrderedExpr[Double] {

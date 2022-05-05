@@ -1,12 +1,13 @@
 package dod.game.expression
 
+import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.{Coordinates, Direction, Shift}
 import org.scalatest.funsuite.AnyFunSuite
 
 class DirectionExprTest extends AnyFunSuite {
 
-    given GameObjectRepository = GameObjectRepository()
+    given GameStage = new GameStage(GameObjectRepository())
 
     test("DirectionExpr::Constant test") {
         assertResult(Some(Direction.North)) {

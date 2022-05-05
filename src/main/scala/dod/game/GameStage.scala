@@ -1,7 +1,7 @@
 package dod.game
 
 import dod.game.event.Event
-import dod.game.expression.Expr.ExprContext
+import dod.game.expression.ExprContext
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Timer
 

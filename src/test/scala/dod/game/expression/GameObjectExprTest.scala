@@ -1,5 +1,6 @@
 package dod.game.expression
 
+import dod.game.GameStage
 import dod.game.gameobject.physics.PhysicsProperty
 import dod.game.gameobject.position.PositionProperty
 import dod.game.gameobject.state.StateProperty
@@ -22,7 +23,7 @@ class GameObjectExprTest extends AnyFunSuite {
         .withStateProperty(stateProperty)
         .withPhysicsProperty(physicsProperty)
 
-    given GameObjectRepository = GameObjectRepository() + gameObject
+    given GameStage = new GameStage(GameObjectRepository() + gameObject)
 
     test("GameObjectExpr::GetName test") {
         assertResult(Some("TestGameObject")) {
