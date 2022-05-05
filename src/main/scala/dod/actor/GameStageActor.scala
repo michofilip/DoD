@@ -42,7 +42,7 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
         case ProcessEvents =>
             setup.gameStage match
                 case Some(gameStage) if setup.processing && setup.events.nonEmpty =>
-                    eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage.gameObjectRepository, setup.events)
+                    eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage, setup.events)
 
                     setup.copy(events = Queue.empty)
                         .pipe(behavior)

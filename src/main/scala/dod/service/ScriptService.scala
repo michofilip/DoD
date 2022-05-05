@@ -1,5 +1,6 @@
 package dod.service
 
+import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Instruction.*
 import dod.game.model.{Instruction, Script}
@@ -9,7 +10,7 @@ import scala.annotation.tailrec
 object ScriptService {
 
     @tailrec
-    def nextExecutableLine(script: Script, lineNo: Int)(using GameObjectRepository): (Int, Instruction) = {
+    def nextExecutableLine(script: Script, lineNo: Int)(using GameStage): (Int, Instruction) = {
         inline def getInstruction(lineNo: Int): Instruction =
             if 0 <= lineNo && lineNo < script.instructions.length then
                 script.instructions(lineNo)

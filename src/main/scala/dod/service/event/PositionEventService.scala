@@ -1,5 +1,6 @@
 package dod.service.event
 
+import dod.game.GameStage
 import dod.game.event.{Event, PositionEvent}
 import dod.game.expression.Expr
 import dod.game.gameobject.position.PositionTransformer
@@ -13,7 +14,7 @@ import scala.util.chaining.scalaUtilChainingOps
 
 private[event] final class PositionEventService {
 
-    private[event] def processPositionEvent(positionEvent: PositionEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = positionEvent match {
+    private[event] def processPositionEvent(positionEvent: PositionEvent)(using gameStage: GameStage): EventResponse = positionEvent match {
         case PositionEvent.MoveTo(gameObjectId, coordinates) => (gameObjectId, coordinates) ~> {
             (gameObjectId, coordinates) => handlePositionUpdate(gameObjectId, PositionTransformer.moveTo(coordinates))
         }
@@ -75,13 +76,13 @@ private[event] final class PositionEventService {
         }
     }
 
-    inline private def handlePositionUpdate(gameObjectId: String, positionTransformer: PositionTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse = {
-        gameObjectRepository.findById(gameObjectId).map { gameObject =>
-            val timestamp = gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+    inline private def handlePositionUpdate(gameObjectId: String, positionTransformer: PositionTransformer)(using gameStage: GameStage): EventResponse = {
+        gameStage.gameObjectRepository.findById(gameObjectId).map { gameObject =>
+            val timestamp = gameStage.gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
-            (gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, timestamp))
+            (gameStage.gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, timestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdatePosition(gameObjectRepository, gameObject) =>
-            (gameObjectRepository + gameObject, Queue.empty)
+            (gameStage.updateGameObjectRepository(gameObjectRepository + gameObject), Queue.empty)
         }.getOrElse {
             defaultResponse
         }

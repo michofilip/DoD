@@ -14,9 +14,9 @@ import scala.util.chaining.scalaUtilChainingOps
 
 final class EventProcessorActor private(eventService: EventService, gameStageActor: ActorRef[GameStageActor.Command]) {
     private def behavior(): Behavior[Command] = Behaviors.receiveMessage {
-        case EventProcessorActor.ProcessEvents(gameObjectRepository, events) =>
-            eventService.processEvents(gameObjectRepository, events).pipe { case (gameObjectRepository, events) =>
-                gameStageActor ! GameStageActor.SetGameStage(new GameStage(gameObjectRepository))
+        case EventProcessorActor.ProcessEvents(gameStage, events) =>
+            eventService.processEvents(gameStage, events).pipe { case (gameStage, events) =>
+                gameStageActor ! GameStageActor.SetGameStage(gameStage)
                 if (events.nonEmpty) {
                     gameStageActor ! GameStageActor.AddEvents(events)
                 }
@@ -29,7 +29,7 @@ object EventProcessorActor {
 
     sealed trait Command
 
-    private[actor] final case class ProcessEvents(gameObjectRepository: GameObjectRepository, events: Queue[Event]) extends Command
+    private[actor] final case class ProcessEvents(gameStage: GameStage, events: Queue[Event]) extends Command
 
 
     def apply(eventService: EventService, gameStageActor: ActorRef[GameStageActor.Command]): Behavior[Command] =

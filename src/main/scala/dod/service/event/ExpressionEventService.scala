@@ -1,5 +1,6 @@
 package dod.service.event
 
+import dod.game.GameStage
 import dod.game.event.ExpressionEvent
 import dod.game.expression.*
 import dod.game.gameobject.GameObjectRepository
@@ -14,7 +15,7 @@ import scala.collection.immutable.Queue
 
 private[event] final class ExpressionEventService {
 
-    private[event] def processExpressionEvent(expressionEvent: ExpressionEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = expressionEvent match {
+    private[event] def processExpressionEvent(expressionEvent: ExpressionEvent)(using gameStage: GameStage): EventResponse = expressionEvent match {
         case ExpressionEvent.SetExpr(gameObjectId, exprName, expr) => (gameObjectId, exprName) ~> {
             (gameObjectId, exprName) => handleExpressionsUpdate(gameObjectId, ExpressionsTransformer.setExpr(exprName, expr))
         }
@@ -47,9 +48,9 @@ private[event] final class ExpressionEventService {
         }
     }
 
-    private inline def handleExpressionsUpdate(gameObjectId: String, expressionsTransformer: ExpressionsTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse =
-        gameObjectRepository.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameObjectRepository - gameObject + gameObject.updateExpressions(expressionsTransformer), Queue.empty)
+    private inline def handleExpressionsUpdate(gameObjectId: String, expressionsTransformer: ExpressionsTransformer)(using gameStage: GameStage): EventResponse =
+        gameStage.gameObjectRepository.findById(gameObjectId).fold(defaultResponse) { gameObject =>
+            (gameStage.updateGameObjectRepository(gameStage.gameObjectRepository - gameObject + gameObject.updateExpressions(expressionsTransformer)), Queue.empty)
         }
 
 }

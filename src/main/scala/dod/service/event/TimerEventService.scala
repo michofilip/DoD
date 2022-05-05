@@ -1,5 +1,6 @@
 package dod.service.event
 
+import dod.game.GameStage
 import dod.game.event.{Event, TimerEvent}
 import dod.game.gameobject.GameObjectRepository
 import dod.game.gameobject.scheduler.SchedulerTransformer
@@ -11,7 +12,7 @@ import scala.collection.immutable.Queue
 
 private[event] final class TimerEventService {
 
-    private[event] def processTimerEvent(timerEvent: TimerEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = timerEvent match {
+    private[event] def processTimerEvent(timerEvent: TimerEvent)(using gameStage: GameStage): EventResponse = timerEvent match {
         case TimerEvent.AddTimer(gameObjectId, timerName, initialTimestamp) => (gameObjectId, timerName, initialTimestamp) ~> {
             (gameObjectId, timerName, initialTimestamp) => handleTimerUpdate(gameObjectId, TimersTransformer.addTimer(timerName, initialTimestamp))
         }
@@ -45,9 +46,9 @@ private[event] final class TimerEventService {
         }
     }
 
-    private inline def handleTimerUpdate(gameObjectId: String, timerTransformer: TimersTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse =
-        gameObjectRepository.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameObjectRepository - gameObject + gameObject.updateTimers(timerTransformer), Queue.empty)
+    private inline def handleTimerUpdate(gameObjectId: String, timerTransformer: TimersTransformer)(using gameStage: GameStage): EventResponse =
+        gameStage.gameObjectRepository.findById(gameObjectId).fold(defaultResponse) { gameObject =>
+            (gameStage.updateGameObjectRepository(gameStage.gameObjectRepository - gameObject + gameObject.updateTimers(timerTransformer)), Queue.empty)
         }
 
 }
