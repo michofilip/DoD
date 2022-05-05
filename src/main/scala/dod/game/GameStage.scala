@@ -8,9 +8,9 @@ import dod.game.model.Timer
 import scala.collection.immutable.Queue
 import scala.util.chaining.scalaUtilChainingOps
 
-class GameStage(val gameObjectRepository: GameObjectRepository) extends ExprContext {
+class GameStage(val gameObjects: GameObjectRepository) extends ExprContext {
 
-    def updateGameObjectRepository(gameObjectRepository: GameObjectRepository): GameStage =
-        GameStage(gameObjectRepository = gameObjectRepository)
+    def updateGameObjects(gameObjects: GameObjectRepository): GameStage =
+        GameStage(gameObjects = gameObjects)
 
 }

@@ -22,7 +22,7 @@ private[event] final class ScriptEventService {
 
     private inline def handleRunScript(gameObjectId: String, scriptName: String, lineNo: Int)(using gameStage: GameStage): EventResponse = {
         for
-            script <- gameStage.gameObjectRepository.findScript(gameObjectId, scriptName)
+            script <- gameStage.gameObjects.findScript(gameObjectId, scriptName)
         yield {
             val responseEvents = ScriptService.nextExecutableLine(script, lineNo) match {
                 case (nextLineNo, EXECUTE(events)) => events :+ ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1)

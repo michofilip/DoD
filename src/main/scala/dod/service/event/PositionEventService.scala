@@ -77,10 +77,10 @@ private[event] final class PositionEventService {
     }
 
     inline private def handlePositionUpdate(gameObjectId: String, positionTransformer: PositionTransformer)(using gameStage: GameStage): EventResponse = {
-        gameStage.gameObjectRepository.findById(gameObjectId).map { gameObject =>
-            val timestamp = gameStage.gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+        gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
+            val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
-            (gameStage.gameObjectRepository - gameObject, gameObject.updatePosition(positionTransformer, timestamp))
+            (gameStage.gameObjects - gameObject, gameObject.updatePosition(positionTransformer, timestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdatePosition(gameObjectRepository, gameObject) =>
             (gameStage.updateGameObjectRepository(gameObjectRepository + gameObject), Queue.empty)
         }.getOrElse {

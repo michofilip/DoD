@@ -35,12 +35,12 @@ private[event] final class StateEventService {
     }
 
     private def handleStateUpdate(gameObjectId: String, stateTransformer: StateTransformer)(using gameStage: GameStage): EventResponse = {
-        gameStage.gameObjectRepository.findById(gameObjectId).map { gameObject =>
-            val timestamp = gameStage.gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+        gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
+            val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
-            (gameStage.gameObjectRepository - gameObject, gameObject.updateState(stateTransformer, timestamp))
+            (gameStage.gameObjects - gameObject, gameObject.updateState(stateTransformer, timestamp))
         }.collect { case (gameObjectRepository, gameObject) if canUpdateState(gameObjectRepository, gameObject) =>
-            (gameStage.updateGameObjectRepository(gameObjectRepository + gameObject), Queue.empty)
+            (gameStage.updateGameObjects(gameObjectRepository + gameObject), Queue.empty)
         }.getOrElse {
             defaultResponse
         }

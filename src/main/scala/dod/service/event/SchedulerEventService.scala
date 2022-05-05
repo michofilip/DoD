@@ -38,8 +38,8 @@ private[event] final class SchedulerEventService {
 
     private inline def handleCheckScheduler(gameObjectId: String, schedulerName: String)(using gameStage: GameStage): EventResponse = {
         for
-            scheduler <- gameStage.gameObjectRepository.findScheduler(gameObjectId, schedulerName)
-            timer <- gameStage.gameObjectRepository.findTimer(scheduler.timerId, scheduler.timerKey)
+            scheduler <- gameStage.gameObjects.findScheduler(gameObjectId, schedulerName)
+            timer <- gameStage.gameObjects.findTimer(scheduler.timerId, scheduler.timerKey)
             ready = timer.durationSince(scheduler.initialTimeStamp) >= scheduler.delay
         yield
             val events =
@@ -58,7 +58,7 @@ private[event] final class SchedulerEventService {
 
     private inline def handleScheduleOnce(gameObjectId: String, schedulerName: String, timerId: String, timerKey: String, delay: Duration, events: Queue[Event])(using gameStage: GameStage): EventResponse = {
         for
-            timer <- gameStage.gameObjectRepository.findTimer(timerId, timerKey)
+            timer <- gameStage.gameObjects.findTimer(timerId, timerKey)
         yield
             val schedulerTransformer = SchedulerTransformer.scheduleOnce(schedulerName, timerId, timerKey, timer.timestamp, delay, events)
             val responseEvents = Queue(SchedulerEvent.CheckScheduler(Expr(gameObjectId), Expr(schedulerName)))
@@ -71,7 +71,7 @@ private[event] final class SchedulerEventService {
 
     private inline def handleScheduleAtFixedRate(gameObjectId: String, schedulerName: String, timerId: String, timerKey: String, delay: Duration, events: Queue[Event])(using gameStage: GameStage): EventResponse = {
         for
-            timer <- gameStage.gameObjectRepository.findTimer(timerId, timerKey)
+            timer <- gameStage.gameObjects.findTimer(timerId, timerKey)
         yield
             val schedulerTransformer = SchedulerTransformer.scheduleAtFixedRate(schedulerName, timerId, timerKey, timer.timestamp, delay, events)
             val responseEvents = Queue(SchedulerEvent.CheckScheduler(Expr(gameObjectId), Expr(schedulerName)))
@@ -83,8 +83,8 @@ private[event] final class SchedulerEventService {
     }
 
     private inline def handleSchedulerUpdate(gameObjectId: String, schedulerTransformer: SchedulerTransformer, events: Queue[Event] = Queue.empty)(using gameStage: GameStage): EventResponse =
-        gameStage.gameObjectRepository.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameStage.updateGameObjectRepository(gameStage.gameObjectRepository - gameObject + gameObject.updateSchedulers(schedulerTransformer)), events)
+        gameStage.gameObjects.findById(gameObjectId).fold(defaultResponse) { gameObject =>
+            (gameStage.updateGameObjects(gameStage.gameObjects - gameObject + gameObject.updateSchedulers(schedulerTransformer)), events)
         }
 
 }

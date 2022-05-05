@@ -64,7 +64,7 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
         case ProcessKeyEvent(keyEvent) =>
             setup.gameStage match
                 case Some(gameStage) if setup.processing =>
-                    keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage.gameObjectRepository, keyEvent)
+                    keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage.gameObjects, keyEvent)
                     Behaviors.same
 
                 case _ =>
@@ -74,7 +74,7 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
     private def updateDisplay(setup: Setup): Unit = {
         displayActor ! DisplayActor.SetGameObjectRepository {
             if (setup.displaying)
-                setup.gameStage.map(_.gameObjectRepository)
+                setup.gameStage.map(_.gameObjects)
             else
                 None
         }
