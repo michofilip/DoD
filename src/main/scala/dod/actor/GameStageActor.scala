@@ -2,7 +2,7 @@ package dod.actor
 
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors, TimerScheduler}
 import akka.actor.typed.{ActorRef, Behavior}
-import dod.actor.GameStageActor.{Command, Setup}
+import dod.actor.GameStageActor.*
 import dod.game.GameStage
 import dod.game.event.Event
 import dod.game.gameobject.GameObjectRepository
@@ -11,6 +11,7 @@ import dod.service.event.EventService
 import dod.ui.Screen
 import scalafx.scene.input.KeyEvent
 
+import scala.collection.immutable.Queue
 import scala.concurrent.duration.DurationInt
 import scala.util.chaining.scalaUtilChainingOps
 
@@ -19,51 +20,61 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
                                    keyEventActor: ActorRef[KeyEventActor.Command])
                                   (using timer: TimerScheduler[Command]) {
     private def behavior(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
-        case GameStageActor.SetProcessing(processing) =>
+        case SetProcessing(processing) =>
             setup.copy(processing = processing)
                 .pipe(behavior)
 
-        case GameStageActor.SetDisplaying(displaying) =>
-            setup.copy(displaying = displaying).tap(updateDisplay)
+        case SetDisplaying(displaying) =>
+            setup.copy(displaying = displaying)
+                .tap(updateDisplay)
                 .pipe(behavior)
 
-        case GameStageActor.SetGameState(gameStage) =>
-            setup.copy(gameStage = gameStage).tap(updateDisplay)
+        case SetGameStage(gameStage) =>
+            setup.copy(gameStage = Some(gameStage))
+                .tap(updateDisplay)
                 .pipe(behavior)
 
-        case GameStageActor.ProcessEvents =>
-            setup.gameStage.filter(_ => setup.processing).filter(_.events.nonEmpty).fold(Behaviors.same) { gameStage =>
-                eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage.gameObjectRepository, gameStage.events)
+        case RemoveGameStage =>
+            setup.copy(gameStage = None, events = Queue.empty)
+                .tap(updateDisplay)
+                .pipe(behavior)
 
-                setup.copy(gameStage = Some(gameStage.clearEvents()))
+        case ProcessEvents =>
+            setup.gameStage match
+                case Some(gameStage) if setup.processing && setup.events.nonEmpty =>
+                    eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage, setup.events)
+
+                    setup.copy(events = Queue.empty)
+                        .pipe(behavior)
+
+                case _ =>
+                    Behaviors.same
+
+        case AddEvents(events) =>
+            if setup.gameStage.isDefined && setup.processing then
+                setup.copy(events = setup.events ++ events)
                     .pipe(behavior)
-            }
-
-        case GameStageActor.UpdateGameObjectRepository(gameObjectRepository) =>
-            setup.gameStage.fold(Behaviors.same) { gameStage =>
-                setup.copy(gameStage = Some(gameStage.updateGameObjectRepository(gameObjectRepository)))
-                    .tap(updateDisplay)
-                    .pipe(behavior)
-            }
-
-        case GameStageActor.AddEvents(events) =>
-            setup.gameStage.fold(Behaviors.same) { gameStage =>
-                setup.copy(gameStage = Some(gameStage.addEvents(events)))
-                    .pipe(behavior)
-            }
-
-        case GameStageActor.ProcessKeyEvent(keyEvent) =>
-            setup.gameStage.filter(_ => setup.processing).fold(Behaviors.same) { gameStage =>
-                keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage.gameObjectRepository, keyEvent)
+            else
                 Behaviors.same
-            }
 
+        case RemoveEvents =>
+            setup.copy(events = Queue.empty)
+                .pipe(behavior)
+
+        case ProcessKeyEvent(keyEvent) =>
+            setup.gameStage match
+                case Some(gameStage) if setup.processing =>
+                    keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage.gameObjects, keyEvent)
+                    Behaviors.same
+
+                case _ =>
+                    Behaviors.same
     }
 
     private def updateDisplay(setup: Setup): Unit = {
         displayActor ! DisplayActor.SetGameObjectRepository {
             if (setup.displaying)
-                setup.gameStage.map(_.gameObjectRepository)
+                setup.gameStage.map(_.gameObjects)
             else
                 None
         }
@@ -78,18 +89,21 @@ object GameStageActor {
 
     final case class SetDisplaying(displaying: Boolean) extends Command
 
-    final case class SetGameState(gameState: Option[GameStage]) extends Command
+    final case class SetGameStage(gameState: GameStage) extends Command
+
+    case object RemoveGameStage extends Command
 
     final case class AddEvents(events: Seq[Event]) extends Command
 
-    final case class ProcessKeyEvent(keyEvent: KeyEvent) extends Command
+    case object RemoveEvents extends Command
 
-    private[actor] final case class UpdateGameObjectRepository(gameObjectRepository: GameObjectRepository) extends Command
+    final case class ProcessKeyEvent(keyEvent: KeyEvent) extends Command
 
     private case object ProcessEvents extends Command
 
 
     private final case class Setup(gameStage: Option[GameStage] = None,
+                                   events: Queue[Event] = Queue.empty,
                                    processing: Boolean = false,
                                    displaying: Boolean = false)
 

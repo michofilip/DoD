@@ -1,23 +1,19 @@
 package dod.game
 
 import dod.game.event.Event
+import dod.game.expression.ExprContext
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Timer
 
 import scala.collection.immutable.Queue
 import scala.util.chaining.scalaUtilChainingOps
 
-class GameStage(val gameObjectRepository: GameObjectRepository, val events: Queue[Event]) {
+class GameStage(val gameObjects: GameObjectRepository) extends ExprContext {
 
-    def updateGameObjectRepository(gameObjectRepository: GameObjectRepository): GameStage =
-        GameStage(gameObjectRepository = gameObjectRepository, events = events)
+    def updateGameObjects(gameObjects: GameObjectRepository): GameStage =
+        GameStage(gameObjects = gameObjects)
 
-
-    def addEvents(events: Seq[Event]): GameStage =
-        GameStage(gameObjectRepository = gameObjectRepository, events = this.events ++ events)
-
-
-    def clearEvents(): GameStage =
-        GameStage(gameObjectRepository = gameObjectRepository, events = Queue.empty)
+    def updateGameObjects(mapping: GameObjectRepository => GameObjectRepository): GameStage =
+        updateGameObjects(mapping(gameObjects))
 
 }

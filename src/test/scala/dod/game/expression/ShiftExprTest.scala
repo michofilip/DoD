@@ -1,12 +1,13 @@
 package dod.game.expression
 
+import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.{Coordinates, Shift}
 import org.scalatest.funsuite.AnyFunSuite
 
 class ShiftExprTest extends AnyFunSuite {
 
-    given GameObjectRepository = GameObjectRepository()
+    given GameStage = new GameStage(GameObjectRepository())
 
     test("ShiftExpr::Constant test") {
         assertResult(Some(Shift(0, 0))) {

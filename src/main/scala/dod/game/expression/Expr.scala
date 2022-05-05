@@ -1,6 +1,6 @@
 package dod.game.expression
 
-import dod.game.expression.Expr.ExprContext
+import dod.game.expression.ExprContext
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Durations.Duration
 import dod.game.model.Timestamps.Timestamp
@@ -19,8 +19,6 @@ abstract class Expr[T] {
 }
 
 object Expr {
-
-    trait ExprContext
 
     private[expression] def resolve1[T, R](expr: Expr[T])(f: T => Option[R])(using ExprContext): Option[R] =
         for (x <- expr.get; r <- f(x)) yield r

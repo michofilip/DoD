@@ -1,5 +1,6 @@
 package dod.service.event
 
+import dod.game.GameStage
 import dod.game.event.StateEvent
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
@@ -11,7 +12,7 @@ import scala.collection.immutable.Queue
 
 private[event] final class StateEventService {
 
-    private[event] def processStateEvent(stateEvent: StateEvent)(using gameObjectRepository: GameObjectRepository): EventResponse = stateEvent match {
+    private[event] def processStateEvent(stateEvent: StateEvent)(using gameStage: GameStage): EventResponse = stateEvent match {
         case StateEvent.SwitchOff(gameObjectId) => gameObjectId ~> {
             gameObjectId => handleStateUpdate(gameObjectId, StateTransformer.switchOff)
         }
@@ -33,18 +34,18 @@ private[event] final class StateEventService {
         }
     }
 
-    private def handleStateUpdate(gameObjectId: String, stateTransformer: StateTransformer)(using gameObjectRepository: GameObjectRepository): EventResponse = {
-        gameObjectRepository.findById(gameObjectId).map { gameObject =>
-            val timestamp = gameObjectRepository.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+    private def handleStateUpdate(gameObjectId: String, stateTransformer: StateTransformer)(using gameStage: GameStage): EventResponse = {
+        gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
+            val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
-            (gameObjectRepository - gameObject, gameObject.updateState(stateTransformer, timestamp))
-        }.collect { case (gameObjectRepository, gameObject) if canUpdateState(gameObjectRepository, gameObject) =>
-            (gameObjectRepository + gameObject, Queue.empty)
+            (gameStage.updateGameObjects(_ - gameObject), gameObject.updateState(stateTransformer, timestamp))
+        }.collect { case (gameStage, gameObject) if canUpdateState(gameStage, gameObject) =>
+            (gameStage.updateGameObjects(_ + gameObject), Queue.empty)
         }.getOrElse {
             defaultResponse
         }
     }
 
-    inline private def canUpdateState(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
-        !gameObjectUpdated.position.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
+    inline private def canUpdateState(gameStage: GameStage, gameObjectUpdated: GameObject): Boolean =
+        !gameObjectUpdated.position.coordinates.exists(gameStage.gameObjects.existSolidAtCoordinates)
 }
