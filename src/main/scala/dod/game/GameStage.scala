@@ -13,4 +13,7 @@ class GameStage(val gameObjects: GameObjectRepository) extends ExprContext {
     def updateGameObjects(gameObjects: GameObjectRepository): GameStage =
         GameStage(gameObjects = gameObjects)
 
+    def updateGameObjects(mapping: GameObjectRepository => GameObjectRepository): GameStage =
+        updateGameObjects(mapping(gameObjects))
+
 }

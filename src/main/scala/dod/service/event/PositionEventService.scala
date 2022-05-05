@@ -80,15 +80,15 @@ private[event] final class PositionEventService {
         gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
             val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
-            (gameStage.gameObjects - gameObject, gameObject.updatePosition(positionTransformer, timestamp))
-        }.collect { case (gameObjectRepository, gameObject) if canUpdatePosition(gameObjectRepository, gameObject) =>
-            (gameStage.updateGameObjectRepository(gameObjectRepository + gameObject), Queue.empty)
+            (gameStage.updateGameObjects(_ - gameObject), gameObject.updatePosition(positionTransformer, timestamp))
+        }.collect { case (gameStage, gameObject) if canUpdatePosition(gameStage, gameObject) =>
+            (gameStage.updateGameObjects(_ + gameObject), Queue.empty)
         }.getOrElse {
             defaultResponse
         }
     }
 
-    inline private def canUpdatePosition(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
-        !gameObjectUpdated.position.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
+    inline private def canUpdatePosition(gameStage: GameStage, gameObjectUpdated: GameObject): Boolean =
+        !gameObjectUpdated.position.coordinates.exists(gameStage.gameObjects.existSolidAtCoordinates)
 
 }

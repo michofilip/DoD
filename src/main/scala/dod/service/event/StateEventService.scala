@@ -38,14 +38,14 @@ private[event] final class StateEventService {
         gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
             val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
 
-            (gameStage.gameObjects - gameObject, gameObject.updateState(stateTransformer, timestamp))
-        }.collect { case (gameObjectRepository, gameObject) if canUpdateState(gameObjectRepository, gameObject) =>
-            (gameStage.updateGameObjects(gameObjectRepository + gameObject), Queue.empty)
+            (gameStage.updateGameObjects(_ - gameObject), gameObject.updateState(stateTransformer, timestamp))
+        }.collect { case (gameStage, gameObject) if canUpdateState(gameStage, gameObject) =>
+            (gameStage.updateGameObjects(_ + gameObject), Queue.empty)
         }.getOrElse {
             defaultResponse
         }
     }
 
-    inline private def canUpdateState(gameObjectRepository: GameObjectRepository, gameObjectUpdated: GameObject): Boolean =
-        !gameObjectUpdated.position.coordinates.exists(gameObjectRepository.existSolidAtCoordinates)
+    inline private def canUpdateState(gameStage: GameStage, gameObjectUpdated: GameObject): Boolean =
+        !gameObjectUpdated.position.coordinates.exists(gameStage.gameObjects.existSolidAtCoordinates)
 }

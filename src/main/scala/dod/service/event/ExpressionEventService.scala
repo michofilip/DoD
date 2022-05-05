@@ -50,7 +50,7 @@ private[event] final class ExpressionEventService {
 
     private inline def handleExpressionsUpdate(gameObjectId: String, expressionsTransformer: ExpressionsTransformer)(using gameStage: GameStage): EventResponse =
         gameStage.gameObjects.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameStage.updateGameObjects(gameStage.gameObjects - gameObject + gameObject.updateExpressions(expressionsTransformer)), Queue.empty)
+            (gameStage.updateGameObjects(_ - gameObject + gameObject.updateExpressions(expressionsTransformer)), Queue.empty)
         }
 
 }

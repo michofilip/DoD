@@ -84,7 +84,7 @@ private[event] final class SchedulerEventService {
 
     private inline def handleSchedulerUpdate(gameObjectId: String, schedulerTransformer: SchedulerTransformer, events: Queue[Event] = Queue.empty)(using gameStage: GameStage): EventResponse =
         gameStage.gameObjects.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameStage.updateGameObjects(gameStage.gameObjects - gameObject + gameObject.updateSchedulers(schedulerTransformer)), events)
+            (gameStage.updateGameObjects(_ - gameObject + gameObject.updateSchedulers(schedulerTransformer)), events)
         }
 
 }

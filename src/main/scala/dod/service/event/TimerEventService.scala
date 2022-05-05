@@ -48,7 +48,7 @@ private[event] final class TimerEventService {
 
     private inline def handleTimerUpdate(gameObjectId: String, timerTransformer: TimersTransformer)(using gameStage: GameStage): EventResponse =
         gameStage.gameObjects.findById(gameObjectId).fold(defaultResponse) { gameObject =>
-            (gameStage.updateGameObjects(gameStage.gameObjects - gameObject + gameObject.updateTimers(timerTransformer)), Queue.empty)
+            (gameStage.updateGameObjects(_ - gameObject + gameObject.updateTimers(timerTransformer)), Queue.empty)
         }
 
 }
