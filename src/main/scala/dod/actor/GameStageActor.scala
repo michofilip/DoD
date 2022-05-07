@@ -72,11 +72,8 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
     }
 
     private def updateDisplay(setup: Setup): Unit = {
-        displayActor ! DisplayActor.SetGameObjectRepository {
-            if (setup.displaying)
-                setup.gameStage.map(_.gameObjects)
-            else
-                None
+        displayActor ! DisplayActor.SetGameStage {
+            if setup.displaying then setup.gameStage else None
         }
     }
 }
