@@ -1,5 +1,6 @@
 package dod.service
 
+import dod.game.GameStage
 import dod.game.event.{Event, PositionEvent}
 import dod.game.expression.Expr
 import dod.game.gameobject.GameObjectRepository
@@ -7,8 +8,8 @@ import dod.game.model.Direction
 import scalafx.scene.input.{KeyCode, KeyEvent}
 
 class KeyEventService {
-    def processKeyEvent(gameObjectRepository: GameObjectRepository, keyEvent: KeyEvent): Seq[Event] = {
-        gameObjectRepository.findById("player") match {
+    def processKeyEvent(gameStage: GameStage, keyEvent: KeyEvent): Seq[Event] = {
+        gameStage.gameObjects.findById("player") match {
             case Some(player) => keyEvent.code match {
                 case KeyCode.Numpad8 | KeyCode.Up => Seq(PositionEvent.StepAndFace(Expr(player.id), Expr(Direction.North)))
                 case KeyCode.Numpad6 | KeyCode.Right => Seq(PositionEvent.StepAndFace(Expr(player.id), Expr(Direction.East)))

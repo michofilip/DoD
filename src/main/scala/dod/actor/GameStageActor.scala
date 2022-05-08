@@ -64,7 +64,7 @@ final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorA
         case ProcessKeyEvent(keyEvent) =>
             setup.gameStage match
                 case Some(gameStage) if setup.processing =>
-                    keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage.gameObjects, keyEvent)
+                    keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage, keyEvent)
                     Behaviors.same
 
                 case _ =>
