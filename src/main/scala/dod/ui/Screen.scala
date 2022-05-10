@@ -1,9 +1,10 @@
 package dod.ui
 
 import dod.data.SpriteRepository
+import dod.game.GameStage
 import dod.game.gameobject.GameObject
-import dod.game.model.{Coordinates, Frame}
 import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Frame}
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.image.Image
 import scalafx.scene.paint.Color
@@ -13,12 +14,25 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
 
     private val graphicsContext2D: GraphicsContext = canvas.graphicsContext2D
 
-    def drawBackground(color: Color): Unit = {
+    def drawGameStage(gameStage: GameStage): Unit = {
+        val gameObjects = gameStage.gameObjects.findAll
+
+        val focus = gameStage.gameObjects
+            .findById("player")
+            .flatMap(_.position.coordinates)
+            .getOrElse(Coordinates(0, 0))
+
+        val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+
+        drawGameObjects(gameObjects, focus, timestamp)
+    }
+
+    private def drawBackground(color: Color): Unit = {
         graphicsContext2D.fill = color
         graphicsContext2D.fillRect(0, 0, width, height)
     }
 
-    def drawGrid(color: Color): Unit = {
+    private def drawGrid(color: Color): Unit = {
         graphicsContext2D.stroke = color
         graphicsContext2D.lineWidth = 1
 
@@ -46,7 +60,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
     }
 
 
-    def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp): Unit = {
+    private def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp): Unit = {
         case class Sprite(x: Double, y: Double, width: Double, height: Double, layer: Int, image: Image)
 
         given Ordering[Sprite] = Ordering.by { sprite =>
@@ -84,6 +98,6 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
             graphicsContext2D.drawImage(sprite.image, sprite.x, sprite.y, sprite.width, sprite.height)
         }
 
-//        drawGrid(Color.Red)
+        drawGrid(Color.Red)
     }
 }

@@ -34,8 +34,8 @@ object Game extends JFXApp3 {
     override def start(): Unit = {
         stage = primaryGameStage.stage
 
-        val (gameStage, events) = context.gameStageService.getGameStageTest
-        //        val gameState = context.gameStageService.getGameStageFomMap("map1")
+        //        val (gameStage, events) = context.gameStageService.getGameStageTest
+        val (gameStage, events) = context.gameStageService.getGameStageFomMap("map1")
 
         gameActor ! GameActor.GameStageCommand(GameStageActor.SetGameStage(gameStage))
         gameActor ! GameActor.GameStageCommand(GameStageActor.AddEvents(events))
