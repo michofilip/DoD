@@ -23,6 +23,7 @@ final class EventProcessorActor private(eventService: EventService, gameStageAct
             if (events.nonEmpty) {
                 gameStageActor ! GameStageActor.AddEvents(events)
             }
+            gameStageActor ! GameStageActor.MarkAsReady
         }
         Behaviors.same
     }
