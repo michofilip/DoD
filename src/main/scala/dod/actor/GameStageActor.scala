@@ -17,77 +17,79 @@ import scala.util.chaining.scalaUtilChainingOps
 
 final class GameStageActor private(eventProcessorActor: ActorRef[EventProcessorActor.Command],
                                    displayActor: ActorRef[DisplayActor.Command],
-                                   keyEventActor: ActorRef[KeyEventActor.Command])
-                                  (using timer: TimerScheduler[Command]) {
+                                   keyEventActor: ActorRef[KeyEventActor.Command]) {
     private def behavior(setup: Setup): Behavior[Command] = Behaviors.receiveMessage {
-        case SetProcessing(processing) =>
-            setup.copy(processing = processing)
-                .pipe(behavior)
-
-        case SetDisplaying(displaying) =>
-            setup.copy(displaying = displaying)
-                .tap(updateDisplay)
-                .pipe(behavior)
-
-        case SetGameStage(gameStage) =>
-            setup.copy(gameStage = Some(gameStage))
-                .tap(updateDisplay)
-                .pipe(behavior)
-
-        case RemoveGameStage =>
-            setup.copy(gameStage = None, events = Queue.empty)
-                .tap(updateDisplay)
-                .pipe(behavior)
-
-        case ProcessEvents =>
-            setup.gameStage match
-                case Some(gameStage) if setup.processing && setup.events.nonEmpty =>
-                    eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage, setup.events)
-
-                    setup.copy(events = Queue.empty)
-                        .pipe(behavior)
-
-                case _ =>
-                    Behaviors.same
-
-        case AddEvents(events) =>
-            if setup.gameStage.isDefined && setup.processing then
-                setup.copy(events = setup.events ++ events)
-                    .pipe(behavior)
-            else
-                Behaviors.same
-
-        case RemoveEvents =>
-            setup.copy(events = Queue.empty)
-                .pipe(behavior)
-
-        case ProcessKeyEvent(keyEvent) =>
-            setup.gameStage match
-                case Some(gameStage) if setup.processing =>
-                    keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage.gameObjects, keyEvent)
-                    Behaviors.same
-
-                case _ =>
-                    Behaviors.same
+        case SetProcessingEnabled(processingEnabled) => handleSetProcessingEnabled(setup, processingEnabled)
+        case SetDisplayingEnabled(displayingEnabled) => handleSetDisplayingEnabled(setup, displayingEnabled)
+        case SetGameStage(gameStage) => handleSetGameStage(setup, gameStage)
+        case RemoveGameStage => handleRemoveGameStage(setup)
+        case ProcessEvents => handleProcessEvents(setup)
+        case MarkAsReady => handleMarkAsReady(setup)
+        case AddEvents(events) => handleAddEvents(setup, events)
+        case RemoveEvents => handleRemoveEvents(setup)
+        case ProcessKeyEvent(keyEvent) => handleProcessKeyEvent(setup, keyEvent)
     }
 
-    private def updateDisplay(setup: Setup): Unit = {
-        displayActor ! DisplayActor.SetGameObjectRepository {
-            if (setup.displaying)
-                setup.gameStage.map(_.gameObjects)
-            else
-                None
+    private inline def handleSetProcessingEnabled(setup: Setup, processingEnabled: Boolean): Behavior[Command] =
+        setup.copy(processingEnabled = processingEnabled)
+            .pipe(behavior)
+
+    private inline def handleSetDisplayingEnabled(setup: Setup, displayingEnabled: Boolean): Behavior[Command] =
+        setup.copy(displayingEnabled = displayingEnabled)
+            .tap(updateDisplay)
+            .pipe(behavior)
+
+    private inline def handleSetGameStage(setup: Setup, gameStage: GameStage): Behavior[Command] =
+        setup.copy(gameStage = Some(gameStage))
+            .tap(updateDisplay)
+            .pipe(behavior)
+
+    private inline def handleRemoveGameStage(setup: Setup): Behavior[Command] =
+        setup.copy(gameStage = None, events = Queue.empty)
+            .tap(updateDisplay)
+            .pipe(behavior)
+
+    private inline def handleProcessEvents(setup: Setup): Behavior[Command] =
+        setup.gameStage.filter(_ => setup.processingEnabled && !setup.processing && setup.events.nonEmpty).fold(Behaviors.same) { gameStage =>
+            eventProcessorActor ! EventProcessorActor.ProcessEvents(gameStage, setup.events)
+
+            setup.copy(events = Queue.empty, processing = true)
+                .pipe(behavior)
         }
-    }
+
+    private inline def handleMarkAsReady(setup: Setup): Behavior[Command] =
+        setup.copy(processing = false)
+            .pipe(behavior)
+
+    private inline def handleAddEvents(setup: Setup, events: Seq[Event]): Behavior[Command] =
+        setup.gameStage.filter(_ => setup.processingEnabled).fold(Behaviors.same) { _ =>
+            setup.copy(events = setup.events ++ events)
+                .pipe(behavior)
+        }
+
+    private inline def handleRemoveEvents(setup: Setup): Behavior[Command] =
+        setup.copy(events = Queue.empty)
+            .pipe(behavior)
+
+    private inline def handleProcessKeyEvent(setup: Setup, keyEvent: KeyEvent): Behavior[Command] =
+        setup.gameStage.filter(_ => setup.processingEnabled).fold(Behaviors.same) { gameStage =>
+            keyEventActor ! KeyEventActor.ProcessKeyEvent(gameStage, keyEvent)
+            Behaviors.same
+        }
+
+    private def updateDisplay(setup: Setup): Unit =
+        displayActor ! DisplayActor.SetGameStage {
+            if setup.displayingEnabled then setup.gameStage else None
+        }
 }
 
 object GameStageActor {
 
     sealed trait Command
 
-    final case class SetProcessing(processing: Boolean) extends Command
+    final case class SetProcessingEnabled(processingEnabled: Boolean) extends Command
 
-    final case class SetDisplaying(displaying: Boolean) extends Command
+    final case class SetDisplayingEnabled(displayingEnabled: Boolean) extends Command
 
     final case class SetGameStage(gameState: GameStage) extends Command
 
@@ -99,23 +101,24 @@ object GameStageActor {
 
     final case class ProcessKeyEvent(keyEvent: KeyEvent) extends Command
 
+    private[actor] case object MarkAsReady extends Command
+
     private case object ProcessEvents extends Command
 
 
     private final case class Setup(gameStage: Option[GameStage] = None,
                                    events: Queue[Event] = Queue.empty,
-                                   processing: Boolean = false,
-                                   displaying: Boolean = false)
+                                   processingEnabled: Boolean = false,
+                                   displayingEnabled: Boolean = false,
+                                   processing: Boolean = false)
 
     def apply(eventService: EventService, screen: Screen, keyEventService: KeyEventService): Behavior[Command] = Behaviors.setup { context =>
         Behaviors.withTimers { timer =>
-            given TimerScheduler[Command] = timer
-
             val eventProcessorActor = context.spawn(EventProcessorActor(eventService, context.self), "EventProcessorActor")
             val displayActor = context.spawn(DisplayActor(screen), "DisplayActor")
             val keyEventActor = context.spawn(KeyEventActor(keyEventService, context.self), "KeyEventActor")
 
-            timer.startTimerAtFixedRate(ProcessEvents, 2000.milliseconds, 33.milliseconds)
+            timer.startTimerAtFixedRate(ProcessEvents, 10.milliseconds)
 
             new GameStageActor(eventProcessorActor, displayActor, keyEventActor).behavior(Setup())
         }
