@@ -27,17 +27,8 @@ final private class DisplayActor private(screen: Screen)(using context: ActorCon
 
     private inline def handleDisplay(setup: Setup): Behavior[Command] = {
         setup.gameStage.filter(_ => !setup.processing).fold(Behaviors.same) { gameStage =>
-            val gameObjects = gameStage.gameObjects.findAll
-
-            val focus = gameStage.gameObjects
-                .findById("player")
-                .flatMap(_.position.coordinates)
-                .getOrElse(Coordinates(0, 0))
-
-            val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
-
             Platform.runLater {
-                screen.drawGameObjects(gameObjects, focus, timestamp)
+                screen.drawGameStage(gameStage)
                 context.self ! MarkAsReady
             }
 
