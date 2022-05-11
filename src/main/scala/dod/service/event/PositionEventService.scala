@@ -78,7 +78,7 @@ private[event] final class PositionEventService {
 
     inline private def handlePositionUpdate(gameObjectId: String, positionTransformer: PositionTransformer)(using gameStage: GameStage): EventResponse = {
         gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
-            val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+            val timestamp = gameStage.timestamp
 
             (gameStage.updateGameObjects(_ - gameObject), gameObject.updatePosition(positionTransformer, timestamp))
         }.collect { case (gameStage, gameObject) if canUpdatePosition(gameStage, gameObject) =>

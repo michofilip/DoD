@@ -16,13 +16,8 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
 
     def drawGameStage(gameStage: GameStage): Unit = {
         val gameObjects = gameStage.gameObjects.findAll
-
-        val focus = gameStage.gameObjects
-            .findById("player")
-            .flatMap(_.position.coordinates)
-            .getOrElse(Coordinates(0, 0))
-
-        val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+        val focus = gameStage.focus
+        val timestamp = gameStage.timestamp
 
         drawGameObjects(gameObjects, focus, timestamp)
     }
