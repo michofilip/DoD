@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class IntegerExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("IntegerExpr::Constant test") {
         assertResult(Some(0)) {

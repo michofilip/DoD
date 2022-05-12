@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class ShiftExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("ShiftExpr::Constant test") {
         assertResult(Some(Shift(0, 0))) {

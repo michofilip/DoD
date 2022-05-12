@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class CoordinatesExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("CoordinatesExpr::Constant test") {
         assertResult(Some(Coordinates(0, 0))) {

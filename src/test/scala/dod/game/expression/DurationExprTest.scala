@@ -9,7 +9,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class DurationExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("DurationExpr::Constant test") {
         assertResult(Some(Duration.zero)) {

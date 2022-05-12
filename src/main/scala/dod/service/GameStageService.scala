@@ -34,7 +34,7 @@ class GameStageService(gameObjectService: GameObjectService) {
 
         val gameObjectRepository = GameObjectRepository(gameObjects)
 
-        (new GameStage(gameObjectRepository), Queue.empty)
+        (GameStage(gameObjectRepository), Queue.empty)
     }
 
     def getGameStageFomMap(mapName: String): (GameStage, Queue[Event]) = {
@@ -62,7 +62,7 @@ class GameStageService(gameObjectService: GameObjectService) {
 
         val (gameObjectRepository, events) = f(chars, GameObjectRepository(), Queue.empty)
 
-        (new GameStage(gameObjectRepository, Some("player")), events)
+        (GameStage(gameObjectRepository, Some("player")), events)
     }
 
     private def getObjects(coordinates: Coordinates, char: Char, gameObjectRepository: GameObjectRepository): (GameObjectRepository, Queue[Event]) = {
