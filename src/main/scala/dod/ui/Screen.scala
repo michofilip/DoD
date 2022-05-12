@@ -5,6 +5,7 @@ import dod.game.GameStage
 import dod.game.gameobject.GameObject
 import dod.game.model.Timestamps.Timestamp
 import dod.game.model.{Coordinates, Frame}
+import dod.ui.Screen.Sprite
 import scalafx.scene.canvas.{Canvas, GraphicsContext}
 import scalafx.scene.image.Image
 import scalafx.scene.paint.Color
@@ -16,23 +17,18 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
 
     def drawGameStage(gameStage: GameStage): Unit = {
         val gameObjects = gameStage.gameObjects.findAll
-
-        val focus = gameStage.gameObjects
-            .findById("player")
-            .flatMap(_.position.coordinates)
-            .getOrElse(Coordinates(0, 0))
-
-        val timestamp = gameStage.gameObjects.findTimer("global_timers", "timer_1").fold(Timestamp.zero)(_.timestamp)
+        val focus = gameStage.focus
+        val timestamp = gameStage.globalTimestamp
 
         drawGameObjects(gameObjects, focus, timestamp)
     }
 
-    private def drawBackground(color: Color): Unit = {
+    private inline def drawBackground(color: Color): Unit = {
         graphicsContext2D.fill = color
         graphicsContext2D.fillRect(0, 0, width, height)
     }
 
-    private def drawGrid(color: Color): Unit = {
+    private inline def drawGrid(color: Color): Unit = {
         graphicsContext2D.stroke = color
         graphicsContext2D.lineWidth = 1
 
@@ -60,13 +56,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
     }
 
 
-    private def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp): Unit = {
-        case class Sprite(x: Double, y: Double, width: Double, height: Double, layer: Int, image: Image)
-
-        given Ordering[Sprite] = Ordering.by { sprite =>
-            (-sprite.y, sprite.layer)
-        }
-
+    private inline def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp): Unit = {
         val offsetX = focus.x * tileWidth - (width - tileWidth) / 2
         val offsetY = focus.y * tileHeight - (height - tileHeight) / 2
 
@@ -77,7 +67,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
         val scaleX = tileWidth / frameTileWidth
         val scaleY = tileHeight / frameTileHeight
 
-        def spriteFrom(gameObject: GameObject): Option[Sprite] = for {
+        def spriteFrom(gameObject: GameObject): Option[Sprite] = for
             coordinates <- gameObject.position.coordinates
             frame <- gameObject.graphics.frame(timestamp)
             layer <- gameObject.graphics.layer
@@ -89,7 +79,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
             scaledHeight = image.height.toDouble * scaleY
 
             if 0 <= x + scaledWidth && x < width && 0 <= y + scaledHeight && y < height
-        } yield Sprite(x, y, scaledWidth, scaledHeight, layer, image)
+        yield Sprite(x, y, scaledWidth, scaledHeight, layer, image)
 
 
         drawBackground(Color.LightGray)
@@ -100,4 +90,10 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
 
         drawGrid(Color.Red)
     }
+}
+
+object Screen {
+    case class Sprite(x: Double, y: Double, width: Double, height: Double, layer: Int, image: Image)
+
+    given Ordering[Sprite] = Ordering.by(sprite => (-sprite.y, sprite.layer))
 }

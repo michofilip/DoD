@@ -62,7 +62,7 @@ class GameStageService(gameObjectService: GameObjectService) {
 
         val (gameObjectRepository, events) = f(chars, GameObjectRepository(), Queue.empty)
 
-        (new GameStage(gameObjectRepository), events)
+        (new GameStage(gameObjectRepository, Some("player")), events)
     }
 
     private def getObjects(coordinates: Coordinates, char: Char, gameObjectRepository: GameObjectRepository): (GameObjectRepository, Queue[Event]) = {
