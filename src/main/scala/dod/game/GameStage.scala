@@ -11,18 +11,21 @@ import scala.util.chaining.scalaUtilChainingOps
 
 case class GameStage(gameObjects: GameObjectRepository, focusId: Option[String] = None) extends ExprContext {
 
-    def updateGameObjects(gameObjects: GameObjectRepository): GameStage =
+    def setGameObjects(gameObjects: GameObjectRepository): GameStage =
         copy(gameObjects = gameObjects)
 
     def updateGameObjects(mapping: GameObjectRepository => GameObjectRepository): GameStage =
-        updateGameObjects(mapping(gameObjects))
+        setGameObjects(mapping(gameObjects))
+
+    def setFocus(focusId: Option[String]): GameStage =
+        copy(focusId = focusId)
 
     def focus: Coordinates = focusId
         .flatMap(gameObjects.findById)
         .flatMap(_.position.coordinates)
         .getOrElse(Coordinates(0, 0))
 
-    def timestamp: Timestamp = gameObjects
+    def globalTimestamp: Timestamp = gameObjects
         .findTimer("global_timers", "timer_1")
         .fold(Timestamp.zero)(_.timestamp)
 
