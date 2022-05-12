@@ -6,7 +6,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class DecimalExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("DecimalExpr::Constant test") {
         assertResult(Some(3.14)) {

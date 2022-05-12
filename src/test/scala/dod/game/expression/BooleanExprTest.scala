@@ -6,7 +6,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class BooleanExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("BooleanExpr::Constant test") {
         assertResult(Some(true)) {

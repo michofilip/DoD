@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class StateExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("StateExpr::Constant test") {
         assertResult(Some(State.Off)) {

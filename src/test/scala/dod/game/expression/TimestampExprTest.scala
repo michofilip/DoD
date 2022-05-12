@@ -8,7 +8,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class TimestampExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("TimestampExpr::Constant test") {
         assertResult(Some(Timestamp.zero)) {

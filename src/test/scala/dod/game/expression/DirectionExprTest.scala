@@ -7,7 +7,7 @@ import org.scalatest.funsuite.AnyFunSuite
 
 class DirectionExprTest extends AnyFunSuite {
 
-    given GameStage = new GameStage(GameObjectRepository())
+    given GameStage = GameStage(GameObjectRepository())
 
     test("DirectionExpr::Constant test") {
         assertResult(Some(Direction.North)) {

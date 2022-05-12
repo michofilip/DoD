@@ -48,7 +48,7 @@ class GameObjectExprTest extends AnyFunSuite {
         .updateExpressions(ExpressionsTransformer.setExpr(exprName9, Expr(Direction.North)))
         .updateExpressions(ExpressionsTransformer.setExpr(exprName10, Expr(State.Off)))
 
-    given GameStage = new GameStage(GameObjectRepository() + gameObject)
+    given GameStage = GameStage(GameObjectRepository() + gameObject)
 
     test("GameObjectExpr::GetName test") {
         assertResult(Some("TestGameObject")) {
@@ -149,14 +149,14 @@ class GameObjectExprTest extends AnyFunSuite {
     }
 
     test("GameObjectExpr::GetCoordinatesExpr test") {
-        assertResult(Some(Coordinates(0,0))) {
+        assertResult(Some(Coordinates(0, 0))) {
             val expr = GameObjectExpr.GetCoordinatesExpr(id, exprName7)
             expr.get
         }
     }
 
     test("GameObjectExpr::GetShiftExpr test") {
-        assertResult(Some(Shift(0,0))) {
+        assertResult(Some(Shift(0, 0))) {
             val expr = GameObjectExpr.GetShiftExpr(id, exprName8)
             expr.get
         }

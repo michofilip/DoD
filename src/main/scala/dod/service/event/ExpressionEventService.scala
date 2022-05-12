@@ -16,11 +16,11 @@ import scala.collection.immutable.Queue
 private[event] final class ExpressionEventService {
 
     private[event] def processExpressionEvent(expressionEvent: ExpressionEvent)(using gameStage: GameStage): EventResponse = expressionEvent match {
-        case ExpressionEvent.SetExpr(gameObjectId, exprName, expr) => (gameObjectId, exprName) ~> {
+        case ExpressionEvent.SetExpression(gameObjectId, exprName, expr) => (gameObjectId, exprName) ~> {
             (gameObjectId, exprName) => handleExpressionsUpdate(gameObjectId, ExpressionsTransformer.setExpr(exprName, expr))
         }
 
-        case ExpressionEvent.SetCalculatedExpr(gameObjectId, exprName, expr) => (gameObjectId, exprName) ~> {
+        case ExpressionEvent.SetValue(gameObjectId, exprName, expr) => (gameObjectId, exprName) ~> {
             (gameObjectId, exprName) => {
                 val expressionsTransformer = expr match {
                     case expr: BooleanExpr => expr.get.fold(ExpressionsTransformer.removeExpr(exprName))(value => ExpressionsTransformer.setExpr(exprName, Expr(value)))
