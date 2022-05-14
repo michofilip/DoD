@@ -1,7 +1,7 @@
 package dod.service.event
 
 import dod.game.GameStage
-import dod.game.event.{Event, PositionEvent}
+import dod.game.event.{Event, PositionEvent, ScriptEvent}
 import dod.game.expression.Expr
 import dod.game.gameobject.position.PositionTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
@@ -80,7 +80,7 @@ private[event] final class PositionEventService {
         gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
             (gameStage.updateGameObjects(_ - gameObject), gameObject.updatePosition(positionTransformer, gameStage.globalTimestamp))
         }.collect { case (gameStage, gameObject) if canUpdatePosition(gameStage, gameObject) =>
-            (gameStage.updateGameObjects(_ + gameObject), Queue.empty)
+            (gameStage.updateGameObjects(_ + gameObject), Queue(ScriptEvent.RunScript(Expr(gameObjectId), Expr("on-position-change"))))
         }.getOrElse {
             defaultResponse
         }
