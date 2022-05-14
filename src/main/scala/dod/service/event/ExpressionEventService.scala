@@ -39,11 +39,11 @@ private[event] final class ExpressionEventService {
             }
         }
 
-        case ExpressionEvent.RemoveExpr(gameObjectId, exprName) => (gameObjectId, exprName) ~> {
+        case ExpressionEvent.RemoveExpression(gameObjectId, exprName) => (gameObjectId, exprName) ~> {
             (gameObjectId, exprName) => handleExpressionsUpdate(gameObjectId, ExpressionsTransformer.removeExpr(exprName))
         }
 
-        case ExpressionEvent.RemoveAllExpr(gameObjectId) => gameObjectId ~> {
+        case ExpressionEvent.RemoveAllExpressions(gameObjectId) => gameObjectId ~> {
             gameObjectId => handleExpressionsUpdate(gameObjectId, ExpressionsTransformer.removeAllExpr)
         }
     }

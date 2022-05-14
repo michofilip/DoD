@@ -1,7 +1,8 @@
 package dod.service.event
 
 import dod.game.GameStage
-import dod.game.event.StateEvent
+import dod.game.event.{ScriptEvent, StateEvent}
+import dod.game.expression.Expr
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
 import dod.game.model.Timestamps.Timestamp
@@ -38,7 +39,7 @@ private[event] final class StateEventService {
         gameStage.gameObjects.findById(gameObjectId).map { gameObject =>
             (gameStage.updateGameObjects(_ - gameObject), gameObject.updateState(stateTransformer, gameStage.globalTimestamp))
         }.collect { case (gameStage, gameObject) if canUpdateState(gameStage, gameObject) =>
-            (gameStage.updateGameObjects(_ + gameObject), Queue.empty)
+            (gameStage.updateGameObjects(_ + gameObject), Queue(ScriptEvent.RunScript(Expr(gameObjectId), Expr("on-state-change"))))
         }.getOrElse {
             defaultResponse
         }
