@@ -3,6 +3,7 @@ package dod.service.event
 import dod.game.GameStage
 import dod.game.event.{Event, SchedulerEvent}
 import dod.game.expression.Expr
+import dod.game.expression.Implicits.given
 import dod.game.gameobject.GameObjectRepository
 import dod.game.gameobject.scheduler.SchedulerTransformer
 import dod.game.model.Durations.Duration
@@ -44,11 +45,11 @@ private[event] final class SchedulerEventService {
         yield
             val events =
                 if ready && scheduler.repeating then
-                    scheduler.events :+ SchedulerEvent.DelayScheduler(Expr(gameObjectId), Expr(schedulerName), Expr(scheduler.delay)) :+ SchedulerEvent.CheckScheduler(Expr(gameObjectId), Expr(schedulerName))
+                    scheduler.events :+ SchedulerEvent.DelayScheduler(gameObjectId, schedulerName, scheduler.delay) :+ SchedulerEvent.CheckScheduler(gameObjectId, schedulerName)
                 else if ready && !scheduler.repeating then
-                    scheduler.events :+ SchedulerEvent.RemoveScheduler(Expr(gameObjectId), Expr(schedulerName))
+                    scheduler.events :+ SchedulerEvent.RemoveScheduler(gameObjectId, schedulerName)
                 else
-                    Queue(SchedulerEvent.CheckScheduler(Expr(gameObjectId), Expr(schedulerName)))
+                    Queue(SchedulerEvent.CheckScheduler(gameObjectId, schedulerName))
 
             (gameStage, events)
 
@@ -61,7 +62,7 @@ private[event] final class SchedulerEventService {
             timer <- gameStage.gameObjects.findTimer(timerId, timerKey)
         yield
             val schedulerTransformer = SchedulerTransformer.scheduleOnce(schedulerName, timerId, timerKey, timer.timestamp, delay, events)
-            val responseEvents = Queue(SchedulerEvent.CheckScheduler(Expr(gameObjectId), Expr(schedulerName)))
+            val responseEvents = Queue(SchedulerEvent.CheckScheduler(gameObjectId, schedulerName))
 
             handleSchedulerUpdate(gameObjectId, schedulerTransformer, responseEvents)
 
@@ -74,7 +75,7 @@ private[event] final class SchedulerEventService {
             timer <- gameStage.gameObjects.findTimer(timerId, timerKey)
         yield
             val schedulerTransformer = SchedulerTransformer.scheduleAtFixedRate(schedulerName, timerId, timerKey, timer.timestamp, delay, events)
-            val responseEvents = Queue(SchedulerEvent.CheckScheduler(Expr(gameObjectId), Expr(schedulerName)))
+            val responseEvents = Queue(SchedulerEvent.CheckScheduler(gameObjectId, schedulerName))
 
             handleSchedulerUpdate(gameObjectId, schedulerTransformer, responseEvents)
 
