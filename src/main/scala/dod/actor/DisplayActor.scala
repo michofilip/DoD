@@ -5,8 +5,7 @@ import akka.actor.typed.{ActorRef, Behavior}
 import dod.actor.DisplayActor.{Command, Display, MarkAsReady, SetGameStage, Setup}
 import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
-import dod.game.model.Coordinates
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Coordinates, Timestamp}
 import dod.ui.Screen
 import scalafx.application.Platform
 

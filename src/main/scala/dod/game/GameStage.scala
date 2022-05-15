@@ -3,8 +3,7 @@ package dod.game
 import dod.game.event.Event
 import dod.game.expression.ExprContext
 import dod.game.gameobject.GameObjectRepository
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Timer}
+import dod.game.model.{Coordinates, Timer, Timestamp}
 
 import scala.collection.immutable.Queue
 import scala.util.chaining.scalaUtilChainingOps

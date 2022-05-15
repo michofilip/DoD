@@ -5,9 +5,7 @@ import dod.game.gameobject.commons.CommonsProperty
 import dod.game.gameobject.graphics.GraphicsProperty
 import dod.game.gameobject.position.{PositionProperty, PositionTransformer}
 import dod.game.gameobject.state.{StateProperty, StateTransformer}
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Animation, AnimationSelector, Frame, State}
+import dod.game.model.{Animation, AnimationSelector, Duration, Frame, State, Timestamp}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID

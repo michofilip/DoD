@@ -7,9 +7,7 @@ import dod.game.gameobject.scheduler.{SchedulerProperty, SchedulerTransformer}
 import dod.game.gameobject.state.{StateProperty, StateTransformer}
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
 import dod.game.model
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Scheduler, Timer}
+import dod.game.model.{Duration, Scheduler, Timer, Timestamp}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID

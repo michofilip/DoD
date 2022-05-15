@@ -2,8 +2,7 @@ package dod.game.expression
 
 import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Shift}
+import dod.game.model.{Coordinates, Shift, Timestamp}
 import org.scalatest.funsuite.AnyFunSuite
 
 class TimestampExprTest extends AnyFunSuite {
