@@ -11,8 +11,7 @@ import dod.game.gameobject.graphics.*
 import dod.game.gameobject.physics.*
 import dod.game.gameobject.position.*
 import dod.game.gameobject.{GameObject, GameObjectRepository}
-import dod.game.model.Timer
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Timer, Timestamp}
 import dod.ui.{PrimaryGameStage, Screen}
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.application.{JFXApp3, Platform}

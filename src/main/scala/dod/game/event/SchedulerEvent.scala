@@ -1,7 +1,7 @@
 package dod.game.event
 
 import dod.game.expression.{DurationExpr, StringExpr}
-import dod.game.model.Durations.Duration
+import dod.game.model.Duration
 
 import scala.collection.immutable.Queue
 

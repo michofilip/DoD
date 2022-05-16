@@ -5,7 +5,7 @@ import dod.game.event.{ScriptEvent, StateEvent}
 import dod.game.expression.Expr
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.Timestamp
 import dod.service.event.EventService.*
 
 import java.util.UUID

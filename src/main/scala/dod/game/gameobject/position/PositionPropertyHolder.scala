@@ -2,8 +2,7 @@ package dod.game.gameobject.position
 
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsPropertyHolder
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction}
+import dod.game.model.{Coordinates, Direction, Timestamp}
 
 private[gameobject] trait PositionPropertyHolder {
     self: GameObject =>

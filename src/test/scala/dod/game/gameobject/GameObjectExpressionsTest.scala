@@ -7,9 +7,7 @@ import dod.game.gameobject.expressions.ExpressionsTransformer
 import dod.game.gameobject.position.{PositionProperty, PositionTransformer}
 import dod.game.gameobject.state.{StateProperty, StateTransformer}
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction, Shift, State, Timer}
+import dod.game.model.{Coordinates, Direction, Duration, Shift, State, Timer, Timestamp}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID

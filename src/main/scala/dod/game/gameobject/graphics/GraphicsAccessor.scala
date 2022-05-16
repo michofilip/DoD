@@ -1,8 +1,6 @@
 package dod.game.gameobject.graphics
 
-import dod.game.model.Frame
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Duration, Frame, Timestamp}
 
 trait GraphicsAccessor {
     def layer: Option[Int]

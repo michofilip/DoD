@@ -1,6 +1,6 @@
 package dod.game.gameobject.commons
 
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.Timestamp
 
 import java.util.UUID
 

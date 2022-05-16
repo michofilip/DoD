@@ -2,9 +2,7 @@ package dod.game.gameobject.scheduler
 
 import dod.game.event.Event
 import dod.game.model
-import dod.game.model.{Scheduler, Timer}
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Duration, Scheduler, Timer, Timestamp}
 
 import java.util.UUID
 import scala.collection.immutable.Queue

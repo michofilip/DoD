@@ -4,9 +4,7 @@ import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsPropertyHolder
 import dod.game.gameobject.position.PositionPropertyHolder
 import dod.game.gameobject.state.StatePropertyHolder
-import dod.game.model.Durations.Duration
-import dod.game.model.Frame
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{Duration, Frame, Timestamp}
 
 private[gameobject] trait GraphicsPropertyHolder {
     self: GameObject with CommonsPropertyHolder with StatePropertyHolder with PositionPropertyHolder =>

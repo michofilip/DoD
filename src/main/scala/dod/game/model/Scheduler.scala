@@ -1,8 +1,6 @@
 package dod.game.model
 
 import dod.game.event.Event
-import Durations.Duration
-import Timestamps.Timestamp
 
 import java.util.UUID
 import scala.collection.immutable.Queue

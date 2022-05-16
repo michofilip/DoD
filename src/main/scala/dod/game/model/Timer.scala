@@ -1,7 +1,7 @@
 package dod.game.model
 
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.Duration
+import dod.game.model.Timestamp
 
 class Timer private(initialTimestamp: Timestamp, lastStartTimestamp: Option[Timestamp]) {
 
