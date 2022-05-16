@@ -9,7 +9,7 @@ import dod.game.gameobject.scheduler.{SchedulerProperty, SchedulerPropertyHolder
 import dod.game.gameobject.script.{ScriptProperty, ScriptPropertyHolder}
 import dod.game.gameobject.state.{StateProperty, StatePropertyHolder, StateTransformer}
 import dod.game.gameobject.timer.{TimersProperty, TimersPropertyHolder}
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.Timestamp
 
 import java.util.UUID
 

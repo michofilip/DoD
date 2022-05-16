@@ -6,7 +6,7 @@ import dod.game.expression.Expr
 import dod.game.expression.Implicits.given
 import dod.game.gameobject.position.PositionTransformer
 import dod.game.gameobject.{GameObject, GameObjectRepository}
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.Timestamp
 import dod.service.event.EventService.*
 
 import java.util.UUID

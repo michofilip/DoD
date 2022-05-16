@@ -5,9 +5,7 @@ import dod.game.event.ExpressionEvent
 import dod.game.expression.*
 import dod.game.gameobject.GameObjectRepository
 import dod.game.gameobject.expressions.ExpressionsTransformer
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction, Shift, State}
+import dod.game.model.{Coordinates, Direction, Duration, Shift, State, Timestamp}
 import dod.service.event.EventService.*
 import javafx.beans.binding.DoubleExpression
 

@@ -3,8 +3,7 @@ package dod.game.gameobject.script
 import dod.game.event.Event
 import dod.game.gameobject.GameObject
 import dod.game.gameobject.scheduler.{SchedulerProperty, SchedulerTransformer}
-import dod.game.model.Durations.Duration
-import dod.game.model.{Scheduler, Script}
+import dod.game.model.{Duration, Scheduler, Script}
 
 import java.util.UUID
 

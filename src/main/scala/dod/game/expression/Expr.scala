@@ -2,9 +2,7 @@ package dod.game.expression
 
 import dod.game.expression.ExprContext
 import dod.game.gameobject.GameObjectRepository
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction, Shift, State}
+import dod.game.model.{Coordinates, Direction, Duration, Shift, State, Timestamp}
 
 import scala.annotation.targetName
 

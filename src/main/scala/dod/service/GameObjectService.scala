@@ -10,8 +10,7 @@ import dod.game.gameobject.scheduler.SchedulerProperty
 import dod.game.gameobject.script.ScriptProperty
 import dod.game.gameobject.state.StateTransformer
 import dod.game.gameobject.timer.{TimersProperty, TimersTransformer}
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction}
+import dod.game.model.{Coordinates, Direction, Timestamp}
 
 import java.util.UUID
 

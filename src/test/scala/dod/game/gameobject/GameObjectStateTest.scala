@@ -4,8 +4,7 @@ import dod.game.gameobject.GameObject
 import dod.game.gameobject.commons.CommonsProperty
 import dod.game.gameobject.position.{PositionProperty, PositionTransformer}
 import dod.game.gameobject.state.{StateProperty, StateTransformer}
-import dod.game.model.State
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.{State, Timestamp}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID

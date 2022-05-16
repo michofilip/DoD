@@ -6,8 +6,7 @@ import dod.game.expression.Expr
 import dod.game.expression.Implicits.given
 import dod.game.gameobject.GameObjectRepository
 import dod.game.gameobject.scheduler.SchedulerTransformer
-import dod.game.model.Durations.Duration
-import dod.game.model.Timer
+import dod.game.model.{Duration, Timer}
 import dod.service.event.EventService.*
 
 import java.util.UUID

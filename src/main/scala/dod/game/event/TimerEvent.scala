@@ -1,7 +1,7 @@
 package dod.game.event
 
 import dod.game.expression.{StringExpr, TimestampExpr}
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.Timestamp
 
 enum TimerEvent extends Event {
     case AddTimer(gameObjectId: StringExpr, timerName: StringExpr, initialTimestamp: TimestampExpr)

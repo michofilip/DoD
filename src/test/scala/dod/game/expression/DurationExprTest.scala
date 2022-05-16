@@ -2,8 +2,8 @@ package dod.game.expression
 
 import dod.game.GameStage
 import dod.game.gameobject.GameObjectRepository
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
+import dod.game.model.Duration
+import dod.game.model.Timestamp
 import dod.game.model.{Coordinates, Shift}
 import org.scalatest.funsuite.AnyFunSuite
 

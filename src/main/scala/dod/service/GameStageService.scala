@@ -3,8 +3,7 @@ package dod.service
 import dod.game.GameStage
 import dod.game.event.Event
 import dod.game.gameobject.GameObjectRepository
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction, Shift}
+import dod.game.model.{Coordinates, Direction, Shift, Timestamp}
 
 import java.util.UUID
 import scala.annotation.tailrec

@@ -6,9 +6,7 @@ import dod.game.gameobject.physics.PhysicsProperty
 import dod.game.gameobject.position.PositionProperty
 import dod.game.gameobject.state.StateProperty
 import dod.game.gameobject.{GameObject, GameObjectRepository}
-import dod.game.model.Durations.Duration
-import dod.game.model.Timestamps.Timestamp
-import dod.game.model.{Coordinates, Direction, Physics, PhysicsSelector, Position, Shift, State}
+import dod.game.model.{Coordinates, Direction, Duration, Physics, PhysicsSelector, Position, Shift, State, Timestamp}
 import org.scalatest.funsuite.AnyFunSuite
 
 import java.util.UUID
