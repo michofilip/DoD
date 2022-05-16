@@ -3,6 +3,7 @@ package dod.service.event
 import dod.game.GameStage
 import dod.game.event.ScriptEvent
 import dod.game.expression.Expr
+import dod.game.expression.Implicits.given
 import dod.game.gameobject.GameObjectRepository
 import dod.game.model.Instruction.*
 import dod.game.model.Script
@@ -25,7 +26,7 @@ private[event] final class ScriptEventService {
             script <- gameStage.gameObjects.findScript(gameObjectId, scriptName)
         yield {
             val responseEvents = ScriptService.nextExecutableLine(script, lineNo) match {
-                case (nextLineNo, EXECUTE(events)) => events :+ ScriptEvent.RunScript(Expr(gameObjectId), Expr(scriptName), nextLineNo + 1)
+                case (nextLineNo, EXECUTE(events)) => events :+ ScriptEvent.RunScript(gameObjectId, scriptName, nextLineNo + 1)
                 case _ => Queue.empty
             }
 
