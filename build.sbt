@@ -4,7 +4,7 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 
 ThisBuild / scalaVersion := "3.1.2"
 
-lazy val scalatestVersion = "3.2.11"
+lazy val scalatestVersion = "3.2.12"
 lazy val akkaVersion = "2.6.19"
 lazy val logbackVersion = "1.2.11"
 lazy val scalafxVersion = "17.0.1-R26"
