@@ -9,17 +9,16 @@ import scala.util.chaining.scalaUtilChainingOps
 
 object ShadowMain {
 
-    class ShadowService(range: Int) {
+    class ShadowService(maxRange: Int) {
+        private val offset = Math.sqrt(2) - 1
 
         private val shifts: Seq[Shift] = {
-            val offset = Math.sqrt(2) - 1
-
             for {
-                x <- -range to range
-                y <- -range to range
-                s = Shift(x, y)
-                if length(s) <= range + offset
-            } yield s
+                x <- -maxRange to maxRange
+                y <- -maxRange to maxRange
+                shift = Shift(x, y)
+                if shift.distanceToZero <= maxRange + offset
+            } yield shift
         }.sorted.toList
 
         private val angles = shifts.flatMap(anglesFrom).distinct.toList
@@ -30,100 +29,122 @@ object ShadowMain {
                 val y = shift.dy
 
                 if (x > 0 && y > 0) {
-                    val min = angle(x - .5, y + .5)
-                    val max = angle(x + .5, y - .5)
+                    val min = getAngle(x - .5, y + .5)
+                    val max = getAngle(x + .5, y - .5)
                     angles.filter(a => min < a && a < max)
                 } else if (x > 0 && y < 0) {
-                    val min = angle(x + .5, y + .5)
-                    val max = angle(x - .5, y - .5)
+                    val min = getAngle(x + .5, y + .5)
+                    val max = getAngle(x - .5, y - .5)
                     angles.filter(a => min < a && a < max)
                 } else if (x < 0 && y > 0) {
-                    val min = angle(x - .5, y - .5)
-                    val max = angle(x + .5, y + .5)
+                    val min = getAngle(x - .5, y - .5)
+                    val max = getAngle(x + .5, y + .5)
                     angles.filter(a => min < a && a < max)
                 } else if (x < 0 && y < 0) {
-                    val min = angle(x + .5, y - .5)
-                    val max = angle(x - .5, y + .5)
+                    val min = getAngle(x + .5, y - .5)
+                    val max = getAngle(x - .5, y + .5)
                     angles.filter(a => min < a && a < max)
                 } else if (x > 0) {
-                    val min = angle(x - .5, .5)
-                    val max = angle(x - .5, -.5)
+                    val min = getAngle(x - .5, .5)
+                    val max = getAngle(x - .5, -.5)
                     angles.filter(a => min < a && a < max)
                 } else if (x < 0) {
-                    val min = angle(x + .5, -.5)
-                    val max = angle(x + .5, .5)
+                    val min = getAngle(x + .5, -.5)
+                    val max = getAngle(x + .5, .5)
                     angles.filter(a => min < a && a < max)
                 } else if (y > 0) {
-                    val min = angle(-.5, y - .5)
-                    val max = angle(.5, y - .5)
+                    val min = getAngle(-.5, y - .5)
+                    val max = getAngle(.5, y - .5)
                     angles.filter(a => min < a || a < max)
                 } else if (y < 0) {
-                    val min = angle(.5, y + .5)
-                    val max = angle(-.5, y + .5)
+                    val min = getAngle(.5, y + .5)
+                    val max = getAngle(-.5, y + .5)
                     angles.filter(a => min < a && a < max)
                 } else {
                     angles
                 }
             }
 
-            shifts.map(s => s -> shadow(s)).toMap
+            shifts.map(shift => shift -> shadow(shift)).toMap
         }
 
-        def lit(focus: Coordinates, dir: Double, angularWidth: Double, opaques: Set[Coordinates]): Set[Coordinates] = {
-            @tailrec
-            def l(shifts: Seq[Shift], alreadyLit: Set[Coordinates], shadows: Set[Double]): Set[Coordinates] = {
-                shifts match
-                    case s +: rest =>
-                        val sh = shiftToShadow(s)
-                        val c = focus.moveBy(s)
+        def lit(focus: Coordinates, direction: Double, angularWidth: Double, range: Int, opaques: Set[Coordinates]): Set[Coordinates] = {
+            def initialCone(dir: Double, angularWidth: Double): Set[Double] = {
+                inline val twoPi = 2 * Math.PI
 
-                        val newAlreadyLit = if (!alreadyLit.contains(c) && sh.exists(sh => !shadows.contains(sh))) {
-                            alreadyLit + c
+                if (angularWidth >= twoPi) {
+                    Set.empty
+                } else {
+                    val alpha = dir - angularWidth / 2
+                    val beta = dir + angularWidth / 2
+
+                    if (0 <= alpha && beta <= twoPi) {
+                        angles.filterNot(a => alpha <= a && a <= beta).toSet
+                    } else if (alpha < 0) {
+                        angles.filterNot(a => alpha + twoPi <= a || a <= beta).toSet
+                    } else if (beta > twoPi) {
+                        angles.filterNot(a => alpha <= a || a <= beta - twoPi).toSet
+                    } else {
+                        Set.empty
+                    }
+                }
+            }
+
+            @tailrec
+            def l(shifts: Seq[Shift], litCoordinates: Set[Coordinates], shadows: Set[Double]): Set[Coordinates] = {
+                shifts match
+                    case shift +: rest =>
+                        val shadow = shiftToShadow(shift)
+                        val coordinates = focus.moveBy(shift)
+                        val inRange = shift.distanceToZero <= range + offset
+
+                        val newAlreadyLit = if (!litCoordinates.contains(coordinates) && shadow.exists(sh => !shadows.contains(sh)) && inRange) {
+                            litCoordinates + coordinates
                         } else {
-                            alreadyLit
+                            litCoordinates
                         }
 
-                        val newOpaques = if (opaques.contains(c)) {
-                            shadows ++ sh
+                        val newOpaques = if (opaques.contains(coordinates) || !inRange) {
+                            shadows ++ shadow
                         } else {
                             shadows
                         }
 
                         l(rest, newAlreadyLit, newOpaques)
-                    case _ => alreadyLit
+                    case _ => litCoordinates
             }
 
-            l(shifts, Set.empty, Set.empty)
+            l(shifts, Set.empty, initialCone(direction, angularWidth))
         }
     }
 
     object ShadowService {
 
-        private def angle(x: Double, y: Double): Double = {
+        private def getAngle(x: Double, y: Double): Double = {
             Math.atan2(x, y).pipe { theta =>
                 if theta < 0 then 2 * Math.PI + theta else theta
             }
         }
 
         private def anglesFrom(shift: Shift): Seq[Double] = Seq(
-            angle(shift.dx - .5, shift.dy - .5),
-            angle(shift.dx - .5, shift.dy + .5),
-            angle(shift.dx + .5, shift.dy - .5),
-            angle(shift.dx + .5, shift.dy + .5)
+            getAngle(shift.dx - .5, shift.dy - .5),
+            getAngle(shift.dx - .5, shift.dy + .5),
+            getAngle(shift.dx + .5, shift.dy - .5),
+            getAngle(shift.dx + .5, shift.dy + .5)
         )
 
-        private def length(shift: Shift): Double =
-            Math.sqrt(shift.dx * shift.dx + shift.dy * shift.dy)
+        extension (shift: Shift) {
+            def distanceToZero: Double = Math.sqrt(shift.dx * shift.dx + shift.dy * shift.dy)
+        }
 
         given Ordering[Shift] with {
-            override def compare(x: Shift, y: Shift): Int = java.lang.Double.compare(length(x), length(y))
+            override def compare(x: Shift, y: Shift): Int = java.lang.Double.compare(x.distanceToZero, y.distanceToZero)
         }
 
     }
 
     def main(args: Array[String]): Unit = {
         case class Element(coordinates: Coordinates, char: Char, opaque: Boolean)
-        case class Cone(coordinates: Coordinates, dir: Double, angularWidth: Double)
 
         val r = 10
 
@@ -144,11 +165,11 @@ object ShadowMain {
         val opaques = elements.filter(_.opaque).map(_.coordinates).toSet
         val chars = elements.map(e => e.coordinates -> e.char).toMap
 
-        val lit = shadowService.lit(Coordinates(0, 0), 0, Math.PI / 2, opaques)
+        val lit = shadowService.lit(Coordinates(0, 0), 0 * Math.PI / 2, Math.PI * 2, 10, opaques)
 
         for (y <- -r to r) {
             for (x <- -r to r) {
-                val c = Coordinates(x, y)
+                val c = Coordinates(x, -y)
                 if (lit.contains(c)) {
                     print(chars.getOrElse(c, ' '))
                 } else {
