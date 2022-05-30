@@ -12,7 +12,7 @@ object ShadowMain {
     case class LightSource(origin: Coordinates, direction: Double, angularWidth: Double, range: Int)
 
     class ShadowService(maxRange: Int) {
-        private val offset = Math.sqrt(2) - 1
+
 
         private val shifts: Seq[Shift] = {
             for {
@@ -117,6 +117,8 @@ object ShadowMain {
     }
 
     object ShadowService {
+
+        private val offset = Math.sqrt(2) - 1
 
         private def getAngle(x: Double, y: Double): Double = {
             Math.atan2(x, y).pipe { theta =>
