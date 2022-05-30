@@ -9,6 +9,8 @@ import scala.util.chaining.scalaUtilChainingOps
 
 object ShadowMain {
 
+    case class LightSource(origin: Coordinates, direction: Double, angularWidth: Double, range: Int)
+
     class ShadowService(maxRange: Int) {
         private val offset = Math.sqrt(2) - 1
 
@@ -68,15 +70,15 @@ object ShadowMain {
             shifts.map(shift => shift -> shadow(shift)).toMap
         }
 
-        def lit(focus: Coordinates, direction: Double, angularWidth: Double, range: Int, opaques: Set[Coordinates]): Set[Coordinates] = {
-            def initialCone(dir: Double, angularWidth: Double): Set[Double] = {
+        def getLitCoordinates(lightSources: Seq[LightSource], opaques: Set[Coordinates]): Set[Coordinates] = {
+            def initialCone(lightSource: LightSource) = {
                 inline val twoPi = 2 * Math.PI
 
-                if (angularWidth >= twoPi) {
+                if (lightSource.angularWidth >= twoPi) {
                     Set.empty
                 } else {
-                    val alpha = dir - angularWidth / 2
-                    val beta = dir + angularWidth / 2
+                    val alpha = lightSource.direction - lightSource.angularWidth / 2
+                    val beta = lightSource.direction + lightSource.angularWidth / 2
 
                     if (0 <= alpha && beta <= twoPi) {
                         angles.filterNot(a => alpha <= a && a <= beta).toSet
@@ -91,30 +93,26 @@ object ShadowMain {
             }
 
             @tailrec
-            def l(shifts: Seq[Shift], litCoordinates: Set[Coordinates], shadows: Set[Double]): Set[Coordinates] = {
+            def l(shifts: Seq[Shift], lightSource: LightSource, litCoordinates: Set[Coordinates], shadows: Set[Double]): Set[Coordinates] = {
                 shifts match
                     case shift +: rest =>
                         val shadow = shiftToShadow(shift)
-                        val coordinates = focus.moveBy(shift)
-                        val inRange = shift.distanceToZero <= range + offset
+                        val coordinates = lightSource.origin.moveBy(shift)
+                        val inRange = shift.distanceToZero <= lightSource.range + offset
 
-                        val newAlreadyLit = if (!litCoordinates.contains(coordinates) && shadow.exists(sh => !shadows.contains(sh)) && inRange) {
-                            litCoordinates + coordinates
-                        } else {
-                            litCoordinates
-                        }
+                        val isLit = !litCoordinates.contains(coordinates) && shadow.exists(sh => !shadows.contains(sh)) && inRange
+                        val castShadow = isLit && (opaques.contains(coordinates) || !inRange)
 
-                        val newOpaques = if (opaques.contains(coordinates) || !inRange) {
-                            shadows ++ shadow
-                        } else {
-                            shadows
-                        }
+                        val litCoordinatesUpdated = if (isLit) litCoordinates + coordinates else litCoordinates
+                        val shadowsUpdated = if (castShadow) shadows ++ shadow else shadows
 
-                        l(rest, newAlreadyLit, newOpaques)
+                        l(rest, lightSource, litCoordinatesUpdated, shadowsUpdated)
                     case _ => litCoordinates
             }
 
-            l(shifts, Set.empty, initialCone(direction, angularWidth))
+            lightSources.foldLeft(Set.empty) { case (litCoordinates, lightSource) =>
+                l(shifts, lightSource, litCoordinates, initialCone(lightSource))
+            }
         }
     }
 
@@ -165,7 +163,14 @@ object ShadowMain {
         val opaques = elements.filter(_.opaque).map(_.coordinates).toSet
         val chars = elements.map(e => e.coordinates -> e.char).toMap
 
-        val lit = shadowService.lit(Coordinates(0, 0), 0 * Math.PI / 2, Math.PI * 2, 10, opaques)
+        val lit = shadowService.getLitCoordinates(
+            Seq(
+                LightSource(Coordinates(0, 0), 0 * 2 * Math.PI, 2 * Math.PI, 10),
+                //                LightSource(Coordinates(8, 8),.625 * 2 * Math.PI,.25 * 2 * Math.PI, 10),
+                //                LightSource(Coordinates(-8, -8),.125 * 2 * Math.PI,.25 * 2 * Math.PI, 10)
+            ),
+            opaques
+        )
 
         for (y <- -r to r) {
             for (x <- -r to r) {
