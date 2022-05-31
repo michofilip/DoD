@@ -47,7 +47,7 @@ object ShadowMain {
         }
 
         def getLitCoordinates(lightSources: Seq[LightSource], opaques: Set[Coordinates]): Set[Coordinates] = {
-            def initialCone(lightSource: LightSource) = {
+            inline def initialCone(lightSource: LightSource) = {
                 inline val twoPi = 2 * Math.PI
 
                 if (lightSource.angularWidth >= twoPi) {
@@ -63,24 +63,30 @@ object ShadowMain {
                 }
             }
 
-            @tailrec
-            def l(shifts: Seq[Shift], lightSource: LightSource, litCoordinates: Set[Coordinates], shadows: Set[Double]): Set[Coordinates] = shifts match
-                case shift +: rest =>
-                    val shadow = shiftToShadow(shift)
-                    val coordinates = lightSource.origin.moveBy(shift)
-                    val inRange = shift.distanceToZero <= lightSource.range + offset
+            inline def lit(litCoordinates: Set[Coordinates], lightSource: LightSource): Set[Coordinates] = {
+                val origin = lightSource.origin
+                val range = lightSource.range + offset
 
-                    val isLit = !litCoordinates.contains(coordinates) && shadow.exists(sh => !shadows.contains(sh)) && inRange
-                    val castShadow = isLit && (opaques.contains(coordinates) || !inRange)
+                @tailrec
+                def l(shifts: Seq[Shift], litCoordinates: Set[Coordinates], shadows: Set[Double]): Set[Coordinates] = shifts match
+                    case shift +: rest =>
+                        val shadow = shiftToShadow(shift)
+                        val coordinates = origin.moveBy(shift)
 
-                    val litCoordinatesUpdated = if (isLit) litCoordinates + coordinates else litCoordinates
-                    val shadowsUpdated = if (castShadow) shadows ++ shadow else shadows
+                        val isLit = shift.distanceToZero <= range && !litCoordinates.contains(coordinates) && !shadow.forall(shadows.contains)
+                        val castShadow = opaques.contains(coordinates)
 
-                    l(rest, lightSource, litCoordinatesUpdated, shadowsUpdated)
-                case _ => litCoordinates
+                        val litCoordinatesUpdated = if (isLit) litCoordinates + coordinates else litCoordinates
+                        val shadowsUpdated = if (castShadow) shadows ++ shadow else shadows
+
+                        l(rest, litCoordinatesUpdated, shadowsUpdated)
+                    case _ => litCoordinates
+
+                l(shifts, litCoordinates, initialCone(lightSource))
+            }
 
             lightSources.foldLeft(Set.empty) { case (litCoordinates, lightSource) =>
-                l(shifts, lightSource, litCoordinates, initialCone(lightSource))
+                lit(litCoordinates, lightSource)
             }
         }
     }
