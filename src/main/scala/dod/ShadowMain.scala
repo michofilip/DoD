@@ -30,14 +30,14 @@ object ShadowMain {
                 val y = shift.dy
 
                 val angleFilter = (angle: Double) =>
-                    if (x > 0 && y > 0) Math.atan2(x - .5, y + .5) < angle && angle < Math.atan2(x + .5, y - .5)
-                    else if (x > 0 && y < 0) Math.atan2(x + .5, y + .5) < angle && angle < Math.atan2(x - .5, y - .5)
-                    else if (x < 0 && y > 0) Math.atan2(x - .5, y - .5) < angle && angle < Math.atan2(x + .5, y + .5)
-                    else if (x < 0 && y < 0) Math.atan2(x + .5, y - .5) < angle && angle < Math.atan2(x - .5, y + .5)
-                    else if (x > 0) Math.atan2(x - .5, .5) < angle && angle < Math.atan2(x - .5, -.5)
-                    else if (x < 0) Math.atan2(x + .5, -.5) < angle && angle < Math.atan2(x + .5, .5)
-                    else if (y > 0) Math.atan2(-.5, y - .5) < angle && angle < Math.atan2(.5, y - .5)
-                    else if (y < 0) Math.atan2(.5, y + .5) < angle || angle < Math.atan2(-.5, y + .5)
+                    if x > 0 && y > 0 then Math.atan2(x - .5, y + .5) < angle && angle < Math.atan2(x + .5, y - .5)
+                    else if x > 0 && y < 0 then Math.atan2(x + .5, y + .5) < angle && angle < Math.atan2(x - .5, y - .5)
+                    else if x < 0 && y > 0 then Math.atan2(x - .5, y - .5) < angle && angle < Math.atan2(x + .5, y + .5)
+                    else if x < 0 && y < 0 then Math.atan2(x + .5, y - .5) < angle && angle < Math.atan2(x - .5, y + .5)
+                    else if x > 0 then Math.atan2(x - .5, .5) < angle && angle < Math.atan2(x - .5, -.5)
+                    else if x < 0 then Math.atan2(x + .5, -.5) < angle && angle < Math.atan2(x + .5, .5)
+                    else if y > 0 then Math.atan2(-.5, y - .5) < angle && angle < Math.atan2(.5, y - .5)
+                    else if y < 0 then Math.atan2(.5, y + .5) < angle || angle < Math.atan2(-.5, y + .5)
                     else true
 
                 angles.filter(angleFilter)
@@ -47,18 +47,18 @@ object ShadowMain {
         }
 
         def getLitCoordinates(lightSources: Seq[LightSource], opaques: Set[Coordinates]): Set[Coordinates] = {
-            inline def initialCone(lightSource: LightSource) = {
+            inline def initialCone(lightSource: LightSource): Set[Double] = {
                 inline val twoPi = 2 * Math.PI
 
-                if (lightSource.angularWidth >= twoPi) {
+                if lightSource.angularWidth >= twoPi then
                     Set.empty
-                } else {
+                else {
                     val alpha = lightSource.direction - lightSource.angularWidth / 2
                     val beta = lightSource.direction + lightSource.angularWidth / 2
 
-                    if (-Math.PI <= alpha && beta <= Math.PI) angles.filterNot(a => alpha <= a && a <= beta).toSet
-                    else if (alpha < -Math.PI) angles.filterNot(a => alpha + twoPi <= a || a <= beta).toSet
-                    else if (beta > Math.PI) angles.filterNot(a => alpha <= a || a <= beta - twoPi).toSet
+                    if -Math.PI <= alpha && beta <= Math.PI then angles.filterNot(a => alpha <= a && a <= beta).toSet
+                    else if alpha < -Math.PI then angles.filterNot(a => alpha + twoPi <= a || a <= beta).toSet
+                    else if beta > Math.PI then angles.filterNot(a => alpha <= a || a <= beta - twoPi).toSet
                     else Set.empty
                 }
             }
@@ -76,8 +76,8 @@ object ShadowMain {
                         val isLit = shift.distanceToZero <= range && !litCoordinates.contains(coordinates) && !shadow.forall(shadows.contains)
                         val castShadow = opaques.contains(coordinates)
 
-                        val litCoordinatesUpdated = if (isLit) litCoordinates + coordinates else litCoordinates
-                        val shadowsUpdated = if (castShadow) shadows ++ shadow else shadows
+                        val litCoordinatesUpdated = if isLit then litCoordinates + coordinates else litCoordinates
+                        val shadowsUpdated = if castShadow then shadows ++ shadow else shadows
 
                         l(rest, litCoordinatesUpdated, shadowsUpdated)
                     case _ => litCoordinates
