@@ -5,7 +5,7 @@ import dod.game.model.{Duration, Timer, Timestamp}
 
 import java.sql.Time
 
-trait TimersPropertyHolder {
+private[gameobject] trait TimersPropertyHolder {
     self: GameObject =>
 
     protected val timersProperty: Option[TimersProperty]

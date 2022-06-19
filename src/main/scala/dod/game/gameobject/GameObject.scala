@@ -3,6 +3,7 @@ package dod.game.gameobject
 import dod.game.gameobject.commons.{CommonsProperty, CommonsPropertyHolder}
 import dod.game.gameobject.expressions.{ExpressionsProperty, ExpressionsPropertyHolder}
 import dod.game.gameobject.graphics.{GraphicsProperty, GraphicsPropertyHolder}
+import dod.game.gameobject.lightsource.{LightSourceProperty, LightSourcePropertyHolder}
 import dod.game.gameobject.physics.{PhysicsProperty, PhysicsPropertyHolder}
 import dod.game.gameobject.position.{PositionProperty, PositionPropertyHolder, PositionTransformer}
 import dod.game.gameobject.scheduler.{SchedulerProperty, SchedulerPropertyHolder}
@@ -21,7 +22,8 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
                                override protected val timersProperty: Option[TimersProperty] = None,
                                override protected val schedulerProperty: Option[SchedulerProperty] = None,
                                override protected val scriptProperty: Option[ScriptProperty] = None,
-                               override protected val expressionsProperty: Option[ExpressionsProperty] = None)
+                               override protected val expressionsProperty: Option[ExpressionsProperty] = None,
+                               override protected val lightSourceProperty: Option[LightSourceProperty] = None)
     extends CommonsPropertyHolder
         with PositionPropertyHolder
         with StatePropertyHolder
@@ -30,7 +32,8 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
         with TimersPropertyHolder
         with SchedulerPropertyHolder
         with ScriptPropertyHolder
-        with ExpressionsPropertyHolder {
+        with ExpressionsPropertyHolder
+        with LightSourcePropertyHolder {
 
     protected def update(positionProperty: Option[PositionProperty] = positionProperty,
                          stateProperty: Option[StateProperty] = stateProperty,
@@ -39,7 +42,8 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
                          timersProperty: Option[TimersProperty] = timersProperty,
                          schedulerProperty: Option[SchedulerProperty] = schedulerProperty,
                          scriptProperty: Option[ScriptProperty] = scriptProperty,
-                         expressionsProperty: Option[ExpressionsProperty] = expressionsProperty): GameObject =
+                         expressionsProperty: Option[ExpressionsProperty] = expressionsProperty,
+                         lightSourceProperty: Option[LightSourceProperty] = lightSourceProperty): GameObject =
         new GameObject(
             commonsProperty = commonsProperty,
             positionProperty = positionProperty,
@@ -49,7 +53,8 @@ final class GameObject private(override protected val commonsProperty: CommonsPr
             timersProperty = timersProperty,
             schedulerProperty = schedulerProperty,
             scriptProperty = scriptProperty,
-            expressionsProperty = expressionsProperty
+            expressionsProperty = expressionsProperty,
+            lightSourceProperty = lightSourceProperty
         )
 
 }

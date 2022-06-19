@@ -1,7 +1,7 @@
-package dod.service.pac
+package dod.service
 
-import dod.game.model.{Coordinates, LightSource, Shift}
-import dod.service.pac.ShadowCastingService.{*, given}
+import dod.game.model.{Coordinates, LightCone, Shift}
+import dod.service.ShadowCastingService.{*, given}
 
 import scala.annotation.tailrec
 
@@ -39,15 +39,15 @@ class ShadowCastingService(maxRange: Int) {
         shifts.map(shift => shift -> shadow(shift)).toMap
     }
 
-    def getLitCoordinates(lightSources: Seq[LightSource], opaques: Set[Coordinates]): Set[Coordinates] = {
-        inline def initialCone(lightSource: LightSource): Set[Double] = {
+    def getLitCoordinates(lightCones: Seq[LightCone], opaques: Set[Coordinates]): Set[Coordinates] = {
+        inline def initialCone(lightCone: LightCone): Set[Double] = {
             inline val twoPi = 2 * Math.PI
 
-            if lightSource.angularWidth >= twoPi then
+            if lightCone.angularWidth >= twoPi then
                 Set.empty
             else {
-                val alpha = lightSource.direction - lightSource.angularWidth / 2
-                val beta = lightSource.direction + lightSource.angularWidth / 2
+                val alpha = lightCone.direction - lightCone.angularWidth / 2
+                val beta = lightCone.direction + lightCone.angularWidth / 2
 
                 if -Math.PI <= alpha && beta <= Math.PI then angles.filterNot(a => alpha <= a && a <= beta).toSet
                 else if alpha < -Math.PI then angles.filterNot(a => alpha + twoPi <= a || a <= beta).toSet
@@ -56,9 +56,9 @@ class ShadowCastingService(maxRange: Int) {
             }
         }
 
-        inline def lit(litCoordinates: Set[Coordinates], lightSource: LightSource): Set[Coordinates] = {
-            val origin = lightSource.origin
-            val range = lightSource.range + offset
+        inline def lit(litCoordinates: Set[Coordinates], lightCone: LightCone): Set[Coordinates] = {
+            val origin = lightCone.origin
+            val range = lightCone.range + offset
 
             @tailrec
             def l(shifts: Seq[Shift], litCoordinates: Set[Coordinates], shadows: Set[Double]): Set[Coordinates] = shifts match
@@ -75,11 +75,11 @@ class ShadowCastingService(maxRange: Int) {
                     l(rest, litCoordinatesUpdated, shadowsUpdated)
                 case _ => litCoordinates
 
-            l(shifts, litCoordinates, initialCone(lightSource))
+            l(shifts, litCoordinates, initialCone(lightCone))
         }
 
-        lightSources.foldLeft(Set.empty) { case (litCoordinates, lightSource) =>
-            lit(litCoordinates, lightSource)
+        lightCones.foldLeft(Set.empty) { case (litCoordinates, lightCone) =>
+            lit(litCoordinates, lightCone)
         }
     }
 }
