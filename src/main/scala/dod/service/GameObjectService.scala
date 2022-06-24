@@ -50,6 +50,7 @@ class GameObjectService(positionService: PositionService,
 
     def createPlayer(id: String, timestamp: Timestamp, coordinates: Coordinates, direction: Direction): GameObject = {
         createGameObject(id, "player", timestamp)
+            .withLightSourceProperty()
             .updatePosition(PositionTransformer.moveTo(coordinates), timestamp)
             .updatePosition(PositionTransformer.turnTo(direction), timestamp)
     }

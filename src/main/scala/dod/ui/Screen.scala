@@ -14,12 +14,12 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
 
     private val graphicsContext2D: GraphicsContext = canvas.graphicsContext2D
 
-    def drawGameStage(gameStage: GameStage): Unit = {
+    def drawGameStage(gameStage: GameStage, litCoordinates: Option[Set[Coordinates]] = None): Unit = {
         val gameObjects = gameStage.gameObjects.findAll
         val focus = gameStage.focus
         val timestamp = gameStage.globalTimestamp
 
-        drawGameObjects(gameObjects, focus, timestamp)
+        drawGameObjects(gameObjects, focus, timestamp, litCoordinates)
     }
 
     private inline def drawBackground(color: Color): Unit = {
@@ -55,7 +55,7 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
     }
 
 
-    private inline def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp): Unit = {
+    private inline def drawGameObjects(gameObjects: Seq[GameObject], focus: Coordinates, timestamp: Timestamp, litCoordinates: Option[Set[Coordinates]]): Unit = {
         val offsetX = focus.x * tileWidth - (width - tileWidth) / 2
         val offsetY = focus.y * tileHeight - (height - tileHeight) / 2
 
@@ -66,8 +66,14 @@ class Screen(width: Double, height: Double, val tileWidth: Double, val tileHeigh
         val scaleX = tileWidth / frameTileWidth
         val scaleY = tileHeight / frameTileHeight
 
+        def isLit(coordinates: Coordinates): Boolean = litCoordinates.fold(true)(_.contains(coordinates))
+
         def spriteFrom(gameObject: GameObject): Option[Sprite] = for
             coordinates <- gameObject.position.coordinates
+
+            // FIXME this should be shadow, not filtered out
+            if isLit(coordinates)
+
             frame <- gameObject.graphics.frame(timestamp)
             layer <- gameObject.graphics.layer
             image <- spriteRepository.sprites.get(frame.spriteId)
